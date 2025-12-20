@@ -1,0 +1,12 @@
+# .ddev/config.watcher.yaml
+web_environment:
+    - HOST=0.0.0.0
+    - PORT=9999
+    - DISABLE_ADMIN_COMPILATION_TYPECHECK=1
+    - PROXY_URL=${DDEV_PRIMARY_URL}:9999
+    - STOREFRONT_SKIP_SSL_CERT=true
+web_extra_exposed_ports:
+    - name: admin-proxy
+      container_port: 9999
+      http_port: 8888
+      https_port: 9990

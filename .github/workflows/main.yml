@@ -1,0 +1,30 @@
+name: build-main
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: |
+        mv wordpress/wp-config.PROD.php wordpress/wp-config.php
+        rm wordpress/wp-config.DEV.php
+    - name: Sync
+      env:
+        dest: "${{vars.USERNAME}}@${{vars.HOST_DNS}}:/kunden/homepages/41/d100076765/htdocs/clickandbuilds/TCIllertissen"
+      run: |
+        cd ./wordpress
+        echo "${{secrets.EC2_SSH_KEY}}" > deploy_key
+        chmod 600 ./deploy_key
+        rsync -chav \
+          -e 'ssh -i ./deploy_key -o StrictHostKeyChecking=no' \
+          --exclude /deploy_key \
+          --exclude /.git/ \
+          --exclude /.github/ \
+          --exclude /node_modules/ \
+          --exclude /wp-content/languages/ \
+          ./ ${{env.dest}}

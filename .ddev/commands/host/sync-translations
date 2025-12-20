@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+
+rsync -avz my.evidew:/data/sites/web/evidenach/www/wp-content/languages/ wordpress/wp-content/languages/

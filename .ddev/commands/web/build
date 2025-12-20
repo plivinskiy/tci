@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+cd wordpress/wp-content/plugins/kivicare-clinic-management-system
+npm install
+npm run prod
