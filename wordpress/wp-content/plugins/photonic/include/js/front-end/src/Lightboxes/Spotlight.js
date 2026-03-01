@@ -114,7 +114,7 @@ export class PhotonicSpotlight extends Lightbox {
 				onchange: (idx, options) => {
 					const current = gallery[idx - 1]; // idx is 1-based, not 0-based
 					const title = document.querySelector("#spotlight .spl-title");
-					title.innerHTML = Util.HTMLSanitizer(current.title);
+					title.innerHTML = Util.HTMLSanitizer.SanitizeHTML(current.title);
 					self.setHash(current.deep);
 
 					const shareable = {

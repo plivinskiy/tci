@@ -1,4 +1,4 @@
-# Copyright (C) 2025 so-widgets-bundle
+# Copyright (C) 2026 so-widgets-bundle
 # This file is distributed under the same license as the so-widgets-bundle package.
 msgid ""
 msgstr ""
@@ -36,7 +36,7 @@ msgstr ""
 msgid "https://siteorigin.com/widgets-bundle/"
 msgstr ""
 
-#: so-widgets-bundle.php:431, so-widgets-bundle.php:459, so-widgets-bundle.php:475, so-widgets-bundle.php:505, so-widgets-bundle.php:520, so-widgets-bundle.php:587, so-widgets-bundle.php:600, base/base.php:59, base/base.php:63, base/base.php:430, base/base.php:437, base/base.php:442, base/inc/actions.php:11, base/inc/actions.php:102, base/inc/actions.php:219, base/inc/actions.php:264, base/inc/actions.php:276, base/inc/actions.php:280, base/inc/actions.php:374, base/inc/actions.php:378
+#: so-widgets-bundle.php:431, so-widgets-bundle.php:459, so-widgets-bundle.php:475, so-widgets-bundle.php:505, so-widgets-bundle.php:520, so-widgets-bundle.php:597, base/base.php:61, base/base.php:428, base/base.php:435, base/base.php:440, base/base.php:739, base/inc/actions.php:287, base/inc/actions.php:380
 msgid "Invalid request."
 msgstr ""
 
@@ -44,7 +44,7 @@ msgstr ""
 msgid "Insufficient permissions."
 msgstr ""
 
-#: so-widgets-bundle.php:439, so-widgets-bundle.php:594, base/inc/actions.php:23
+#: so-widgets-bundle.php:439, so-widgets-bundle.php:591, base/inc/actions.php:20
 msgid "Invalid post."
 msgstr ""
 
@@ -64,24 +64,28 @@ msgstr ""
 msgid "Deactivated"
 msgstr ""
 
-#: so-widgets-bundle.php:859
+#: so-widgets-bundle.php:856
 msgid "Manage Widgets"
 msgstr ""
 
-#: so-widgets-bundle.php:860
+#: so-widgets-bundle.php:857
 msgid "Support"
 msgstr ""
 
-#: so-widgets-bundle.php:863
+#: so-widgets-bundle.php:860
 msgid "Addons"
 msgstr ""
 
-#: so-widgets-bundle.php:913
+#: so-widgets-bundle.php:910
 msgid "There were no results for the place you entered. Please try another."
 msgstr ""
 
-#: base/base.php:446
+#: base/base.php:444
 msgid "(No Title)"
+msgstr ""
+
+#: base/base.php:743
+msgid "You do not have permission to make this action."
 msgstr ""
 
 #: base/siteorigin-widget.class.php:575
@@ -136,7 +140,7 @@ msgstr ""
 msgid "Clicking %s will replace the current widget contents. You can revert by refreshing the page before updating."
 msgstr ""
 
-#: base/siteorigin-widget.class.php:774, base/inc/actions.php:57
+#: base/siteorigin-widget.class.php:774, base/inc/actions.php:54
 msgid "Widget Preview"
 msgstr ""
 
@@ -240,19 +244,15 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: base/inc/actions.php:13
+#: base/inc/actions.php:10
 msgid "Invalid widget."
 msgstr ""
 
-#: base/inc/actions.php:324
-msgid "Nonce error"
-msgstr ""
-
-#: base/inc/actions.php:333
+#: base/inc/actions.php:337
 msgid "Signature error"
 msgstr ""
 
-#: base/inc/actions.php:358
+#: base/inc/actions.php:362
 msgid "Attachment error"
 msgstr ""
 
@@ -348,7 +348,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: widgets/accordion/accordion.php:75, widgets/accordion/accordion.php:153, widgets/tabs/tabs.php:170
+#: widgets/accordion/accordion.php:75, widgets/accordion/accordion.php:168, widgets/tabs/tabs.php:170
 msgid "Panels"
 msgstr ""
 
@@ -384,7 +384,7 @@ msgstr ""
 msgid "Headings"
 msgstr ""
 
-#: widgets/accordion/accordion.php:120, widgets/accordion/accordion.php:158, widgets/hero/hero.php:172, widgets/layout-slider/layout-slider.php:131, widgets/price-table/price-table.php:162, widgets/price-table/price-table.php:214, widgets/slider/slider.php:92, widgets/social-media-buttons/social-media-buttons.php:85, widgets/tabs/tabs.php:111, widgets/tabs/tabs.php:131, widgets/tabs/tabs.php:175
+#: widgets/accordion/accordion.php:120, widgets/accordion/accordion.php:173, widgets/hero/hero.php:172, widgets/layout-slider/layout-slider.php:131, widgets/price-table/price-table.php:162, widgets/price-table/price-table.php:214, widgets/slider/slider.php:92, widgets/social-media-buttons/social-media-buttons.php:85, widgets/tabs/tabs.php:111, widgets/tabs/tabs.php:131, widgets/tabs/tabs.php:175
 msgid "Background color"
 msgstr ""
 
@@ -400,31 +400,67 @@ msgstr ""
 msgid "Title hover color"
 msgstr ""
 
-#: widgets/accordion/accordion.php:139, widgets/accordion/accordion.php:167, widgets/social-media-buttons/social-media-buttons.php:89, widgets/tabs/tabs.php:116, widgets/tabs/tabs.php:150, widgets/tabs/tabs.php:184
+#: widgets/accordion/accordion.php:139, widgets/cta/cta.php:117
+msgid "Title HTML Tag"
+msgstr ""
+
+#: widgets/accordion/accordion.php:142, widgets/author-box/author-box.php:176, widgets/blog/blog.php:164, widgets/cta/cta.php:120, widgets/cta/cta.php:142, widgets/features/features.php:148, widgets/headline/headline.php:68, widgets/headline/headline.php:149, widgets/recent-posts/recent-posts.php:98, base/inc/widgets/base-carousel.class.php:383
+msgid "H1"
+msgstr ""
+
+#: widgets/accordion/accordion.php:143, widgets/author-box/author-box.php:177, widgets/blog/blog.php:165, widgets/cta/cta.php:121, widgets/cta/cta.php:143, widgets/features/features.php:149, widgets/headline/headline.php:69, widgets/headline/headline.php:150, widgets/recent-posts/recent-posts.php:99, base/inc/widgets/base-carousel.class.php:384
+msgid "H2"
+msgstr ""
+
+#: widgets/accordion/accordion.php:144, widgets/author-box/author-box.php:178, widgets/blog/blog.php:166, widgets/cta/cta.php:122, widgets/cta/cta.php:144, widgets/features/features.php:150, widgets/headline/headline.php:70, widgets/headline/headline.php:151, widgets/recent-posts/recent-posts.php:100, base/inc/widgets/base-carousel.class.php:385
+msgid "H3"
+msgstr ""
+
+#: widgets/accordion/accordion.php:145, widgets/author-box/author-box.php:179, widgets/blog/blog.php:167, widgets/cta/cta.php:123, widgets/cta/cta.php:145, widgets/features/features.php:151, widgets/headline/headline.php:71, widgets/headline/headline.php:152, widgets/recent-posts/recent-posts.php:101, base/inc/widgets/base-carousel.class.php:386
+msgid "H4"
+msgstr ""
+
+#: widgets/accordion/accordion.php:146, widgets/author-box/author-box.php:180, widgets/blog/blog.php:168, widgets/cta/cta.php:124, widgets/cta/cta.php:146, widgets/features/features.php:152, widgets/headline/headline.php:72, widgets/headline/headline.php:153, widgets/recent-posts/recent-posts.php:102, base/inc/widgets/base-carousel.class.php:387
+msgid "H5"
+msgstr ""
+
+#: widgets/accordion/accordion.php:147, widgets/author-box/author-box.php:181, widgets/blog/blog.php:169, widgets/cta/cta.php:125, widgets/cta/cta.php:147, widgets/features/features.php:153, widgets/headline/headline.php:73, widgets/headline/headline.php:154, widgets/recent-posts/recent-posts.php:103, base/inc/widgets/base-carousel.class.php:388
+msgid "H6"
+msgstr ""
+
+#: widgets/accordion/accordion.php:148, widgets/author-box/author-box.php:182, widgets/blog/blog.php:170, widgets/cta/cta.php:126, widgets/cta/cta.php:148, widgets/headline/headline.php:74, widgets/headline/headline.php:155, widgets/recent-posts/recent-posts.php:104, base/inc/widgets/base-carousel.class.php:389
+msgid "Paragraph"
+msgstr ""
+
+#: widgets/accordion/accordion.php:149
+msgid "Div"
+msgstr ""
+
+#: widgets/accordion/accordion.php:154, widgets/accordion/accordion.php:182, widgets/social-media-buttons/social-media-buttons.php:89, widgets/tabs/tabs.php:116, widgets/tabs/tabs.php:150, widgets/tabs/tabs.php:184
 msgid "Border color"
 msgstr ""
 
-#: widgets/accordion/accordion.php:143, widgets/social-media-buttons/social-media-buttons.php:113, widgets/tabs/tabs.php:155
+#: widgets/accordion/accordion.php:158, widgets/social-media-buttons/social-media-buttons.php:113, widgets/tabs/tabs.php:155
 msgid "Border hover color"
 msgstr ""
 
-#: widgets/accordion/accordion.php:147, widgets/accordion/accordion.php:171, widgets/tabs/tabs.php:120, widgets/tabs/tabs.php:160, widgets/tabs/tabs.php:188
+#: widgets/accordion/accordion.php:162, widgets/accordion/accordion.php:186, widgets/tabs/tabs.php:120, widgets/tabs/tabs.php:160, widgets/tabs/tabs.php:188
 msgid "Border width"
 msgstr ""
 
-#: widgets/accordion/accordion.php:163, widgets/tabs/tabs.php:180
+#: widgets/accordion/accordion.php:178, widgets/tabs/tabs.php:180
 msgid "Font color"
 msgstr ""
 
-#: widgets/accordion/accordion.php:175
+#: widgets/accordion/accordion.php:190
 msgid "Bottom margin"
 msgstr ""
 
-#: widgets/accordion/accordion.php:275
+#: widgets/accordion/accordion.php:322
 msgid "Get more customization options and the ability to use widgets and layouts as your accordion content with %sSiteOrigin Premium%s"
 msgstr ""
 
-#: widgets/accordion/accordion.php:280
+#: widgets/accordion/accordion.php:327
 msgid "Use Google Fonts right inside the Accordion Widget with %sSiteOrigin Premium%s"
 msgstr ""
 
@@ -590,34 +626,6 @@ msgstr ""
 
 #: widgets/author-box/author-box.php:173, widgets/headline/headline.php:65, widgets/headline/headline.php:146, base/inc/widgets/base-carousel.class.php:380
 msgid "HTML Tag"
-msgstr ""
-
-#: widgets/author-box/author-box.php:176, widgets/blog/blog.php:164, widgets/cta/cta.php:120, widgets/cta/cta.php:142, widgets/features/features.php:148, widgets/headline/headline.php:68, widgets/headline/headline.php:149, widgets/recent-posts/recent-posts.php:98, base/inc/widgets/base-carousel.class.php:383
-msgid "H1"
-msgstr ""
-
-#: widgets/author-box/author-box.php:177, widgets/blog/blog.php:165, widgets/cta/cta.php:121, widgets/cta/cta.php:143, widgets/features/features.php:149, widgets/headline/headline.php:69, widgets/headline/headline.php:150, widgets/recent-posts/recent-posts.php:99, base/inc/widgets/base-carousel.class.php:384
-msgid "H2"
-msgstr ""
-
-#: widgets/author-box/author-box.php:178, widgets/blog/blog.php:166, widgets/cta/cta.php:122, widgets/cta/cta.php:144, widgets/features/features.php:150, widgets/headline/headline.php:70, widgets/headline/headline.php:151, widgets/recent-posts/recent-posts.php:100, base/inc/widgets/base-carousel.class.php:385
-msgid "H3"
-msgstr ""
-
-#: widgets/author-box/author-box.php:179, widgets/blog/blog.php:167, widgets/cta/cta.php:123, widgets/cta/cta.php:145, widgets/features/features.php:151, widgets/headline/headline.php:71, widgets/headline/headline.php:152, widgets/recent-posts/recent-posts.php:101, base/inc/widgets/base-carousel.class.php:386
-msgid "H4"
-msgstr ""
-
-#: widgets/author-box/author-box.php:180, widgets/blog/blog.php:168, widgets/cta/cta.php:124, widgets/cta/cta.php:146, widgets/features/features.php:152, widgets/headline/headline.php:72, widgets/headline/headline.php:153, widgets/recent-posts/recent-posts.php:102, base/inc/widgets/base-carousel.class.php:387
-msgid "H5"
-msgstr ""
-
-#: widgets/author-box/author-box.php:181, widgets/blog/blog.php:169, widgets/cta/cta.php:125, widgets/cta/cta.php:147, widgets/features/features.php:153, widgets/headline/headline.php:73, widgets/headline/headline.php:154, widgets/recent-posts/recent-posts.php:103, base/inc/widgets/base-carousel.class.php:388
-msgid "H6"
-msgstr ""
-
-#: widgets/author-box/author-box.php:182, widgets/blog/blog.php:170, widgets/cta/cta.php:126, widgets/cta/cta.php:148, widgets/headline/headline.php:74, widgets/headline/headline.php:155, widgets/recent-posts/recent-posts.php:104, base/inc/widgets/base-carousel.class.php:389
-msgid "Paragraph"
 msgstr ""
 
 #: widgets/author-box/author-box.php:201, widgets/author-box/author-box.php:232, widgets/blog/blog.php:301, widgets/blog/blog.php:328, widgets/blog/blog.php:392, widgets/blog/blog.php:485, widgets/headline/headline.php:83, widgets/headline/headline.php:164, widgets/recent-posts/recent-posts.php:321
@@ -828,7 +836,7 @@ msgstr ""
 msgid "Post Meta Color"
 msgstr ""
 
-#: widgets/blog/blog.php:577, widgets/blog/blog.php:1637
+#: widgets/blog/blog.php:577, widgets/blog/blog.php:1647
 msgid "Pagination"
 msgstr ""
 
@@ -893,11 +901,11 @@ msgstr ""
 msgid "Continue reading"
 msgstr ""
 
-#: widgets/blog/blog.php:1667
+#: widgets/blog/blog.php:1677
 msgid "Get more pagination themes and Ajax reloading with %sSiteOrigin Premium%s"
 msgstr ""
 
-#: widgets/blog/blog.php:1672
+#: widgets/blog/blog.php:1682
 msgid "Adjust the post Read More link text and choose a custom post date format with %sSiteOrigin Premium%s"
 msgstr ""
 
@@ -1740,10 +1748,6 @@ msgstr ""
 
 #: widgets/cta/cta.php:113
 msgid "Fonts"
-msgstr ""
-
-#: widgets/cta/cta.php:117
-msgid "Title HTML Tag"
 msgstr ""
 
 #: widgets/cta/cta.php:131
@@ -3353,7 +3357,7 @@ msgstr ""
 msgid "Very high"
 msgstr ""
 
-#: widgets/social-media-buttons/social-media-buttons.php:437
+#: widgets/social-media-buttons/social-media-buttons.php:439
 msgid "Add custom social networks with %sSiteOrigin Premium%s"
 msgstr ""
 
@@ -3597,15 +3601,15 @@ msgstr ""
 msgid "Always use the embedded video rather than the MediaElement player."
 msgstr ""
 
-#: base/inc/fields/autocomplete.class.php:54
+#: base/inc/fields/autocomplete.class.php:66
 msgid "Search"
 msgstr ""
 
-#: base/inc/fields/autocomplete.class.php:60, base/inc/fields/link.class.php:45
+#: base/inc/fields/autocomplete.class.php:72, base/inc/fields/link.class.php:45
 msgid "No results found."
 msgstr ""
 
-#: base/inc/fields/autocomplete.class.php:63, base/inc/fields/link.class.php:48
+#: base/inc/fields/autocomplete.class.php:75, base/inc/fields/link.class.php:48
 msgid "Close"
 msgstr ""
 
@@ -3671,7 +3675,7 @@ msgstr ""
 msgid "Choose Icon"
 msgstr ""
 
-#: base/inc/fields/icon.class.php:71, base/inc/fields/media.class.php:121, base/inc/fields/multiple-media.class.php:118, base/inc/fields/multiple-media.class.php:136
+#: base/inc/fields/icon.class.php:71, base/inc/fields/media.class.php:137, base/inc/fields/multiple-media.class.php:118, base/inc/fields/multiple-media.class.php:136
 msgid "Remove"
 msgstr ""
 
@@ -3707,55 +3711,55 @@ msgstr ""
 msgid "Search Content"
 msgstr ""
 
-#: base/inc/fields/media.class.php:55
+#: base/inc/fields/media.class.php:61
 msgid "Choose Media"
 msgstr ""
 
-#: base/inc/fields/media.class.php:56, base/inc/fields/multiple-media.class.php:58
+#: base/inc/fields/media.class.php:62, base/inc/fields/multiple-media.class.php:58
 msgid "Set Media"
 msgstr ""
 
-#: base/inc/fields/media.class.php:57
+#: base/inc/fields/media.class.php:63
 msgid "Image Search"
 msgstr ""
 
-#: base/inc/fields/media.class.php:64, base/inc/fields/multiple-media.class.php:67
+#: base/inc/fields/media.class.php:80, base/inc/fields/multiple-media.class.php:67
 msgid "You need to <a href=\"%s\">upgrade</a> to WordPress 3.5 to use media fields"
 msgstr ""
 
-#: base/inc/fields/media.class.php:136
+#: base/inc/fields/media.class.php:152
 msgid "External URL"
 msgstr ""
 
-#: base/inc/fields/media.class.php:196
+#: base/inc/fields/media.class.php:212
 msgid "Would you like to import this image into your media library?"
 msgstr ""
 
-#: base/inc/fields/media.class.php:201, base/inc/fields/media.class.php:210
+#: base/inc/fields/media.class.php:217, base/inc/fields/media.class.php:226
 msgid "Search For Images"
 msgstr ""
 
-#: base/inc/fields/media.class.php:217
+#: base/inc/fields/media.class.php:233
 msgid "Related Searches: "
 msgstr ""
 
-#: base/inc/fields/media.class.php:224
+#: base/inc/fields/media.class.php:240
 msgid "Powered by %s"
 msgstr ""
 
-#: base/inc/fields/media.class.php:235
+#: base/inc/fields/media.class.php:251
 msgid "Loading Images"
 msgstr ""
 
-#: base/inc/fields/media.class.php:236
+#: base/inc/fields/media.class.php:252
 msgid "Downloading Image - Please Wait"
 msgstr ""
 
-#: base/inc/fields/media.class.php:239
+#: base/inc/fields/media.class.php:255
 msgid "Load More"
 msgstr ""
 
-#: base/inc/fields/media.class.php:258
+#: base/inc/fields/media.class.php:274
 msgid "Sponsored"
 msgstr ""
 
@@ -4403,126 +4407,130 @@ msgid "Github"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:176
-msgid "Goodreads"
+msgid "GitLab"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:182
-msgid "Google"
+msgid "Goodreads"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:188
-msgid "Hacker News"
+msgid "Google"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:194
-msgid "IMDb"
+msgid "Hacker News"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:200
-msgid "JSFiddle"
+msgid "IMDb"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:206
-msgid "Last.fm"
+msgid "JSFiddle"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:212
-msgid "Patreon"
+msgid "Last.fm"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:218
-msgid "Reddit"
+msgid "Patreon"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:224
-msgid "Slack"
+msgid "Reddit"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:230
-msgid "Slideshare"
+msgid "Slack"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:236
-msgid "Soundcloud"
+msgid "Slideshare"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:242
-msgid "Spotify"
+msgid "Soundcloud"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:248
-msgid "Stack Exchange"
+msgid "Spotify"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:254
-msgid "Stack Overflow"
+msgid "Stack Exchange"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:260
-msgid "Steam"
+msgid "Stack Overflow"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:266
-msgid "Strava"
+msgid "Steam"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:272
-msgid "Telegram"
+msgid "Strava"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:278
-msgid "Threads"
+msgid "Telegram"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:284
-msgid "TikTok"
+msgid "Threads"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:290
-msgid "Trello"
+msgid "TikTok"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:296
-msgid "TripAdvisor"
+msgid "Trello"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:302
-msgid "Twitch"
+msgid "TripAdvisor"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:308
-msgid "Twitter (Classic Logo)"
+msgid "Twitch"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:314
-msgid "Viber"
+msgid "Twitter (Classic Logo)"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:320
-msgid "Vimeo"
+msgid "Viber"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:326
-msgid "WhatsApp"
+msgid "Vimeo"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:332
-msgid "WordPress"
+msgid "WhatsApp"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:338
-msgid "Xing"
+msgid "WordPress"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:344
-msgid "Yahoo"
+msgid "Xing"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:350
-msgid "Yelp"
+msgid "Yahoo"
 msgstr ""
 
 #: widgets/social-media-buttons/data/networks.php:356
+msgid "Yelp"
+msgstr ""
+
+#: widgets/social-media-buttons/data/networks.php:362
 msgid "YouTube"
 msgstr ""
 

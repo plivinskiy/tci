@@ -6,7 +6,7 @@ Donate link: https://paypal.me/adenion
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 8.7.3
+Stable tag: 8.8.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ Blog2Social automatically creates social media posts for your content and shares
 
 _Compatible with WooCommerce, Gutenberg Editor, Hummingbird, Bitly, Rebrand.ly, Sniply, WP Automatic Plugin, Page Builder & RSS Importer._
 
-**#New: Best Time Settings for video networks available**
+**#New: Comment feature for X, Bluesky, Facebook, Instagram, and LinkedIn**
 
 Blog2Social is a freemium WordPress plugin with a free basic version and Premium plans offering advanced features. Some functions of the auto-poster are Premium features to comply with the API rules and community guidelines of the social networks.  
 
@@ -79,7 +79,7 @@ BLOG2SOCIAL FREE
 BLOG2SOCIAL PREMIUM
 
 * Share content on over 21 networks: Facebook, X (Twitter), LinkedIn, XING, VK, Pinterest, Instagram, TikTok, YouTube, Vimeo, Reddit, Torial, Medium, Tumblr, Flickr, Diigo, Google Business Profile, Telegram, Ravelry, Discord, Instapaper, Mastodon, Bluesky, HumHub, Band.
-* Schedule your posts for any time and date.
+* Schedule your Posts and Videos for any time and date and at your best times.
 * Automatically create, schedule and publish posts from your website.
 * Share videos, image galleries, Reels and Stories.
 * Autopost imported content via RSS.
@@ -153,8 +153,18 @@ No. Default WordPress plugin permissions (755) are sufficient.
 
 
 == Changelog ==
-= 8.7.3 =
+= 8.8.2 =
+Usability Optimization
+= 8.8.1 =
+Usability Optimization
+= 8.8.0 =
+Network: First comment function
+= 8.7.5 =
 Additional Security Update
+= 8.7.4 =
+Additional Security Update
+= 8.7.3 =
+Usability Optimization
 = 8.7.2 =
 Usability Optimization
 = 8.7.1 =
@@ -261,8 +271,18 @@ Bugfix: Autoposting
 Publish and share videos
 
 == Upgrade Notice ==
-= 8.7.3 =
+= 8.8.2 =
+Usability Optimization
+= 8.8.1 =
+Usability Optimization
+= 8.8.0 =
+Network: First comment function
+= 8.7.5 =
 Additional Security Update
+= 8.7.4 =
+Additional Security Update
+= 8.7.3 =
+Usability Optimization
 = 8.7.2 =
 Usability Optimization
 = 8.7.1 =

@@ -93,15 +93,15 @@ class BPLProDocumentEmbedder {
             [
                 'id' => 'showName',
                 'type' => 'switcher',
-                'title' => esc_html__('Show file name on top', 'ppv-pro'),
-                'desc' => 'is not available for google drive and dropbox',
+                'title' => esc_html__('Display File Name at the Top', 'ppv-pro'),
+                'desc' => 'Not available for Google Drive and Dropbox',
                 'default' => 0
             ],
             [
                 'id' => 'download',
                 'type' => 'switcher',
-                'title' => esc_html__('Show downlaod button', 'ppv-pro'),
-                'desc' => esc_html__('is not available for google drive and dropbox', 'ppv-pro'),
+                'title' => esc_html__('Show Download Button', 'ppv-pro'),
+                'desc' => esc_html__('Not available for Google Drive and Dropbox', 'ppv-pro'),
                 'default' => false
             ],
             [
@@ -115,7 +115,7 @@ class BPLProDocumentEmbedder {
                 'id' => 'disablePopout',
                 'type' => 'switcher',
                 'title' => esc_html__('Disable Popout', 'ppv-pro'),
-                'desc' => esc_html__('only available for google drive', 'ppv-pro'),
+                'desc' => esc_html__('Only available for google drive', 'ppv-pro'),
                 'default' => false
             ],
             [

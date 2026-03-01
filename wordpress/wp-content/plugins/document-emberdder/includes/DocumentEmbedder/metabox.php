@@ -47,7 +47,7 @@
         [
           'id' => 'download',
           'type' => 'switcher',
-          'title' => __('Show downlaod button', 'ppv'),
+          'title' => __('Show Download Button', 'ppv'),
           'desc' => __('is not available for google drive and dropbox', 'ppv'),
           'default' => 1
         ],

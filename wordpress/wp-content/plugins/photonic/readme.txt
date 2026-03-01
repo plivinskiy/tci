@@ -4,9 +4,9 @@ Donate link: https://aquoid.com/plugins/photonic/
 Tags: flickr, smugmug, zenfolio, gallery, lightbox
 Text Domain: photonic
 Requires at least: 6.2
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.3
-Stable tag: 3.23
+Stable tag: 3.24
 License: GPLv3 or later
 
 Galleries on steroids! A stylish lightbox & gallery plugin for WP, Flickr, SmugMug and Zenfolio photos and videos.
@@ -212,6 +212,6 @@ Yes, but only for the plugin front-end and the wizard. The Settings pages are no
 
 == Changelog ==
 
-= 3.23 =
+= 3.24 =
 
-*	Fixed: Bug in sanitize function was causing errors for missing titles
+*	Fixed: Bug in sanitizing for Spotlight lightbox

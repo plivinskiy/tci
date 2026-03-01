@@ -1,5 +1,7 @@
 <?php
-
+if (!defined('ABSPATH')) {
+    exit;
+}
 class Ajax_Get {
 
     static private $instance = null;
@@ -241,7 +243,7 @@ class Ajax_Get {
     }
 
     public function getShipItemFullText() {
-
+      
         if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
@@ -254,18 +256,16 @@ class Ajax_Get {
                 echo wp_json_encode(array('result' => false, 'error' => 'permission'));
                 wp_die();
             }
-
+            
             $userLang = isset($_POST['userLang']) ? trim(sanitize_text_field(wp_unslash($_POST['userLang']))) : strtolower(substr(B2S_LANGUAGE, 0, 2));
-            $data = get_post((int) $_POST['postId']);
-
-            if (isset($data->post_content)) {
-
-                $postUrl = (get_permalink($data->ID) !== false) ? get_permalink($data->ID) : $data->guid;
-                $content = trim(B2S_Util::prepareContent($data->ID, $data->post_content, $postUrl, '', false, $userLang));
-                $networkId = isset($_POST['networkId']) ? (int) $_POST['networkId'] : 0;
-                echo json_encode(array('result' => true, 'text' => trim(sanitize_textarea_field($content)), 'networkAuthId' => (int) $_POST['networkAuthId'], 'networkId' => $networkId));
-                wp_die();
-            }
+                $data = get_post((int) $_POST['postId']);
+                if (isset($data->post_content)) {
+                    $postUrl = (get_permalink($data->ID) !== false) ? get_permalink($data->ID) : $data->guid;
+                    $content = trim(B2S_Util::prepareContent($data->ID, $data->post_content, $postUrl, '', false, $userLang));
+                    $networkId = isset($_POST['networkId']) ? (int) $_POST['networkId'] : 0;
+                    echo json_encode(array('result' => true, 'text' => trim(sanitize_textarea_field($content)), 'networkAuthId' => (int) $_POST['networkAuthId'], 'networkId' => $networkId));
+                    wp_die();
+                }
             }
 
         echo json_encode(array('result' => false));
@@ -336,7 +336,15 @@ class Ajax_Get {
             $b2sPostType = (isset($_POST['b2sPostType']) && $_POST['b2sPostType'] == 'ex') ? 'ex' : "";    //Content Curation
 
             $b2sDraftData = array();
+
+            $forceReloadFromTemplateChange = false;
+
             if (isset($_POST['b2sIsDraft']) && (int) $_POST['b2sIsDraft'] == 1) {
+
+                if(isset($_POST['forceReloadFromTemplateChange']) && (int) $_POST['forceReloadFromTemplateChange'] == 1) {
+                    $forceReloadFromTemplateChange = true;
+                }
+
                 global $wpdb;
                 if ($wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}b2s_posts_drafts'") == $wpdb->prefix . 'b2s_posts_drafts') {
                     
@@ -361,7 +369,7 @@ class Ajax_Get {
             }
 
             $item = new B2S_Ship_Item((int) $_POST['postId'], $userLang, $selSchedDate, $b2sPostType, $relayCount, $isVideoMode, $canReel, $assConnected);
-
+      
             if (isset($_POST['ignoreTemplate'])) {
 
                 $ignoreRaw = sanitize_text_field(wp_unslash($_POST['ignoreTemplate']));
@@ -369,7 +377,7 @@ class Ajax_Get {
                 $item->setIgnoreTemplate($ignoreTemplate);
             }
 
-            echo json_encode(array('result' => true, 'networkAuthId' => (int) $_POST['networkAuthId'], 'networkType' => $networkType, 'networkId' => (int) $_POST['networkId'], 'content' => $item->getItemHtml((object) $itemData, true, $b2sDraftData), 'draft' => !empty($b2sDraftData), 'draftActions' => $b2sDraftData));
+            echo json_encode(array('result' => true, 'networkAuthId' => (int) $_POST['networkAuthId'], 'networkType' => $networkType, 'networkId' => (int) $_POST['networkId'], 'content' => $item->getItemHtml((object) $itemData, true, $b2sDraftData, $forceReloadFromTemplateChange), 'draft' => !empty($b2sDraftData), 'draftActions' => $b2sDraftData));
         } else {
             echo json_encode(array('result' => false));
         }

@@ -1,5 +1,8 @@
 <!--after Install-->
 <?php 
+if (!defined('ABSPATH')) {
+    exit;
+}
 /**
  * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
  */

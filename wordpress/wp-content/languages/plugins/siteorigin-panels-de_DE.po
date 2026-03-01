@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Page Builder by SiteOrigin - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-11-12 03:05:13+0000\n"
+"PO-Revision-Date: 2026-02-07 00:21:27+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -27,11 +27,11 @@ msgstr "Widget bearbeiten"
 msgid "Edit As Page"
 msgstr "Als Seite bearbeiten"
 
-#: inc/admin.php:536
+#: inc/admin.php:539
 msgid "right"
 msgstr "rechts"
 
-#: inc/admin.php:534
+#: inc/admin.php:537
 msgid "left"
 msgstr "links"
 
@@ -183,15 +183,15 @@ msgstr "Vertikale Ausrichtung der Spalte"
 msgid "Link Color"
 msgstr "Linkfarbe"
 
-#: inc/admin.php:1871
+#: inc/admin.php:1914
 msgid "Toggle editor selection menu"
 msgstr "Editor-Auswahlmenü ein-/ausblenden"
 
-#: inc/admin.php:529
+#: inc/admin.php:532
 msgid "New Row"
 msgstr "Neue Zeile"
 
-#: inc/admin.php:526
+#: inc/admin.php:529
 msgid "Draft"
 msgstr "Entwurf"
 
@@ -219,15 +219,15 @@ msgstr "Immer"
 msgid "Never"
 msgstr "Nie"
 
-#: inc/admin.php:524
+#: inc/admin.php:527
 msgid "Paste Row"
 msgstr "Zeile einfügen"
 
-#: inc/admin.php:523
+#: inc/admin.php:526
 msgid "Copy Row"
 msgstr "Zeile kopieren"
 
-#: inc/admin.php:1873
+#: inc/admin.php:1916
 msgid "Block Editor"
 msgstr "Block-Editor"
 
@@ -251,7 +251,7 @@ msgstr "E-Mail-Support"
 msgid "Save Draft"
 msgstr "Entwurf speichern"
 
-#: inc/admin.php:543 inc/styles.php:577 tpl/js-templates.php:66
+#: inc/admin.php:546 inc/styles.php:577 tpl/js-templates.php:66
 msgid "Widget"
 msgstr "Widget"
 
@@ -263,19 +263,19 @@ msgstr "Add-ons"
 msgid "Layouts"
 msgstr "Layouts"
 
-#: inc/admin.php:515
+#: inc/admin.php:518
 msgid "Delete Widget"
 msgstr "Widget löschen"
 
-#: inc/admin.php:516
+#: inc/admin.php:519
 msgid "Copy Widget"
 msgstr "Widget kopieren"
 
-#: inc/admin.php:514
+#: inc/admin.php:517
 msgid "Duplicate Widget"
 msgstr "Widget duplizieren"
 
-#: inc/admin.php:513
+#: inc/admin.php:516
 msgid "Edit Widget"
 msgstr "Widget bearbeiten"
 
@@ -287,7 +287,7 @@ msgstr "Beitragsabfrage"
 msgid "External URL"
 msgstr "Externe URL"
 
-#: inc/admin.php:1377 inc/admin.php:1905 inc/styles-admin.php:28
+#: inc/admin.php:1420 inc/admin.php:1948 inc/styles-admin.php:28
 msgid "Invalid nonce."
 msgstr "Nonce ist ungültig."
 
@@ -297,7 +297,7 @@ msgstr "Nonce ist ungültig."
 msgid "(opens in a new window)"
 msgstr "(öffnet in einem neuen Fenster)"
 
-#: inc/admin.php:527
+#: inc/admin.php:530
 msgid "Untitled"
 msgstr "Ohne Titel"
 
@@ -846,7 +846,7 @@ msgstr "BBPress"
 msgid "Recommended Widgets"
 msgstr "Empfohlene Widgets"
 
-#: inc/admin.php:1872 inc/admin.php:1936 inc/settings.php:230
+#: inc/admin.php:1915 inc/admin.php:1979 inc/settings.php:230
 #: settings/tpl/settings.php:9
 msgid "SiteOrigin Page Builder"
 msgstr "SiteOrigin Page Builder"
@@ -911,10 +911,6 @@ msgstr "Inhalte von Page Builder zu Post-Inhalt kopieren."
 msgid "Search Settings"
 msgstr "Sucheinstellungen"
 
-#: settings/tpl/settings.php:32
-msgid "Settings Saved"
-msgstr "Einstellungen gespeichert"
-
 #: settings/tpl/settings.php:97
 msgid "Save Settings"
 msgstr "Einstellungen speichern"
@@ -923,7 +919,7 @@ msgstr "Einstellungen speichern"
 msgid "Custom Home Page Builder"
 msgstr "Benutzerdefinierter Homepage Builder"
 
-#: inc/admin.php:772 inc/home.php:26
+#: inc/admin.php:815 inc/home.php:26
 msgid "Home Page"
 msgstr "Homepage"
 
@@ -931,111 +927,111 @@ msgstr "Homepage"
 msgid "All Widgets"
 msgstr "Alle Widgets"
 
-#: inc/admin.php:427
+#: inc/admin.php:430
 msgid "Missing Widget"
 msgstr "Fehlendes Widget"
 
-#: inc/admin.php:428
+#: inc/admin.php:431
 msgid "Page Builder doesn't know about this widget."
 msgstr "Page Builder weiß nichts über dieses Widget."
 
-#: inc/admin.php:432
+#: inc/admin.php:435
 msgid "%d seconds"
 msgstr "%d Sekunden"
 
-#: inc/admin.php:434
+#: inc/admin.php:437
 msgid "%d minutes"
 msgstr "%d Minuten"
 
-#: inc/admin.php:436
+#: inc/admin.php:439
 msgid "%d hours"
 msgstr "%d Stunden"
 
-#: inc/admin.php:439
+#: inc/admin.php:442
 msgid "%d second"
 msgstr "%d Sekunde"
 
-#: inc/admin.php:441
+#: inc/admin.php:444
 msgid "%d minute"
 msgstr "%d Minute"
 
-#: inc/admin.php:443
+#: inc/admin.php:446
 msgid "%d hour"
 msgstr "%d Stunde"
 
-#: inc/admin.php:446
+#: inc/admin.php:449
 msgid "%s before"
 msgstr "%s vorher"
 
-#: inc/admin.php:447
+#: inc/admin.php:450
 msgid "Now"
 msgstr "Jetzt"
 
-#: inc/admin.php:451
+#: inc/admin.php:454
 msgid "Current"
 msgstr "Aktuell"
 
-#: inc/admin.php:452
+#: inc/admin.php:455
 msgid "Original"
 msgstr "Original"
 
-#: inc/admin.php:458
+#: inc/admin.php:461
 msgid "Widget deleted"
 msgstr "Widget gelöscht"
 
-#: inc/admin.php:462
+#: inc/admin.php:465
 msgid "Widget edited"
 msgstr "Widget bearbeitet"
 
-#: inc/admin.php:464
+#: inc/admin.php:467
 msgid "Widget duplicated"
 msgstr "Widget dupliziert"
 
-#: inc/admin.php:466
+#: inc/admin.php:469
 msgid "Widget moved"
 msgstr "Widget verschoben"
 
-#: inc/admin.php:470
+#: inc/admin.php:473
 msgid "Row deleted"
 msgstr "Zeile gelöscht"
 
-#: inc/admin.php:472
+#: inc/admin.php:475
 msgid "Row added"
 msgstr "Zeile hinzugefügt"
 
-#: inc/admin.php:474
+#: inc/admin.php:477
 msgid "Row edited"
 msgstr "Zeile bearbeitet"
 
-#: inc/admin.php:476
+#: inc/admin.php:479
 msgid "Row moved"
 msgstr "Zeile verschoben"
 
-#: inc/admin.php:478
+#: inc/admin.php:481
 msgid "Row duplicated"
 msgstr "Zeile dupliziert"
 
-#: inc/admin.php:486
+#: inc/admin.php:489
 msgid "Prebuilt layout loaded"
 msgstr "Vorgefertigtes Layout geladen"
 
-#: inc/admin.php:490
+#: inc/admin.php:493
 msgid "Loading prebuilt layout"
 msgstr "Vorgefertigtes Layout laden"
 
-#: inc/admin.php:494
+#: inc/admin.php:497
 msgid "Layout Builder Widget"
 msgstr "Layout Builder Widget"
 
-#: inc/admin.php:559
+#: inc/admin.php:562
 msgid "Page Builder layouts"
 msgstr "Page Builder Layouts"
 
-#: inc/admin.php:560
+#: inc/admin.php:563
 msgid "Error uploading or importing file."
 msgstr "Fehler beim Upload oder Import der Datei."
 
-#: inc/admin.php:883
+#: inc/admin.php:926
 msgid "Untitled Widget"
 msgstr "Titelloses Widget"
 
@@ -1063,7 +1059,7 @@ msgstr "Die Seitenlayouts sind responsiv und voll anpassbar."
 msgid "Add Widget"
 msgstr "Widget hinzufügen"
 
-#: inc/admin.php:506 tpl/js-templates.php:17 tpl/js-templates.php:19
+#: inc/admin.php:509 tpl/js-templates.php:17 tpl/js-templates.php:19
 msgid "Add Row"
 msgstr "Zeile hinzufügen"
 
@@ -1071,15 +1067,15 @@ msgstr "Zeile hinzufügen"
 msgid "History"
 msgstr "Verlauf"
 
-#: inc/admin.php:520 tpl/js-templates.php:100
+#: inc/admin.php:523 tpl/js-templates.php:100
 msgid "Edit Row"
 msgstr "Zeile bearbeiten"
 
-#: inc/admin.php:521 tpl/js-templates.php:101
+#: inc/admin.php:524 tpl/js-templates.php:101
 msgid "Duplicate Row"
 msgstr "Zeile duplizieren"
 
-#: inc/admin.php:522 tpl/js-templates.php:102
+#: inc/admin.php:525 tpl/js-templates.php:102
 msgid "Delete Row"
 msgstr "Zeile löschen"
 
@@ -1095,7 +1091,7 @@ msgstr "Duplizieren"
 msgid "Delete"
 msgstr "Löschen"
 
-#: inc/admin.php:403 tpl/js-templates.php:226 tpl/js-templates.php:293
+#: inc/admin.php:405 tpl/js-templates.php:226 tpl/js-templates.php:293
 #: tpl/js-templates.php:381
 msgid "Done"
 msgstr "Fertig"
@@ -1104,7 +1100,7 @@ msgstr "Fertig"
 msgid "Add New Widget %s"
 msgstr "Neues Widget %s hinzufügen"
 
-#: inc/admin.php:504 tpl/js-templates.php:244
+#: inc/admin.php:507 tpl/js-templates.php:244
 msgid "Search Widgets"
 msgstr "Widgets durchsuchen"
 
@@ -1172,7 +1168,7 @@ msgstr "Aktivieren"
 msgid "Your search didn't return any results"
 msgstr "Deine Suche hat keine Ergebnisse gebracht"
 
-#: inc/admin.php:507 inc/styles.php:532
+#: inc/admin.php:510 inc/styles.php:532
 msgid "Column"
 msgstr "Spalte"
 
@@ -1204,15 +1200,15 @@ msgstr "Dieses Interface benötigt JavaScript"
 msgid "Edit Home Page"
 msgstr "Homepage bearbeiten"
 
-#: inc/admin.php:460
+#: inc/admin.php:463
 msgid "Widget added"
 msgstr "Widget hinzugefügt"
 
-#: inc/admin.php:492
+#: inc/admin.php:495
 msgid "Would you like to clear your Page Builder content and revert to using the standard visual editor?"
 msgstr "Möchtest du deinen Page-Builder-Inhalt verwerfen und zum visuellen Standard-Editor zurückkehren?"
 
-#: inc/admin.php:491
+#: inc/admin.php:494
 msgid "Would you like to copy this editor's existing content to Page Builder?"
 msgstr "Möchtest du den vorhandenen Inhalt dieses Editors in den Page Builder kopieren?"
 
@@ -1260,11 +1256,11 @@ msgstr "Ein Editor für formatierten Text"
 msgid "Do you want to browse the Prebuilt Layouts directory?"
 msgstr "Möchtest du das Verzeichnis der vorgefertigten Layouts durchstöbern?"
 
-#: inc/admin.php:454
+#: inc/admin.php:457
 msgid "Converted to editor"
 msgstr "Zum Editor konvertiert"
 
-#: inc/admin.php:502
+#: inc/admin.php:505
 msgid "Add Widget Below"
 msgstr "Widget unterhalb einfügen"
 
@@ -1276,19 +1272,19 @@ msgstr "Zurück"
 msgid "Post Types"
 msgstr "Inhaltstypen"
 
-#: inc/admin.php:496 tpl/js-templates.php:102 tpl/js-templates.php:475
+#: inc/admin.php:499 tpl/js-templates.php:102 tpl/js-templates.php:475
 msgid "Are you sure?"
 msgstr "Bist du dir sicher?"
 
-#: inc/admin.php:1171
+#: inc/admin.php:1214
 msgid "Save and reload this page to start using the widget after you've installed it."
 msgstr "Speichere und lade diese Seite erneut, um das Widget nach der Installation zu verwenden."
 
-#: inc/admin.php:1165
+#: inc/admin.php:1208
 msgid "You need to install 1{%1$s} to use the widget 2{%2$s}."
 msgstr "Sie müssen {%1$s} installieren, um das Widget 2{%2$s} verwenden zu können."
 
-#: inc/admin.php:183 inc/admin.php:684 inc/admin.php:1465 inc/admin.php:1469
+#: inc/admin.php:183 inc/admin.php:727 inc/admin.php:1508 inc/admin.php:1512
 #: inc/settings.php:231 tpl/js-templates.php:217
 msgid "Page Builder"
 msgstr "Page-Builder"
@@ -1300,6 +1296,10 @@ msgstr "Individuelle Homepage"
 #: inc/styles.php:280
 msgid "Border Color"
 msgstr "Randfarbe"
+
+#: settings/tpl/settings.php:32
+msgid "Settings Saved"
+msgstr "Einstellungen wurden gespeichert"
 
 #: inc/styles.php:437
 msgid "Gutter"

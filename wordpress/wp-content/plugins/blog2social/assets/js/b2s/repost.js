@@ -536,7 +536,7 @@ function showEditSchedPost(b2s_id, post_id, network_auth_id, network_type, netwo
             jQuery('.b2s-post-item-details-preview-title[data-network-auth-id="' + network_auth_id + '"]').prop("readonly", true);
             jQuery('.b2s-post-item-details-preview-desc[data-network-auth-id="' + network_auth_id + '"]').prop("readonly", true);
             jQuery('.b2s-post-item-details-item-url-input[data-network-auth-id="' + network_auth_id + '"]').prop("readonly", true);
-            jQuery('.b2s-load-info-meta-tag-modal[data-network-auth-id="' + network_auth_id + '"]').attr("style", "display:none !important");
+            jQuery('.b2sInfoMetaTagModal[data-network-auth-id="' + network_auth_id + '"]').attr("style", "display:none !important");
             if (jQuery('.b2s-post-item-details-post-format[data-network-auth-id="' + network_auth_id + '"]').val() == 0) {
                 jQuery('.b2s-select-image-modal-open[data-network-auth-id="' + network_auth_id + '"]').hide();
                 jQuery('.b2s-image-remove-btn[data-network-auth-id="' + network_auth_id + '"]').hide();
@@ -915,7 +915,7 @@ function showEditSchedCalendarPost(b2s_id, post_id, network_auth_id, network_typ
             jQuery('.b2s-post-item-details-preview-title[data-network-auth-id="' + network_auth_id + '"]').prop("readonly", true);
             jQuery('.b2s-post-item-details-preview-desc[data-network-auth-id="' + network_auth_id + '"]').prop("readonly", true);
             jQuery('.b2s-post-item-details-item-url-input[data-network-auth-id="' + network_auth_id + '"]').prop("readonly", true);
-            jQuery('.b2s-load-info-meta-tag-modal[data-network-auth-id="' + network_auth_id + '"]').attr("style", "display:none !important");
+            jQuery('.b2sInfoMetaTagModal[data-network-auth-id="' + network_auth_id + '"]').attr("style", "display:none !important");
             if (jQuery('.b2s-post-item-details-post-format[data-network-auth-id="' + network_auth_id + '"]').val() == 0) {
                 jQuery('.b2s-select-image-modal-open[data-network-auth-id="' + network_auth_id + '"]').hide();
                 jQuery('.b2s-image-remove-btn[data-network-auth-id="' + network_auth_id + '"]').hide();

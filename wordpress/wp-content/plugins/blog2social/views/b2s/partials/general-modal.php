@@ -1,5 +1,7 @@
 <?php
-
+if (!defined('ABSPATH')) {
+    exit;
+}
 /**
  * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
  */
@@ -46,7 +48,12 @@ $allowed_tags = array(
     'span' => array(
         'class' => true,
         'style' => true,
-    )
+    ),
+    'br' => array(),
+    'hr' => array(
+        'style' => true,
+        'class' => true,
+    ),
 );
 
 $modal= new B2S_View_Modal_General();

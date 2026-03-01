@@ -4,7 +4,7 @@
  * Plugin Name: Document Embedder
  * Plugin URI:  http://documentembedder.com/
  * Description: Embed Any document easily in wordpress such as word, excel, powerpoint, pdf and more
- * Version:     2.0.3
+ * Version:     2.0.5
  * Author:      bPlugins
  * Author URI:  http://bplugins.com
  * License:     GPLv3
@@ -18,7 +18,7 @@ if ( function_exists( 'de_fs' ) ) {
     de_fs()->set_basename( false, __FILE__ );
 } else {
     /* Some Set-up */
-    define( 'BPLDE_VER', '2.0.3' );
+    define( 'BPLDE_VER', '2.0.5' );
     define( 'BPLDE_PRO_IMPORT', '1.0.0' );
     define( 'BPLDE_PLUGIN_DIR', plugin_dir_url( __FILE__ ) );
     define( 'BPLDE_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );

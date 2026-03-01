@@ -1,12 +1,23 @@
 <?php
-
+if (!defined('ABSPATH')) {
+    exit;
+}
 /**
  * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
  */
 
 wp_nonce_field('b2s_security_nonce', 'b2s_security_nonce');
 $b2sSiteUrl = get_option('siteurl') . ((substr(get_option('siteurl'), -1, 1) == '/') ? '' : '/');
+$assConnected = false;
+global $wpdb;
+if ($wpdb->get_var($wpdb->prepare("SELECT `id`, `access_token` FROM `{$wpdb->prefix}b2s_user_tool` WHERE `blog_user_id` = %d AND `tool_id` = 1", (int) B2S_PLUGIN_BLOG_USER_ID))) {
+    $sqlResult = $wpdb->get_row($wpdb->prepare("SELECT `id`, `access_token` FROM `{$wpdb->prefix}b2s_user_tool` WHERE `blog_user_id` = %d AND `tool_id` = 1", (int) B2S_PLUGIN_BLOG_USER_ID));
+    if (isset($sqlResult->id) && (int) $sqlResult->id > 0 && isset($sqlResult->access_token) && !empty($sqlResult->access_token)){
+        $assConnected = true;
+    }
+}
 ?>
+<input type="hidden" id="b2sServerUrl" value="<?php echo esc_url(B2S_PLUGIN_SERVER_URL); ?>">
 <div class="b2s-container">
     <div class="b2s-inbox">
         <div class="col-md-12 del-padding-left">
@@ -24,7 +35,14 @@ $b2sSiteUrl = get_option('siteurl') . ((substr(get_option('siteurl'), -1, 1) == 
                                 <br>
                                 <p><?php esc_html_e("Discover how the AI text assistant Assistini can take your social media posts to the next level. Assistini AI provides you with creative ideas and optimizes your texts to improve the performance of your social media posts and the interaction with your followers. Whether you post on Instagram, Twitter, Facebook or LinkedIn - Assistini is your reliable creative partner.", "blog2social"); ?></p>
                                 <br>
-                                <a class="b2s-ass-register-btn text-center" target="_blank" href="https://b2s.li/wp-plugin-assistini-login"><?php esc_html_e('Connect with Assistini AI now', 'blog2social'); ?></a>
+                                <div class="b2s-ass-connect-actions">
+                                    <?php 
+                                        $default_label   = __('Connect with Assistini AI now', 'blog2social');
+                                        $connected_label = __('Connected with Assistini AI', 'blog2social');
+                                        ?>
+                                    <a class="b2s-ass-register-btn text-center <?php echo esc_attr($assConnected ? "btn-success-assistini-connected b2s-btn-disabled b2s-ass-connected" : "") ?>" href="#" data-default-label="<?php echo esc_attr($default_label) ?>" data-connected-label="<?php echo esc_attr($connected_label) ?>"><?php echo $assConnected ? esc_html($connected_label) : esc_html($default_label); ?></a>
+                                    <button type="button" class="b2s-ass-logout-btn btn-link" style= "<?php echo esc_attr($assConnected ? "" : "display:none;") ?>"><?php esc_html_e('log out', 'blog2social'); ?></button>
+                                </div>
                             </div>
                             <div class="col-md-6 hidden-sm hidden-xs text-center">
                                 <img class="b2s-ass-img-welcome" src="<?php echo esc_url(plugins_url('/assets/images/ass/assistini-welcome.png', B2S_PLUGIN_FILE)); ?>" alt="Assistini"> 
@@ -104,7 +122,7 @@ $b2sSiteUrl = get_option('siteurl') . ((substr(get_option('siteurl'), -1, 1) == 
                         </div>
 
                         <div class="row text-center">
-                            <a class="b2s-ass-register-btn" target="_blank" href="https://b2s.li/wp-plugin-assistini-website"><?php esc_html_e('learn more', 'blog2social'); ?></a>
+                                <a class="b2s-ass-btn" target="_blank" href="https://b2s.li/wp-plugin-assistini-website"><?php esc_html_e('learn more', 'blog2social'); ?></a>
                         </div>
 
 

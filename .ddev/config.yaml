@@ -1,15 +1,15 @@
 name: tci.develop
 type: wordpress
 docroot: wordpress
-php_version: "8.2"
+php_version: "7.4"
 webserver_type: apache-fpm
 xdebug_enabled: true
 additional_hostnames: []
 additional_fqdns: []
-host_db_port: "59009"
+host_db_port: "59112"
 database:
-    type: mariadb
-    version: "10.11"
+    type: mysql
+    version: "5.7"
 use_dns_when_possible: true
 composer_version: "2"
 web_environment: []
@@ -20,6 +20,7 @@ hooks:
     post-import-db:
         - exec: wp --path='/var/www/html/wordpress' search-replace https://www.tc-illertissen.de/ https://tci.develop.ddev.site/
         - exec: wp --path='/var/www/html/wordpress' search-replace https://tc-illertissen.de/ https://tci.develop.ddev.site/
+        - exec: wp --path='/var/www/html/wordpress' search-replace tc-illertissen.de tci.develop.ddev.site
 
 
 # Key features of DDEV's config.yaml:

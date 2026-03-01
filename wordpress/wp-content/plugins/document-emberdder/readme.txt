@@ -1,9 +1,9 @@
 === Document Embedder – Embed PDFs, Word, Excel, and Other Files ===
-Contributors: bplugins, abuhayat, shehabulislam, taninrahman, freemius
+Contributors: bplugins, abuhayat, shehabulislam, taninrahman, farazi1, freemius
 Tags: document embedder, embed pdf, embed any document, pdf embedder, add document
 Requires at least: 6.5+
-Tested up to: 6.8
-Stable tag: 2.0.3
+Tested up to: 6.9
+Stable tag: 2.0.5
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat/
 License: GPLv2 or later
@@ -15,7 +15,7 @@ Document Embedder lets you display PDF, DOCX, PPTX, XLSX, and other files in Wor
 **Embed Any Document Instantly with the #1 No-Code Plugin – Trusted by 10,000+ WordPress Sites**
 
 
-[**Document Embedder**](https://bplugins.com/products/document-embedder/) | [**Documentation**](https://bplugins.com/docs/document-embedder/) | [**Pricing**](https://bplugins.com/products/document-embedder/#pricing) | [**Support**](https://bplugins.com/support/) | [**Demo**](https://bplugins.com/products/document-embedder/#demos)
+[**Document Embedder**](https://bplugins.com/products/document-embedder/) | [**Documentation**](https://bplugins.com/docs/document-embedder/) | [**Pricing**](https://bplugins.com/products/document-embedder/pricing) | [**Support**](https://bplugins.com/support/) | [**Demo**](https://bplugins.com/products/document-embedder/#demos)
 
 [**Document Embedder**](https://bplugins.com/products/document-embedder/) allows you to embed PDF, Word, Excel, PowerPoint, and other document formats directly into WordPress posts and pages. It supports local file uploads as well as files hosted on platforms like Google Drive and Dropbox. Files are displayed using the Google Drive viewer and can be configured to match your layout.
 
@@ -146,7 +146,7 @@ Prefer the Block Editor? No problem!
 
 - **Archives:** .ZIP, .RAR
 
-[**Live Demo**](https://bplugins.com/products/document-embedder/#demos) | [**Try The Pro**](https://bplugins.com/products/document-embedder/#pricing)
+[**Live Demo**](https://bplugins.com/products/document-embedder/#demos) | [**Try The Pro**](https://bplugins.com/products/document-embedder/pricing)
 
 
 ### User Feedback
@@ -192,14 +192,32 @@ Liked this plugin? Hate it? Want a new feature? [**Send your feedback**](https:/
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
+You can install the Document Embedder plugin in three ways.
 
-e.g.
+= From the WordPress Dashboard =
+1. Log in to your WordPress admin dashboard.
+2. Go to Plugins > Add New.
+3. Search for "Document Embedder" (developed by **bPlugins**).
+4. Click Install Now.
+5. After installation, click Activate.
 
-1. Upload `plugin-directory` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Use shortcode in page, post or in widgets.
-4. Enjoy
+= Download & Upload =
+1. Download the Document Embedder plugin (document-emberdder.zip).
+2. Log in to your WordPress admin dashboard.
+3. Go to Plugins > Add New.
+4. Click Upload Plugin.
+5. Select the document-emberdder.zip file and click Install Now.
+6. Activate the plugin after installation.
+
+= Manual Installation =
+1. Download the Document Embedder plugin.
+2. Extract the zip file.
+3. Upload the document-emberdder folder to the /wp-content/plugins/ directory using FTP or File Manager.
+4. Log in to your WordPress admin dashboard.
+5. Go to Plugins > Installed Plugins.
+6. Activate Document Embedder from the plugins list.
+
+Enjoy
 
 
 == Frequently Asked Questions ==
@@ -237,6 +255,9 @@ Please report security bugs found in the source code of the Document Embedder pl
 
 
 == Changelog ==
+
+= 2.0.4 - 24 January 2026 = 
+* Fixed Issues - download button and view button styles issue, Vulnerability issue.
 
 = 2.0.2 - 11 November 2025 = 
 * Update dashboard and freemius sdk

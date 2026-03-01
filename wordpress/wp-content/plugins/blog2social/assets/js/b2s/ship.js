@@ -1,3 +1,4 @@
+
 jQuery.noConflict();
 
 var b2sTosXingGroupCount = 0;
@@ -736,6 +737,16 @@ jQuery(document).on("click", ".b2s-post-item-option-share-as-story", function ()
         jQuery('.b2s-post-item-details-item-message-input[data-network-count="' + jQuery(this).attr('data-network-count') + '"][data-network-auth-id="' + jQuery(this).attr('data-network-auth-id') + '"]').attr('required', false);
         // hide assistini buttons
         hideAssButtons(jQuery(this).attr('data-network-auth-id'), jQuery(this).attr('data-network-count'));
+
+        // Stories cannot be commented: hide and disable comment area
+        var authId = jQuery(this).attr('data-network-auth-id');
+        var networkId = jQuery(this).attr('data-network-id');
+        var networkCount = jQuery(this).attr('data-network-count');
+        
+        // Only for Instagram (12) and Facebook (1) in video mode
+        if (networkId == 12 || networkId == 1) {
+            disableCommentByStory(authId, networkCount);
+        }
     } else {
 
         if (jQuery(this).attr('data-network-count') >= 0) {
@@ -753,6 +764,15 @@ jQuery(document).on("click", ".b2s-post-item-option-share-as-story", function ()
         jQuery('.b2s-post-item-details-item-message-input[data-network-count="' + jQuery(this).attr('data-network-count') + '"][data-network-auth-id="' + jQuery(this).attr('data-network-auth-id') + '"]').attr('required', true);
         // show assistini buttons
         showAssButtons(jQuery(this).attr('data-network-auth-id'), jQuery(this).attr('data-network-count'));
+
+        // Re-enable comment area when story is unchecked
+        var authId = jQuery(this).attr('data-network-auth-id');
+        var networkId = jQuery(this).attr('data-network-id');
+        var networkCount = jQuery(this).attr('data-network-count');
+        
+        if (networkId == 12 || networkId == 1) {
+            enableCommentByStory(authId, networkCount);
+        }
     }
     return true;
 });
@@ -777,33 +797,99 @@ jQuery(document).on("click", ".b2s-post-ship-item-copy-original-text", function 
     networkCount(networkAuthId);
     return false;
 });
-jQuery(document).on("click", ".b2s-network-select-btn", function () {
+
+jQuery(document).on("keyup", ".b2s-post-item-details-item-comment-input", function () {
+    var networkAuthId = jQuery(this).attr('data-network-auth-id');
+    var networkCount = jQuery(this).attr('data-network-count');
+    commentLimitAll(networkAuthId, networkCount);
+});
+
+jQuery(document).on('mousedown mouseup keydown keyup', '.b2s-edit-template-comment', function () {
+    var tb = jQuery(this).get(0);
+    jQuery('.b2s-edit-template-comment-selection-start[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(tb.selectionStart);
+    jQuery('.b2s-edit-template-comment-selection-end[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(tb.selectionEnd);
+    
+    // Update comment preview with shortcode replacement
+    var comment = generateExamplePost(jQuery(this).val(), jQuery('.b2s-edit-template-range-comment[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(), jQuery('.b2s-edit-template-excerpt-range-comment[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val());
+    comment = comment.replace(/\n/g, "<br>");
+    jQuery('.b2s-edit-template-preview-comment[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').html(comment);
+    
+    // Show or hide comment wrapper based on whether there's text
+    var wrapper = jQuery('.b2s-edit-template-preview-comment-wrapper[data-network-type="' + jQuery(this).attr('data-network-type') + '"]');
+    if (jQuery(this).val().trim() !== '') {
+        wrapper.show();
+    } else {
+        wrapper.hide();
+    }
+});
+
+jQuery(document).on('click', '.b2s-edit-template-comment-post-item', function () {
+    var networkType = jQuery(this).attr('data-network-type');
+    var text = jQuery('.b2s-edit-template-comment[data-network-type="' + networkType + '"]').val();
+    var start = jQuery('.b2s-edit-template-comment-selection-start[data-network-type="' + networkType + '"]').val();
+    var end = jQuery('.b2s-edit-template-comment-selection-end[data-network-type="' + networkType + '"]').val();
+
+    var reg = new RegExp("({.+?})", "g");
+    var amatch = null;
+    while ((amatch = reg.exec(text)) != null) {
+        var thisMatchStart = amatch.index;
+        var thisMatchEnd = amatch.index + amatch[0].length;
+        //case: keydown in pattern
+        if (start > thisMatchStart && end < thisMatchEnd) {
+            event.preventDefault();
+            return false;
+        }
+    }
+    var newText = text.slice(0, start) + jQuery(this).html() + text.slice(end);
+    jQuery('.b2s-edit-template-comment[data-network-type="' + networkType + '"]').val(newText);
+    jQuery('.b2s-edit-template-comment').focus();
+    jQuery('.b2s-edit-template-comment').trigger('keyup');
+    event.preventDefault();
+    return false;
+});
+
+jQuery(document).on('click', '.b2s-edit-template-comment-clear-btn', function () {
+    var networkType = jQuery(this).attr('data-network-type');
+    jQuery('.b2s-edit-template-comment[data-network-type="' + networkType + '"]').val("");
+    jQuery('.b2s-edit-template-comment').focus();
+    event.preventDefault();
+    return false;
+});
+
+//Force Reload Used to update Ship Item when Network Template Settings changed
+jQuery(document).on("click", ".b2s-network-select-btn", function (event, forceReloadFromTemplateChange, chosenPostFormat) {
+
+    forceReloadFromTemplateChange = forceReloadFromTemplateChange == true;
+
     var networkAuthId = jQuery(this).attr('data-network-auth-id');
     var networkId = jQuery(this).attr('data-network-id');
     var networkType = jQuery(this).attr('data-network-type');
     var metaType = jQuery(this).attr('data-meta-type');
     var maxSchedDate = jQuery(this).attr('data-max-sched-date');
 
+    // Remove old items, so force reload does not create duplicates
+    if (forceReloadFromTemplateChange == true) {
+        var allItems = jQuery('.b2s-post-list > .b2s-post-item[data-network-auth-id="' + networkAuthId + '"]');
+        allItems = allItems.remove();
+    }
+
     //doppelklick Schutz
     if (!jQuery(this).hasClass('b2s-network-select-btn-deactivate')) {
         //active?
-        if (!jQuery(this).children().hasClass('active')) {
+        if (forceReloadFromTemplateChange || (!jQuery(this).children().hasClass('b2s-network-list-active'))) {
             //TOS XING Groups
             if ((networkId == 8 || networkId == 19) && networkType == 2) {
-                if ((b2sTosXingGroupCount == jQuery('#b2sTosXingGroupCrosspostingLimit').val()) || (networkId == 19 && jQuery('.b2s-network-select-btn[data-network-id="' + networkId + '"][data-network-type="' + networkType + '"][data-network-tos-group-id="' + jQuery(this).attr('data-network-tos-group-id') + '"]').children().hasClass('active'))) {
+                if ((b2sTosXingGroupCount == jQuery('#b2sTosXingGroupCrosspostingLimit').val()) || (networkId == 19 && jQuery('.b2s-network-select-btn[data-network-id="' + networkId + '"][data-network-type="' + networkType + '"][data-network-tos-group-id="' + jQuery(this).attr('data-network-tos-group-id') + '"]').children().hasClass('b2s-network-list-active'))) {
                     jQuery('#b2s-tos-xing-group-max-count-modal').modal('show');
                     return false;
                 } else {
                     b2sTosXingGroupCount++;
                 }
             }
-
-
-
-
-
+          
             //schon vorhanden?
-            if (jQuery('.b2s-post-item[data-network-auth-id="' + networkAuthId + '"]').length > 0 && !jQuery('.b2s-post-item[data-network-auth-id="' + networkAuthId + '"]').hasClass('b2s-post-item-connection-fail-dummy')) {
+            if (forceReloadFromTemplateChange == false && jQuery('.b2s-post-item[data-network-auth-id="' + networkAuthId + '"]').length > 0 && !jQuery('.b2s-post-item[data-network-auth-id="' + networkAuthId + '"]').hasClass('b2s-post-item-connection-fail-dummy')) {
+            
                 activatePortal(networkAuthId);
 
                 //Hide OG Area when image format from v8.4 onwards
@@ -898,7 +984,7 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
 
                         jQuery('.b2s-post-item-details-preview-title[data-network-auth-id="' + networkAuthId + '"]').prop("readonly", true);
                         jQuery('.b2s-post-item-details-preview-desc[data-network-auth-id="' + networkAuthId + '"]').prop("readonly", true);
-                        jQuery('.b2s-load-info-meta-tag-modal[data-network-auth-id="' + networkAuthId + '"]').attr("style", "display:none !important");
+                        jQuery('.b2sInfoMetaTagModal[data-network-auth-id="' + networkAuthId + '"]').attr("style", "display:none !important");
                         if (jQuery('.b2s-post-item-details-post-format[data-network-auth-id="' + networkAuthId + '"]').val() == 0) {
 
                             jQuery('.b2s-select-image-modal-open[data-network-auth-id="' + networkAuthId + '"]').hide();
@@ -940,6 +1026,7 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
                 */
                 checkGifAnimation(networkAuthId, networkId);
             } else {
+               
                 jQuery(this).addClass('b2s-network-select-btn-deactivate');
                 jQuery('.b2s-network-status-img-loading[data-network-auth-id="' + networkAuthId + '"]').show();
                 jQuery('.b2s-empty-area').hide();
@@ -976,7 +1063,8 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
                         'ignoreTemplate': (jQuery('#b2sIgnoreTemplate').length ? jQuery('#b2sIgnoreTemplate').val() : 0),
                         'isVideo': jQuery('#b2sIsVideo').val(),
                         'assConnected': jQuery('#b2s-ship-ass-connected').val(),
-                        'b2s_security_nonce': jQuery('#b2s_security_nonce').val()
+                        'b2s_security_nonce': jQuery('#b2s_security_nonce').val(),
+                        'forceReloadFromTemplateChange': forceReloadFromTemplateChange?1:0
                     },
                     beforeSend: function (jqXHR) { // before jQuery send the request we will push it to our array
                         jQuery.xhrPool.push(jqXHR);
@@ -999,6 +1087,7 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
                         return true;
                     },
                     success: function (data) {
+                   
                         if (data != undefined) {
                             jQuery('.b2s-network-status-img-loading[data-network-auth-id="' + data.networkAuthId + '"]').hide();
                             jQuery('.b2s-network-select-btn[data-network-auth-id="' + data.networkAuthId + '"]').removeClass('b2s-network-select-btn-deactivate');
@@ -1017,7 +1106,18 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
                                 if (add == false) {
                                     jQuery('.b2s-post-list').prepend(data.content);
                                 }
+                              
+                                if(forceReloadFromTemplateChange && chosenPostFormat!==null){
 
+                                    try{
+                                        var postFormatType= getPostFormatTypeByNetwork(networkId,networkType);
+                                        changePostFormat(networkId, networkType, chosenPostFormat, networkAuthId, postFormatType, jQuery(this).attr("data-post-wp-type"), true);
+                                          
+                                    }catch(e){
+                                      
+                                    }
+                                }
+                                      
                                 activatePortal(data.networkAuthId);
                                 var dateFormat = "yyyy-mm-dd";
                                 var language = "en";
@@ -1248,7 +1348,7 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
                                     if (jQuery('#b2sPostType').val() == 'ex') {
                                         jQuery('.b2s-post-item-details-preview-title[data-network-auth-id="' + data.networkAuthId + '"]').prop("readonly", true);
                                         jQuery('.b2s-post-item-details-preview-desc[data-network-auth-id="' + data.networkAuthId + '"]').prop("readonly", true);
-                                        jQuery('.b2s-load-info-meta-tag-modal[data-network-auth-id="' + data.networkAuthId + '"]').attr("style", "display:none !important");
+                                        jQuery('.b2sInfoMetaTagModal[data-network-auth-id="' + data.networkAuthId + '"]').attr("style", "display:none !important");
                                         if (jQuery('.b2s-post-item-details-post-format[data-network-auth-id="' + data.networkAuthId + '"]').val() == 0) {
 
                                             jQuery('.b2s-select-image-modal-open[data-network-auth-id="' + data.networkAuthId + '"]').hide();
@@ -1268,7 +1368,7 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
                                         }
 
                                         //CC Imagepost V6.0.0
-                                        if (jQuery('#b2sExPostFormat').val() == 0 || jQuery('#b2sExPostFormat').val() == 1 || jQuery('#b2sExPostFormat').val() == 2) {
+                                        if (!forceReloadFromTemplateChange && (jQuery('#b2sExPostFormat').val() == 0 || jQuery('#b2sExPostFormat').val() == 1 || jQuery('#b2sExPostFormat').val() == 2)) {
                                             if (jQuery('#user_version').val() >= 1) {
                                                 var exPostFormat = jQuery('#b2sExPostFormat').val();
                                                 if (exPostFormat == 2) {
@@ -1324,7 +1424,8 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
 
                                         jQuery('.b2s-post-ship-item-post-format[data-network-auth-id="' + data.networkAuthId + '"]').trigger('click', [true]);
                                         jQuery('.b2s-post-item-details-preview-url-reload[data-network-auth-id="' + data.networkAuthId + '"]').addClass('disabled');
-                                        jQuery('.b2s-user-network-settings-post-format[value="' + data.draftActions.post_format + '"][data-network-auth-id="' + data.networkAuthId + '"][data-network-id="' + networkId + '"][data-network-type="' + networkType + '"]').trigger('click');
+                                        jQuery('.b2s-user-network-settings-post-format-area-new[data-network-auth-id="' + data.networkAuthId + '"][data-post-format="' + data.draftActions.post_format + '"]').trigger('click');
+                                        jQuery('.b2s-user-network-settings-post-format-apply[data-network-auth-id="' + data.networkAuthId + '"]').trigger('click', [data.networkAuthId]);
                                     }
 
                                     jQuery.each(data.draftActions.sched_image_url, function (index, value) {
@@ -1348,13 +1449,17 @@ jQuery(document).on("click", ".b2s-network-select-btn", function () {
                                     });
 
                                     if (data.draftActions.releaseSelect == "1") {
-
+                                        var selectedFromDraft = 0;
+                                        const arr = data?.draftActions?.share_as_story;
+                                        if (Array.isArray(arr) && arr.length > 0) {
+                                            selectedFromDraft = arr[0];
+                                        }
                                         jQuery('.b2s-post-item-details-release-input-date-select[data-network-auth-id="' + data.networkAuthId + '"]').val(data.draftActions.releaseSelect);
-                                        jQuery('.b2s-post-item-details-release-input-date-select[data-network-auth-id="' + data.networkAuthId + '"]').trigger('change');
+                                        jQuery('.b2s-post-item-details-release-input-date-select[data-network-auth-id="' + data.networkAuthId + '"]').trigger('change',[selectedFromDraft]);
 
                                         jQuery.each(data.draftActions.date, function (index, value) {
                                             if (index == "1" || index == "2") {
-                                                jQuery('.b2s-post-item-details-release-input-add[data-network-auth-id="' + data.networkAuthId + '"][data-network-count="' + (index - 1) + '"]').trigger('click');
+                                                jQuery('.b2s-post-item-details-release-input-add[data-network-auth-id="' + data.networkAuthId + '"][data-network-count="' + (index - 1) + '"]').trigger('click',[true]);
                                             }
                                             jQuery('.b2s-post-item-details-release-input-date[data-network-auth-id="' + data.networkAuthId + '"][data-network-count="' + index + '"]').val(value);
                                             jQuery('.b2s-post-item-details-release-input-date[data-network-auth-id="' + data.networkAuthId + '"][data-network-count="' + index + '"]').trigger('change');
@@ -1739,7 +1844,7 @@ jQuery(document).on('change', '.b2s-post-item-details-release-input-interval-sel
 });
 
 //select shipping mode
-jQuery(document).on('change', '.b2s-post-item-details-release-input-date-select', function () {
+jQuery(document).on('change', '.b2s-post-item-details-release-input-date-select', function (event, selectedFromDraft) {
 
     var dataNetworkCount = 0;
     var hideTextareaAfter = false;
@@ -1827,7 +1932,8 @@ jQuery(document).on('change', '.b2s-post-item-details-release-input-date-select'
         // end
         
         //Add Reel and story settings to specific date for Instagram and Facebook
-        if ((jQuery(this).attr('data-network-id') == 12 || jQuery(this).attr('data-network-id') == 1) && jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="-1"]').prop('checked') == true) {
+        if ((jQuery(this).attr('data-network-id') == 12 || jQuery(this).attr('data-network-id') == 1) && jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="-1"]').prop('checked') == true && selectedFromDraft == 1) {
+            
             jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="0"]').prop('checked', true);
             jQuery('.b2s-post-item-ass-auth-btn[data-network-auth-id="' + networkAuthId + '"][data-network-count="0"]').hide();
             jQuery('.b2s-post-item-ass-create-btn[data-network-auth-id="' + networkAuthId + '"][data-network-count="0"]').hide();
@@ -1881,7 +1987,6 @@ jQuery(document).on('change', '.b2s-post-item-details-release-input-date-select'
     releaseChoose(jQuery(this).val(), jQuery(this).attr('data-network-auth-id'), dataNetworkCount,jQuery(this).attr('data-network-id'));
 
     if (hideTextareaAfter == true) { // in case of "share_as_story" hide textarea
-        
         jQuery('.b2s-post-item-details-item-message-area[data-network-auth-id="' + networkAuthId + '"][data-network-count="-1"]').first().hide();
         jQuery('.b2s-post-item-ass-auth-btn[data-network-auth-id="' + networkAuthId + '"][data-network-count="-1"]').first().hide();
         jQuery('.b2s-multi-image-area[data-network-auth-id="' + jQuery(this).attr('data-network-auth-id') + '"][data-network-count="-1"]').hide();
@@ -1931,7 +2036,7 @@ jQuery(document).on('click', '.b2s-re-share-btn', function () {
 
     //TOS XING Group
     jQuery('.b2s-network-select-btn').each(function () {
-        if (jQuery(this).children().hasClass('active')) {
+        if (jQuery(this).children().hasClass('b2s-network-list-active')) {
             if (jQuery(this).attr('data-network-id') == "19" && jQuery(this).attr('data-network-type') == "2") {
                 b2sTosXingGroupCount--;
                 deactivatePortal(jQuery(this).attr('data-network-auth-id'));
@@ -1943,7 +2048,7 @@ jQuery(document).on('click', '.b2s-re-share-btn', function () {
 
     return false;
 });
-jQuery(document).on('click', '.b2s-post-item-details-release-input-add', function () {
+jQuery(document).on('click', '.b2s-post-item-details-release-input-add', function (event, openedFromDraft) {
     var networkAuthId = jQuery(this).attr('data-network-auth-id');
     var netCount = jQuery(this).attr('data-network-count');
     var networkId = jQuery(this).attr('data-network-id');
@@ -1962,23 +2067,48 @@ jQuery(document).on('click', '.b2s-post-item-details-release-input-add', functio
     if (curMode == 1) {
 
         if(networkId==1 || networkId==12){
-
-            if(jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCount+ '"]').prop("checked") == true){
-          
-                if(jQuery("#b2sIsVideo").val() == "1"){
-                    jQuery('.b2s-post-item-sched-customize-text[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext + '"]').hide();
-                    jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext+ '"]').prop("checked", true);
-                    hideAssButtons(networkAuthId, netCountNext);
-                }else
-                {
-                    jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext+ '"]').prop("checked", true);
-                    jQuery('.b2s-post-item-details-item-message-area[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext + '"]').hide();
-                    hideAssButtons(networkAuthId, netCountNext);
+            if(openedFromDraft != true){
+                if(jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCount+ '"]').prop("checked") == true){
+            
+                    if(jQuery("#b2sIsVideo").val() == "1"){
+                        jQuery('.b2s-post-item-sched-customize-text[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext + '"]').hide();
+                        jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext+ '"]').prop("checked", true);
+                        hideAssButtons(networkAuthId, netCountNext);
+                    }else
+                    {
+                        jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext+ '"]').prop("checked", true);
+                        jQuery('.b2s-post-item-details-item-message-area[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext + '"]').hide();
+                        hideAssButtons(networkAuthId, netCountNext);
+                    }
                 }
+            }else{
+                if(jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext+ '"]').prop("checked") == true){
+       
+                    jQuery('.b2s-post-item-sched-customize-text[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext + '"]').hide();
+                    hideAssButtons(networkAuthId, netCountNext);
+                    var toggleBtn = jQuery('.b2s-toggle-comment[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext + '"]');
+                    toggleBtn.prop('disabled', true);
+                    toggleBtn.prop('checked', false);
+                    updateToggleCommentValue(toggleBtn);
+                    toggleBtn.attr('data-disabled-by-story', 'true');
+                    jQuery('.b2s-post-item-details-item-comment-area[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext + '"]').hide();
+                            
+                }
+                
             }
 
             if(jQuery('.b2s-post-item-share-as-reel[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCount+ '"]').prop("checked") == true){
                 jQuery('.b2s-post-item-share-as-reel[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCountNext + '"]').prop("checked", true);
+            }
+            
+            // Handle comment area disable if share_as_story is checked
+            if(jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCount+ '"]').prop("checked") == true){
+                var $toggle = jQuery('.b2s-toggle-comment[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + netCount + '"]');
+                var $commentArea = jQuery('.b2s-comment-area-' + networkAuthId + '[data-network-count="' + netCount + '"]');
+                if($toggle.length) {
+                    $toggle.prop('checked', false).val('0').prop('disabled', true).attr('data-disabled-by-story', 'true');
+                    $commentArea.hide();
+                }
             }
 
         }
@@ -2185,7 +2315,7 @@ jQuery(document).on('click', '.b2s-select-image-modal-open', function () {
             var activeMetaNetworks = {};
             var inactiveMetaNetworks = {};
             jQuery('.b2s-network-select-btn[data-meta-type="' + metaType + '"]').each(function () {
-                if (jQuery(this).find('.active').length > 0) {
+                if (jQuery(this).find('.b2s-network-list-active').length > 0) {
                     activeMetaNetworks[jQuery(this).attr('data-network-auth-id')] = jQuery(this).attr('data-network-id');
                 } else {
                     inactiveMetaNetworks[jQuery(this).attr('data-network-auth-id')] = jQuery(this).attr('data-network-id');
@@ -2844,12 +2974,30 @@ jQuery.validator.addMethod('checkSched', function (value, element, rest) {
     }
     return true;
 });
+
+function checkMaxInputVarsLimit(form) {
+    var maxInputVars = parseInt(jQuery('#max_input_vars').val(), 10);
+    var formInputCount = jQuery(form).serializeArray().length;
+    if (!isNaN(maxInputVars) && maxInputVars > 0 && formInputCount > maxInputVars) {
+        jQuery('.b2s-max-input-vars-value').text(maxInputVars);
+        jQuery('#b2sMaxInputVarsModal').modal('show');
+        return false;
+    }
+    return true;
+}
+
 jQuery("#b2sNetworkSent").validate({
     ignore: "",
     errorPlacement: function (error, element) {
         return false;
     },
     submitHandler: function (form) {
+
+        //Check for Max input vars
+        if (checkMaxInputVarsLimit(form) == false) {
+            return false;
+        }
+
         //Licence Condition
         if (checkLicenceCondition() == false) {
             return false;
@@ -2961,7 +3109,7 @@ jQuery(window).on("load", function () {
 
 jQuery(document).on('click', '.b2s-loading-area-save-profile-change', function () {
     var selectedAuth = new Array();
-    jQuery('.b2s-network-list.active').each(function () {
+    jQuery('.b2s-network-list.b2s-network-list-active').each(function () {
         selectedAuth.push(jQuery(this).parents('.b2s-network-select-btn').attr('data-network-auth-id'));
     });
     jQuery('.b2s-server-connection-fail').hide();
@@ -2989,7 +3137,7 @@ jQuery(document).on('click', '.b2s-loading-area-save-profile-change', function (
                     var jsonMandantIds = jQuery(this).parents('.b2s-sidbar-wrapper-nav-li').attr('data-mandant-id');
                     if (jsonMandantIds !== undefined) {
                         var jsonMandantIds = jQuery.parseJSON(jsonMandantIds);
-                        if (jsonMandantIds.indexOf(mandantId) !== -1 && !jQuery(this).hasClass('active')) {
+                        if (jsonMandantIds.indexOf(mandantId) !== -1 && !jQuery(this).hasClass('b2s-network-list-active')) {
                             //remove
                             var newMandant = new Array();
                             jQuery(jsonMandantIds).each(function (index, item) {
@@ -2998,7 +3146,7 @@ jQuery(document).on('click', '.b2s-loading-area-save-profile-change', function (
                                 }
                             });
                             jQuery(this).parents('.b2s-sidbar-wrapper-nav-li').attr('data-mandant-id', JSON.stringify(newMandant));
-                        } else if (jsonMandantIds.indexOf(mandantId) == -1 && jQuery(this).hasClass('active')) {
+                        } else if (jsonMandantIds.indexOf(mandantId) == -1 && jQuery(this).hasClass('b2s-network-list-active')) {
                             //add
                             jsonMandantIds.push(mandantId);
                             jQuery(this).parents('.b2s-sidbar-wrapper-nav-li').attr('data-mandant-id', JSON.stringify(jsonMandantIds));
@@ -3359,7 +3507,7 @@ function deactivatePortal(networkAuthId, postType = 'text') {
     jQuery(selector).find('.form-control').each(function () {
         jQuery(this).attr("disabled", "disabled");
     });
-    jQuery('.b2s-network-select-btn[data-network-auth-id="' + networkAuthId + '"]').children().removeClass('active').find('.b2s-network-status-img').addClass('b2s-network-hide');
+    jQuery('.b2s-network-select-btn[data-network-auth-id="' + networkAuthId + '"]').children().removeClass('b2s-network-list-active').find('.b2s-network-status-img').addClass('b2s-network-hide');
     checkNetworkSelected(postType);
     submitArea();
     return true;
@@ -3397,7 +3545,7 @@ function activatePortal(networkAuthId, check) {
     } else {
         jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + networkAuthId + '"][data-network-count="-1"]').removeAttr("disabled", "disabled");
     }
-    jQuery('.b2s-network-select-btn[data-network-auth-id="' + networkAuthId + '"]').children().addClass('active').find('.b2s-network-hide').removeClass('b2s-network-hide');
+    jQuery('.b2s-network-select-btn[data-network-auth-id="' + networkAuthId + '"]').children().addClass('b2s-network-list-active').find('.b2s-network-hide').removeClass('b2s-network-hide');
     checkNetworkSelected();
     submitArea();
 }
@@ -3543,6 +3691,23 @@ function releaseChoose(choose, dataNetworkAuthId, dataNetworkCount, networkId=0)
             jQuery('.b2s-image-remove-btn' + selectorInput + '[data-network-count="-1"]').show();
             jQuery('.b2s-post-original-area' + selectorInput).addClass('col-sm-7').addClass('col-lg-9');
             jQuery('.b2s-post-tool-area' + selectorInput).show();
+            
+            // Show comment area for mode 0 only if toggle is checked (and not disabled by story) or there is a comment
+            var $toggle = jQuery('.b2s-toggle-comment' + selectorInput + '[data-network-count="-1"]');
+            var $commentArea = jQuery('.b2s-comment-area-' + dataNetworkAuthId + '[data-network-count="-1"]');
+            var $commentInput = jQuery('.b2s-post-item-details-item-comment-input[data-network-auth-id="' + dataNetworkAuthId + '"][data-network-count="-1"]');
+            var $shareAsStory = jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + dataNetworkAuthId + '"][data-network-count="-1"]');
+            jQuery('.b2s-toggle-comment-wrapper' + selectorInput + '[data-network-count="-1"]').show();
+            
+            // Check if share_as_story is checked - if so, disable and hide comment area
+            if ($shareAsStory.length && $shareAsStory.prop('checked')) {
+                $toggle.prop('checked', false).val('0').prop('disabled', true).attr('data-disabled-by-story', 'true');
+                $commentArea.hide();
+            } else if ($toggle.attr('data-disabled-by-story') !== 'true' && ($toggle.prop('checked') || ($commentInput.length && $commentInput.val() && $commentInput.val().trim() !== ''))) {
+                $commentArea.show();
+            } else {
+                $commentArea.hide();
+            }
         }
 
         jQuery('.b2s-post-item-details-release-input-date' + selectorInput).prop('disabled', true);
@@ -3592,8 +3757,7 @@ function releaseChoose(choose, dataNetworkAuthId, dataNetworkCount, networkId=0)
         jQuery('.b2s-post-item-details-release-area-div-time' + selectorInput).hide();
         jQuery('.b2s-post-item-details-release-area-div-day' + selectorInput).hide();
     } else if (choose == 1) {
-
-
+       
         //Take text char count from default text area
         var $source = jQuery(".b2s-post-item-countChar[data-network-count=-1][data-network-auth-id='" + dataNetworkAuthId + "']");
         var $target = jQuery(".b2s-post-item-countChar[data-network-count=0][data-network-auth-id='" + dataNetworkAuthId + "']");
@@ -3624,8 +3788,12 @@ function releaseChoose(choose, dataNetworkAuthId, dataNetworkCount, networkId=0)
             if (jQuery('.b2s-post-item-details-release-input-date-select' + selectorInput).attr('data-network-id') == "2" || jQuery('.b2s-post-item-details-release-input-date-select' + selectorInput).attr('data-network-id') == "45") {
                 jQuery('.b2s-post-ship-item-copy-original-text' + selectorInput + '[data-network-count="0"]').trigger('click');
             }
+            
+            // Hide default comment area
+            jQuery('.b2s-toggle-comment-wrapper' + selectorInput + '[data-network-count="-1"]').hide();
+            jQuery('.b2s-comment-area-' + dataNetworkAuthId + '[data-network-count="-1"]').hide();
         }
-
+      
         jQuery('.b2s-post-item-details-release-area-details-row' + selectorInput).hide();
         jQuery('.b2s-post-item-details-release-input-date' + selectorInput).hide();
         jQuery('.b2s-post-item-details-release-input-date' + selectorInput).prop('disabled', true);
@@ -3640,6 +3808,25 @@ function releaseChoose(choose, dataNetworkAuthId, dataNetworkCount, networkId=0)
             //since 4.8.0 customize content
             jQuery('.b2s-post-item-details-release-customize-sched-area-details-row[data-network-count="' + i + '"]' + selectorInput).show();
             jQuery('.b2s-post-item-details-item-message-input[data-network-count="' + i + '"]' + selectorInput).removeAttr('disabled');
+            // Show scheduled comment areas only if toggle is checked (and not disabled by story) or there is a comment
+            var $toggleSched = jQuery('.b2s-toggle-comment' + selectorInput + '[data-network-count="' + i + '"]');
+            var $commentAreaSched = jQuery('.b2s-comment-area-' + dataNetworkAuthId + '[data-network-count="' + i + '"]');
+            var $commentInputSched = jQuery('.b2s-post-item-details-item-comment-input[data-network-auth-id="' + dataNetworkAuthId + '"][data-network-count="' + i + '"]');
+            var $shareAsStorySched = jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + dataNetworkAuthId + '"][data-network-count="' + i + '"]');
+            jQuery('.b2s-toggle-comment-wrapper' + selectorInput + '[data-network-count="' + i + '"]').show();
+            
+            // Check if share_as_story is checked - if so, disable and hide comment area
+            if ($shareAsStorySched.length && $shareAsStorySched.prop('checked')) {
+                $toggleSched.prop('checked', false).val('0').prop('disabled', true).attr('data-disabled-by-story', 'true');
+                $commentAreaSched.hide();
+                hideAssButtons(dataNetworkAuthId, i);
+                jQuery('.b2s-post-item-details-item-message-emoji-btn[data-network-auth-id="' + dataNetworkAuthId + '"][data-network-count="' + i + '"]').hide();
+                jQuery('.b2s-post-item-details-item-comment-emoji-btn[data-network-auth-id="' + dataNetworkAuthId + '"][data-network-count="' + i + '"]').hide();
+            } else if ($toggleSched.attr('data-disabled-by-story') !== 'true' && ($toggleSched.prop('checked') || ($commentInputSched.length && $commentInputSched.val() && $commentInputSched.val().trim() !== ''))) {
+                $commentAreaSched.show();
+            } else {
+                $commentAreaSched.hide();
+            }
         }
         jQuery('.b2s-post-item-details-release-input-weeks' + selectorInput).hide();
         jQuery('.b2s-post-item-details-release-input-weeks' + selectorInput).prop('disabled');
@@ -3693,6 +3880,23 @@ function releaseChoose(choose, dataNetworkAuthId, dataNetworkCount, networkId=0)
             jQuery('.cropper-open' + selectorInput + '[data-network-count="-1"]').show();
             jQuery('.b2s-post-original-area' + selectorInput).addClass('col-sm-7').addClass('col-lg-9');
             jQuery('.b2s-post-tool-area' + selectorInput).show();
+            
+            // Show comment area for mode 2 only if toggle is checked (and not disabled by story) or there is a comment
+            var $toggle2 = jQuery('.b2s-toggle-comment' + selectorInput + '[data-network-count="-1"]');
+            var $commentArea2 = jQuery('.b2s-comment-area-' + dataNetworkAuthId + '[data-network-count="-1"]');
+            var $commentInput2 = $commentArea2.find('.b2s-post-item-details-item-comment-input');
+            var $shareAsStory2 = jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + dataNetworkAuthId + '"][data-network-count="-1"]');
+            jQuery('.b2s-toggle-comment-wrapper' + selectorInput + '[data-network-count="-1"]').show();
+            
+            // Check if share_as_story is checked - if so, disable and hide comment area
+            if ($shareAsStory2.length && $shareAsStory2.prop('checked')) {
+                $toggle2.prop('checked', false).val('0').prop('disabled', true).attr('data-disabled-by-story', 'true');
+                $commentArea2.hide();
+            } else if ($toggle2.attr('data-disabled-by-story') !== 'true' && ($toggle2.prop('checked') || ($commentInput2.val() && $commentInput2.val().trim() !== ''))) {
+                $commentArea2.show();
+            } else {
+                $commentArea2.hide();
+            }
         }
 
         jQuery('.b2s-post-item-details-release-area-details-row' + selectorInput).hide();
@@ -3900,13 +4104,15 @@ jQuery(document).on('change', '.b2s-twitter-thread', function () {
     var checkbox = jQuery(this);
     var networkAuthId = jQuery(this).attr("data-network-auth-id");
     var networkCountId = jQuery(this).attr('data-network-count');
+    var networkId = jQuery(this).attr('data-network-id');
     var twitterLimit = 280;
     var textField = jQuery(".b2s-post-item-details-item-message-input[data-network-count='" + networkCountId + "'][data-network-auth-id='" + networkAuthId + "']");
-
+  
     if (checkbox.is(':checked')) {
         jQuery(".b2s-insert-tweet-break-button").attr("disabled", false);
         var networkCountText = "networkCount('" + networkAuthId + "');";
         textField.attr("onkeyup", networkCountText)
+        disableCommentByThread(networkAuthId, "-1");
 
     } else {
         jQuery(".b2s-insert-tweet-break-button").attr("disabled", true);
@@ -3917,6 +4123,8 @@ jQuery(document).on('change', '.b2s-twitter-thread', function () {
         networkLimitAll(networkAuthId, networkId, twitterLimit);
         jQuery(".b2s-post-item-show-thread-count[data-network-count='" + networkCountId + "'][data-network-auth-id='" + networkAuthId + "']").hide();
 
+        enableCommentByThread(networkAuthId, "-1");
+        
     }
 });
 
@@ -3952,6 +4160,8 @@ jQuery(document).on('change', '.b2s-twitter-thread-sched', function () {
         var networkCountText = "networkCount('" + networkAuthId + "');";
         textField.attr("onkeyup", networkCountText)
 
+       disableCommentByThread(networkAuthId, networkCountId);
+
     } else {
         jQuery(".b2s-insert-tweet-break-button-sched").attr("disabled", true);
         var networkId = jQuery(".b2s-post-item-sched-customize-text[data-network-auth-id='" + networkAuthId + "']").attr('data-network-id');
@@ -3960,6 +4170,9 @@ jQuery(document).on('change', '.b2s-twitter-thread-sched', function () {
         textField.val(textField.val().replaceAll("{new tweet}", ""));
         networkLimitAll(networkAuthId, networkId, twitterLimit);
         jQuery(".b2s-post-item-show-thread-count[data-network-count='" + networkCountId + "'][data-network-auth-id='" + networkAuthId + "']").hide();
+
+        // Re-enable comment area when thread is unchecked
+        enableCommentByThread(networkAuthId, networkCountId);
 
     }
 });
@@ -4196,6 +4409,42 @@ function getCaretPos(domElem) {
     return pos;
 }
 
+function commentLimitAll(networkAuthId, networkCount) {
+    var commentInput = jQuery(".b2s-post-item-details-item-comment-input[data-network-auth-id='" + networkAuthId + "'][data-network-count='" + networkCount + "']");
+    
+    if (commentInput.length === 0) {
+        return;
+    }
+    
+    var limit = parseInt(commentInput.attr('data-network-comment-limit'));
+    var text = commentInput.val();
+    
+    if (!limit || limit === 0) {
+        // No limit, just update character count
+        if (text) {
+            jQuery(".b2s-post-item-comment-countChar[data-network-auth-id='" + networkAuthId + "'][data-network-count='" + networkCount + "']").html(text.length);
+        }
+        return;
+    }
+    
+    if (typeof text !== typeof undefined && text !== false) {
+        var textLength = text.length;
+        var newText = text;
+        
+        // If text exceeds limit, cut it
+        if (textLength >= limit) {
+            newText = text.substring(0, limit);
+            var pos = getCaretPos(commentInput[0]);
+            commentInput.val(newText);
+            setCaretPos(commentInput[0], pos);
+            textLength = limit;
+        }
+        
+        // Update character count display
+        jQuery(".b2s-post-item-comment-countChar[data-network-auth-id='" + networkAuthId + "'][data-network-count='" + networkCount + "']").html(textLength);
+    }
+}
+
 function setCaretPos(domElem, pos) {
     if (domElem.setSelectionRange) {
         domElem.focus();
@@ -4259,7 +4508,7 @@ function chooseMandant() {
         jQuery(this).attr("disabled", "disabled");
         jQuery(this).removeClass('error');
     });
-    jQuery('.b2s-network-select-btn').children().removeClass('active').find('.b2s-network-status-img').addClass('b2s-network-hide');
+    jQuery('.b2s-network-select-btn').children().removeClass('b2s-network-list-active').find('.b2s-network-status-img').addClass('b2s-network-hide');
     //Check IS RE-PUBLISH
     var isMultiSelectNetwork = false;
     if (typeof jQuery('#b2sMultiSelectedNetworkAuthId') != 'undefined' && typeof jQuery('#b2sMultiSelectedNetworkAuthId').val() != 'undefined' && jQuery('#b2sMultiSelectedNetworkAuthId').val() != '') { //exisits?
@@ -4513,6 +4762,14 @@ jQuery(document).on('click', '.b2s-draft-btn-scroll', function () {
 });
 
 function saveDraft() {
+
+    if (checkMaxInputVarsLimit('#b2sNetworkSent') == false) {
+        jQuery('.b2s-loader-btn-ship').css('display', 'none');
+        jQuery('.b2s-submit-btn').removeAttr('disabled');
+        jQuery('.b2s-submit-btn-scroll').removeAttr('disabled');
+        return false;
+    }
+
     jQuery('#action').val('b2s_save_draft_data');
     var data = jQuery('#b2sNetworkSent').serialize() + '&b2s_security_nonce=' + jQuery('#b2s_security_nonce').val();
     jQuery('#action').val('b2s_save_ship_data');
@@ -4570,6 +4827,49 @@ jQuery('#b2sAuthNetwork6Modal').on('hidden.bs.modal', function () {
     jQuery('body').addClass('modal-open');
 });
 
+jQuery('#b2sInfoNoCache').on('hidden.bs.modal', function () {
+    jQuery('body').addClass('modal-open');
+});
+jQuery('#b2sInfoFormat').on('hidden.bs.modal', function () {
+    jQuery('body').addClass('modal-open');
+});
+
+jQuery(document).on('click', '.b2sInfoFormatBtn', function () {
+    jQuery('#b2sInfoFormat').modal('show');
+    var id = jQuery(this).attr('data-network-id');
+    jQuery('.b2sInfoFormatText').hide();
+    jQuery('.b2sInfoFormatText[data-network-id="' + id + '"]').show();
+});
+
+jQuery('#b2sInfoContent').on('hidden.bs.modal', function () {
+    jQuery('body').addClass('modal-open');
+});
+jQuery('#b2sInfoCharacterLimit').on('hidden.bs.modal', function () {
+    jQuery('body').addClass('modal-open');
+});
+jQuery('#b2sMaxInputVarsModal').on('hidden.bs.modal', function () {
+    if (jQuery('.modal.in:visible, .modal.show:visible').length === 0) {
+        jQuery('body').removeClass('modal-open');
+        jQuery('.modal-backdrop').remove();
+    }
+});
+jQuery('.b2s-info-share-as-story-modal').on('hidden.bs.modal', function () {
+    jQuery('body').addClass('modal-open');
+});
+
+jQuery(document).on('click', '.b2sInfoNetwork18Btn', function () {
+    jQuery('#b2sInfoNetwork18').modal('show');
+});
+jQuery(document).on('click', '.b2sInfoNoCacheBtn', function () {
+    jQuery('#b2sInfoNoCache').modal('show');
+});
+jQuery(document).on('click', '.b2sInfoContentBtn', function () {
+    jQuery('#b2sInfoContent').modal('show');
+});
+jQuery(document).on('click', '.b2sInfoCharacterLimitBtn', function () {
+    jQuery('#b2sInfoCharacterLimit').modal('show');
+});
+
 jQuery(document).on('click', '.b2sInfoPostRelayModalBtn', function () {
     jQuery('#b2sInfoPostRelayModal').modal('show');
 });
@@ -4579,8 +4879,8 @@ jQuery(document).on('click', '.b2sInfoSchedTimesModalBtn', function () {
 jQuery(document).on('click', '.b2s-info-share-as-story-modal-btn', function () {
     jQuery('.b2s-info-share-as-story-modal').modal('show');
 });
-jQuery(document).on('click', '.b2s-network-setting-save-btn', function () {
-    jQuery('#b2s-network-setting-save').modal('show');
+jQuery(document).on('click', '.b2sNetworkSettingSaveModal', function () {
+    jQuery('#b2sNetworkSettingSaveModal').modal('show');
 });
 jQuery(document).on('click', '.b2s-network-list-modal-btn', function () {
     jQuery('#b2s-network-list-modal').modal('show');
@@ -4635,6 +4935,7 @@ function freeze_gif(i) {
 
 var currentEmojiNetworkAuthId = 0;
 var currentEmojiNetworkCount = -1;
+var currentEmojiInputSelector = '.b2s-post-item-details-item-message-input';
 var emojiTranslation = JSON.parse(jQuery('#b2sEmojiTranslation').val());
 var picker = new EmojiButton({
     position: 'auto',
@@ -4657,33 +4958,38 @@ var picker = new EmojiButton({
 });
 picker.on('emoji', function (emoji) {
     if (currentEmojiNetworkAuthId > 0) {
-        var text = jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]').val();
-        var start = jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]').attr('selectionStart');
-        var end = jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]').attr('selectionEnd');
+        var inputSelector = currentEmojiInputSelector + '[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]';
+        var text = jQuery(inputSelector).val();
+        var start = jQuery(inputSelector).attr('selectionStart');
+        var end = jQuery(inputSelector).attr('selectionEnd');
+        if (typeof text === 'undefined') {
+            return;
+        }
         if (typeof start == 'undefined' || typeof end == 'undefined') {
             start = text.length;
             end = text.length;
         }
         var newText = text.slice(0, start) + emoji + text.slice(end);
-        jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]').val(newText);
-        jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]').focus();
-        jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]').prop("selectionStart", parseInt(start) + emoji.length);
-        jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]').prop("selectionEnd", parseInt(start) + emoji.length);
-        jQuery('.b2s-post-item-details-item-message-input[data-network-auth-id="' + currentEmojiNetworkAuthId + '"][data-network-count="' + currentEmojiNetworkCount + '"]').trigger('keyup');
+        jQuery(inputSelector).val(newText);
+        jQuery(inputSelector).focus();
+        jQuery(inputSelector).prop("selectionStart", parseInt(start) + emoji.length);
+        jQuery(inputSelector).prop("selectionEnd", parseInt(start) + emoji.length);
+        jQuery(inputSelector).trigger('keyup');
     }
 });
 
-jQuery(document).on('click', '.b2s-post-item-details-item-message-emoji-btn', function () {
+jQuery(document).on('click', '.b2s-post-item-details-item-message-emoji-btn, .b2s-post-item-details-item-comment-emoji-btn', function () {
     if (picker.pickerVisible) {
         picker.hidePicker();
     } else {
+        currentEmojiInputSelector = jQuery(this).hasClass('b2s-post-item-details-item-comment-emoji-btn') ? '.b2s-post-item-details-item-comment-input' : '.b2s-post-item-details-item-message-input';
         currentEmojiNetworkAuthId = jQuery(this).attr('data-network-auth-id');
         currentEmojiNetworkCount = jQuery(this).attr('data-network-count');
         picker.showPicker(jQuery(this));
     }
 });
 
-jQuery(document).on('mousedown mouseup keydown keyup', '.b2s-post-item-details-item-message-input', function () {
+jQuery(document).on('mousedown mouseup keydown keyup', '.b2s-post-item-details-item-message-input, .b2s-post-item-details-item-comment-input', function () {
     var tb = jQuery(this).get(0);
     jQuery(this).attr('selectionStart', tb.selectionStart);
     jQuery(this).attr('selectionEnd', tb.selectionEnd);
@@ -4852,10 +5158,11 @@ function openPostFormat(networkId, networkType, networkAuthId, wpType, showModal
 
         var currentPostFormat = jQuery('.b2s-post-item-details-post-format[data-network-auth-id="' + networkAuthId + '"]').val();
        
+        jQuery('.b2s-user-network-settings-post-format-apply[data-network-type="' + networkType + '"][data-network-id="' + networkId + '"]').attr("data-network-auth-id", networkAuthId);
+        jQuery('.b2s-user-network-settings-post-format-new[data-network-type="' + networkType + '"][data-network-id="' + networkId + '"]').attr("data-network-auth-id", networkAuthId);
+        jQuery('.b2s-user-network-settings-post-format-area-new[data-network-type="' + networkType + '"][data-network-id="' + networkId + '"]').attr("data-network-auth-id", networkAuthId);
+        
         if (showModal) {
-            jQuery('.b2s-user-network-settings-post-format-apply[data-network-type="' + networkType + '"][data-network-id="' + networkId + '"]').attr("data-network-auth-id", networkAuthId);
-            jQuery('.b2s-user-network-settings-post-format-new[data-network-type="' + networkType + '"][data-network-id="' + networkId + '"]').attr("data-network-auth-id", networkAuthId);
-            jQuery('.b2s-user-network-settings-post-format-area-new[data-network-type="' + networkType + '"][data-network-id="' + networkId + '"]').attr("data-network-auth-id", networkAuthId);
             jQuery('.b2s-user-network-settings-post-format-new[data-network-type="' + networkType + '"][data-network-id="' + networkId + '"][data-post-format="' + currentPostFormat + '"]').prop("checked", true);
 
             //remove old ui values 
@@ -4897,7 +5204,7 @@ function openPostFormat(networkId, networkType, networkAuthId, wpType, showModal
 }
 
 function changePostFormat(networkId, networkType, postFormat, networkAuthId, postFormatType, postType, closeModal) {
-    
+
     jQuery('.b2s-settings-user-success').hide();
     jQuery('.b2s-settings-user-error').hide();
     jQuery('.b2s-server-connection-fail').hide();
@@ -5023,7 +5330,7 @@ function changePostFormat(networkId, networkType, postFormat, networkAuthId, pos
     if (postType == "ex") {
         jQuery('.b2s-post-item-details-preview-title[data-network-auth-id="' + networkAuthId + '"]').prop("readonly", true);
         jQuery('.b2s-post-item-details-preview-desc[data-network-auth-id="' + networkAuthId + '"]').prop("readonly", true);
-        jQuery('.b2s-load-info-meta-tag-modal[data-network-auth-id="' + networkAuthId + '"]').attr("style", "display:none !important");
+        jQuery('.b2sInfoMetaTagModal[data-network-auth-id="' + networkAuthId + '"]').attr("style", "display:none !important");
         if (postFormat == '0') {
 
             jQuery('.b2s-select-image-modal-open[data-network-auth-id="' + networkAuthId + '"]').hide();
@@ -5731,15 +6038,16 @@ jQuery(document).on('click', '#b2s-sidebar-ship-ass-logout-btn', function () {
 });
 
 function assGenerateText(networkAuthId, networkName, schedCount = false) {
+
     if (schedCount !== false) {
         var textareaElm = jQuery('.b2s-post-item-details-item-message-input[name="b2s[' + networkAuthId + '][sched_content][' + schedCount + ']"]');
         var loaderElm = jQuery('.b2s-post-item-textarea-loader[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + schedCount + '"]');
-        var createBtnElm = jQuery('.b2s-post-item-ass-create-btn[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + schedCount + '"]');
+        var createBtnElm = jQuery('.b2s-post-item-ass-create-btn');
         var resetBtnElm = jQuery('.b2s-post-item-ass-reset-btn[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + schedCount + '"]');
     } else {
         var textareaElm = jQuery('textarea[name="b2s[' + networkAuthId + '][content]"]');
         var loaderElm = jQuery('.b2s-post-item-textarea-loader[data-network-auth-id="' + networkAuthId + '"][data-network-count="-1"]');
-        var createBtnElm = jQuery('.b2s-post-item-ass-create-btn[data-network-auth-id="' + networkAuthId + '"][data-network-count="-1"]');
+        var createBtnElm = jQuery('.b2s-post-item-ass-create-btn');
         var resetBtnElm = jQuery('.b2s-post-item-ass-reset-btn[data-network-auth-id="' + networkAuthId + '"][data-network-count="-1"]');
     }
     var postId = textareaElm.data('post-id');
@@ -5820,7 +6128,6 @@ function assGenerateText(networkAuthId, networkName, schedCount = false) {
                             addTagwithContent(networkAuthId, element);
                         });
                         
-            
                         var postFormat = jQuery('.b2s-post-item-details-post-format[data-network-auth-id="' + networkAuthId + '"]').val();
 
                         if(postFormat == 3){
@@ -5875,23 +6182,30 @@ function assGenerateText(networkAuthId, networkName, schedCount = false) {
             } else {
                 showAssError("default");    
             }
+        },
+         complete: function () {
+         createBtnElm.prop('disabled', false);
         }
     });
 }
+
 function showAssError(code){
 
     if(code=="nonce"){
         jQuery('.b2s-nonce-check-fail').show();
         return;
     }
+
     if(code==3100){
         if (jQuery('#b2sIsVideo').val() == 1) {
             code = code +"-video";
         }
     }
-    if(code==undefined){
-        code= "default";
+
+    if(jQuery('.b2sAssErrorModal-'+code).length<1){
+       code="default";
     }
+
     jQuery('.b2sAssErrorModal-body').hide();
     jQuery('.b2sAssErrorModal-'+code).show();
     jQuery('#b2sAssErrorModal').modal('show');
@@ -5937,9 +6251,11 @@ function showAssButtons(networkAuthId = 0, schedCount = - 1) {
 }
 }
 
-jQuery(document).on('click', '.b2s-user-network-settings-post-format-apply', function () {
+jQuery(document).on('click', '.b2s-user-network-settings-post-format-apply', function (e, dataNetworkAuthId) {
 
-    var dataNetworkAuthId = jQuery(this).attr('data-network-auth-id');
+    if(dataNetworkAuthId != 'undefined'){
+        var dataNetworkAuthId = jQuery(this).attr('data-network-auth-id');
+    }
 
     if (jQuery('.b2s-user-network-settings-post-format-new[data-network-auth-id="' + dataNetworkAuthId + '"][data-post-format="1"]').prop('checked') == true) {
 
@@ -6293,7 +6609,6 @@ jQuery(document).on('click', '.tiktok-promotional-toggle', function () {
    
 });
 
-
 jQuery(document).on('change', '.b2s-tiktok-promotion-option', function () {
   
     if (jQuery(this).is(':checked')) {
@@ -6370,3 +6685,837 @@ jQuery(document).on('change', '.b2s-tiktok-promotion-option', function () {
 
 });
 
+function toggleFbPageShareAsStory(networkId, networkType) {
+        if (networkId !== 1 || networkType != 1) {
+            return;
+        }
+        var wrapper = jQuery('.b2s-edit-template-share-as-story-wrapper[data-network-type=' + networkType + ']');
+        if (!wrapper.length) {
+            return;
+        }
+        var formatValue = jQuery('.b2s-edit-template-post-format[data-network-type=' + networkType + ']').val();
+        if (formatValue== 1) {
+            wrapper.show();
+        } else {
+            wrapper.hide();
+        }
+};
+
+jQuery(document).on('click', '.b2s-edit-template-btn', function () {
+
+    //new Ad Modal if Version Free
+    if(jQuery('#b2sUserVersion').val() < 1){
+        jQuery('#b2sProFeatureEditTemplateModal').modal('show');
+        return;
+    }
+    
+    jQuery('b2s-edit-template-user-upgrade-required').hide();
+    jQuery('.b2s-edit-template-content').hide();
+    jQuery('.b2s-edit-template-save-btn').hide();
+    jQuery('.b2s-loading-area').show();
+    jQuery('#b2s-edit-template').modal('show');
+    jQuery('#b2s-edit-template-network-id').val(jQuery(this).attr('data-network-id'));
+    var networkId = jQuery(this).attr('data-network-id');
+    var networkType = jQuery(this).attr('data-network-type');
+
+    jQuery('.b2s-edit-template-network-img').hide();
+    jQuery('#b2s-edit-template-network-img-' + networkId).show();
+
+    jQuery.ajax({
+        url: ajaxurl,
+        type: "GET",
+        dataType: "json",
+        cache: false,
+        data: {
+            'action': 'b2s_get_edit_template',
+            'networkId': networkId,
+            'b2s_security_nonce': jQuery('#b2s_security_nonce').val()
+        },
+        error: function () {
+            jQuery('.b2s-server-connection-fail').show();
+            return false;
+        },
+        success: function (data) {
+            if (data.result == true) {
+
+                if(data.content == 'b2s_upgrade_required') {
+                    jQuery('.b2s-loading-area').hide();
+                    jQuery('.b2s-edit-template-user-upgrade-required').show();
+                    return;
+                }
+
+                jQuery('#b2s-edit-template').modal('show');
+                jQuery('.b2s-edit-template-content').html(data.content);
+                jQuery('.b2s-loading-area').hide();
+                jQuery('.b2s-edit-template-content').show();
+                jQuery('.b2s-edit-template-save-btn').show();
+                if (jQuery('#b2sUserVersion').val() < 1 && networkId != 1 && networkId != 3 && networkId != 19) {
+                    jQuery('.b2s-edit-template-save-btn').addClass('b2s-btn-disabled');
+                } else {
+                    jQuery('.b2s-edit-template-save-btn').removeClass('b2s-btn-disabled');
+                }
+                jQuery('.b2s-edit-template-post-content').trigger('keyup');
+                jQuery('.b2s-edit-template-comment').trigger('keyup');
+                jQuery('.b2s-edit-template-share-as-story-wrapper').each(function () {
+                    var wrapperType = jQuery(this).data('network-type');
+                    toggleFbPageShareAsStory(networkId, wrapperType);
+                });
+                if (networkId == 12) {
+                    Coloris({
+                        el: '.b2s-edit-template-colorpicker',
+                        theme: 'polaroid',
+                        swatches: [
+                            '#ffffff',
+                            '#000000',
+                            '#ff0000',
+                            '#00ff00',
+                            '#0000ff',
+                            '#ffff00',
+                            '#c3073f',
+                            '#5cdb95',
+                            '#659dbd',
+                            '#f9db7a',
+                            '#e46de0'
+                        ]
+                    });
+                }
+
+                //When opened click Type
+                if(networkType){
+                    triggerClickByNetworkType(networkType);
+                }
+
+            } else {
+                if (data.error == 'nonce') {
+                    jQuery('.b2s-nonce-check-fail').show();
+                }
+            }
+        }
+    });
+});
+
+// Edit Template - Link Post
+jQuery(document).on('click', '.b2s-edit-template-link-post', function () {
+    var networkId = jQuery(this).data('network-id');
+    jQuery('.b2s-edit-template-image-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-primary').addClass('btn-light');
+    jQuery('.b2s-edit-template-text-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-primary').addClass('btn-light');
+    jQuery('.b2s-edit-template-link-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-light').addClass('btn-primary');
+    if(networkId == 4){
+        jQuery('.b2s-edit-template-post-format[data-network-type=' + jQuery(this).attr('data-network-type') + ']').val('3');
+    }else {
+        jQuery('.b2s-edit-template-post-format[data-network-type=' + jQuery(this).attr('data-network-type') + ']').val('0');
+    }
+    jQuery('.b2s-edit-template-image-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').hide();
+    jQuery('.b2s-edit-template-link-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').show();
+    jQuery('.b2s-edit-template-text-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').hide();
+    jQuery('.b2s-edit-template-enable-link-area[data-network-type=' + jQuery(this).attr('data-network-type') + ']').hide();
+    jQuery('.tumblr-link-post-notice').show();
+    toggleFbPageShareAsStory(networkId, jQuery(this).attr('data-network-type'));
+
+    // Tumblr special Preview Post again
+    if(networkId == 4) {
+        var post = generateExamplePost(jQuery('.b2s-edit-template-post-content').val().replace(/\n/g, "<br>"), jQuery('.b2s-edit-template-range[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(), jQuery('.b2s-edit-template-excerpt-range[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val());
+        jQuery('.b2s-edit-template-preview-content[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').html(post);
+    }
+});
+
+// Edit Template - Image Post
+jQuery(document).on('click', '.b2s-edit-template-image-post', function () {
+    var networkId = jQuery(this).data('network-id');
+    jQuery('.tumblr-link-post-notice').hide();
+    jQuery('.b2s-edit-template-link-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-primary').addClass('btn-light');
+    jQuery('.b2s-edit-template-text-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-primary').addClass('btn-light');
+    jQuery('.b2s-edit-template-image-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-light').addClass('btn-primary');
+    jQuery('.b2s-edit-template-post-format[data-network-type=' + jQuery(this).attr('data-network-type') + ']').val('1');
+    jQuery('.b2s-edit-template-link-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').hide();
+    jQuery('.b2s-edit-template-text-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').hide();
+    jQuery('.b2s-edit-template-image-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').show();
+    jQuery('.b2s-edit-template-enable-link-area[data-network-type=' + jQuery(this).attr('data-network-type') + ']').show();
+    toggleFbPageShareAsStory(networkId, jQuery(this).attr('data-network-type'));
+
+    // Tumblr special Preview Post again
+    if(networkId == 4) {
+        var post = generateExamplePost(jQuery('.b2s-edit-template-post-content').val().replace(/\n/g, "<br>"), jQuery('.b2s-edit-template-range[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(), jQuery('.b2s-edit-template-excerpt-range[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val());
+        jQuery('.b2s-edit-template-preview-content[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').html(post);
+    }
+});
+
+// Edit Template - Text Post
+jQuery(document).on('click', '.b2s-edit-template-text-post', function () {
+    var networkId = jQuery(this).data('network-id');
+    jQuery('.tumblr-link-post-notice').hide();
+    jQuery('.b2s-edit-template-link-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-primary').addClass('btn-light');
+    jQuery('.b2s-edit-template-image-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-primary').addClass('btn-light');
+    jQuery('.b2s-edit-template-text-post[data-network-type=' + jQuery(this).attr('data-network-type') + ']').removeClass('btn-light').addClass('btn-primary');
+    jQuery('.b2s-edit-template-post-format[data-network-type=' + jQuery(this).attr('data-network-type') + ']').val('0');
+    jQuery('.b2s-edit-template-link-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').hide();
+    jQuery('.b2s-edit-template-image-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').hide();
+    jQuery('.b2s-edit-template-text-preview[data-network-type=' + jQuery(this).attr('data-network-type') + ']').show();
+    jQuery('.b2s-edit-template-enable-link-area[data-network-type=' + jQuery(this).attr('data-network-type') + ']').show();
+    toggleFbPageShareAsStory(networkId, jQuery(this).attr('data-network-type'));
+
+    // Tumblr special Preview Post again
+    if(networkId == 4) {
+        var post = generateExamplePost(jQuery('.b2s-edit-template-post-content').val().replace(/\n/g, "<br>"), jQuery('.b2s-edit-template-range[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(), jQuery('.b2s-edit-template-excerpt-range[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val());
+        jQuery('.b2s-edit-template-preview-content[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').html(post);
+    }
+});
+
+// Edit Template - Content Post Item
+jQuery(document).on('click', '.b2s-edit-template-content-post-item', function () {
+    var networkType = jQuery(this).attr('data-network-type');
+    var text = jQuery('.b2s-edit-template-post-content[data-network-type="' + networkType + '"]').val();
+    var start = jQuery('.b2s-edit-template-content-selection-start[data-network-type="' + networkType + '"]').val();
+    var end = jQuery('.b2s-edit-template-content-selection-end[data-network-type="' + networkType + '"]').val();
+
+    var reg = new RegExp("({.+?})", "g");
+    var amatch = null;
+    while ((amatch = reg.exec(text)) != null) {
+        var thisMatchStart = amatch.index;
+        var thisMatchEnd = amatch.index + amatch[0].length;
+        // case: keydown in pattern
+        if (start > thisMatchStart && end < thisMatchEnd) {
+            event.preventDefault();
+            return false;
+        }
+    }
+    var newText = text.slice(0, start) + jQuery(this).html() + text.slice(end);
+    jQuery('.b2s-edit-template-post-content[data-network-type="' + networkType + '"]').val(newText);
+    jQuery('.b2s-edit-template-post-content').focus();
+    jQuery('.b2s-edit-template-post-content').trigger('keyup');
+    event.preventDefault();
+    return false;
+});
+
+// Edit Template - Content Clear Button
+jQuery(document).on('click', '.b2s-edit-template-content-clear-btn', function () {
+    var networkType = jQuery(this).attr('data-network-type');
+    jQuery('.b2s-edit-template-post-content[data-network-type="' + networkType + '"]').val("");
+    jQuery('.b2s-edit-template-post-content').focus();
+    jQuery('.b2s-edit-template-post-content').trigger('keyup');
+    event.preventDefault();
+    return false;
+});
+
+// Edit Template - Range Input Validation
+jQuery(document).on('keyup', '.b2s-edit-template-range', function () {
+    if (isNaN(parseInt(jQuery(this).val())) || parseInt(jQuery(this).val()) < 1) {
+        jQuery(this).val("1");
+    }
+    if (jQuery(this).attr('max') > 0 && parseInt(jQuery(this).val()) > jQuery(this).attr('max')) {
+        jQuery(this).val(jQuery(this).attr('max'));
+    }
+    event.preventDefault();
+    return false;
+});
+
+// Edit Template - Excerpt Range Input Validation
+jQuery(document).on('keyup', '.b2s-edit-template-excerpt-range', function () {
+    if (isNaN(parseInt(jQuery(this).val())) || parseInt(jQuery(this).val()) < 1) {
+        jQuery(this).val("1");
+    }
+    if (jQuery(this).attr('max') > 0 && parseInt(jQuery(this).val()) > jQuery(this).attr('max')) {
+        jQuery(this).val(jQuery(this).attr('max'));
+    }
+    event.preventDefault();
+    return false;
+});
+
+// Edit Template - Comment Range Input Validation
+jQuery(document).on('keyup', '.b2s-edit-template-range-comment', function () {
+    if (isNaN(parseInt(jQuery(this).val())) || parseInt(jQuery(this).val()) < 1) {
+        jQuery(this).val("1");
+    }
+    if (jQuery(this).attr('max') > 0 && parseInt(jQuery(this).val()) > jQuery(this).attr('max')) {
+        jQuery(this).val(jQuery(this).attr('max'));
+    }
+    event.preventDefault();
+    return false;
+});
+
+// Edit Template - Comment Excerpt Range Input Validation
+jQuery(document).on('keyup', '.b2s-edit-template-excerpt-range-comment', function () {
+    if (isNaN(parseInt(jQuery(this).val())) || parseInt(jQuery(this).val()) < 1) {
+        jQuery(this).val("1");
+    }
+    if (jQuery(this).attr('max') > 0 && parseInt(jQuery(this).val()) > jQuery(this).attr('max')) {
+        jQuery(this).val(jQuery(this).attr('max'));
+    }
+    event.preventDefault();
+    return false;
+});
+
+// Edit Template - Range Change Handler
+jQuery(document).on('change', '.b2s-edit-template-range', function () {
+    jQuery('.b2s-edit-template-post-content').trigger('keyup');
+});
+
+// Edit Template - Excerpt Range Change Handler
+jQuery(document).on('change', '.b2s-edit-template-excerpt-range', function () {
+    jQuery('.b2s-edit-template-post-content').trigger('keyup');
+});
+
+// Edit Template - Comment Range Change Handler
+jQuery(document).on('change', '.b2s-edit-template-range-comment', function () {
+    jQuery('.b2s-edit-template-comment').trigger('keyup');
+});
+
+// Edit Template - Comment Excerpt Range Change Handler
+jQuery(document).on('change', '.b2s-edit-template-excerpt-range-comment', function () {
+    jQuery('.b2s-edit-template-comment').trigger('keyup');
+});
+
+// Edit Template - Load Default
+jQuery(document).on('click', '.b2s-edit-template-load-default', function () {
+    jQuery('.b2s-edit-template-content').hide();
+    jQuery('.b2s-edit-template-save-btn').hide();
+    jQuery('.b2s-edit-template-save-success').hide();
+    jQuery('.b2s-edit-template-save-failed').hide();
+    jQuery('.b2s-loading-area').show();
+    var networkType = jQuery(this).attr('data-network-type');
+
+    jQuery.ajax({
+        url: ajaxurl,
+        type: "POST",
+        dataType: "json",
+        cache: false,
+        data: {
+            'action': 'b2s_load_default_post_template',
+            'networkId': jQuery('#b2s-edit-template-network-id').val(),
+            'networkType': networkType,
+            'b2s_security_nonce': jQuery('#b2s_security_nonce').val()
+        },
+        error: function () {
+            jQuery('.b2s-loading-area').hide();
+            jQuery('.b2s-edit-template-content').show();
+            jQuery('.b2s-edit-template-save-btn').show();
+            jQuery('.b2s-edit-template-load-default-failed').show();
+            return false;
+        },
+        success: function (data) {
+            jQuery('.b2s-loading-area').hide();
+            jQuery('.b2s-edit-template-content').show();
+            jQuery('.b2s-edit-template-save-btn').show();
+            if (data.result == true) {
+                jQuery('.b2s-template-tab-' + networkType).html(data.html);
+            } else {
+                if (data.error == 'nonce') {
+                    jQuery('.b2s-nonce-check-fail').show();
+                }
+                jQuery('.b2s-edit-template-load-default-failed').show();
+            }
+        }
+    });
+});
+
+// Edit Template - Save Button
+jQuery(document).on('click', '.b2s-edit-template-save-btn', function () {
+
+    if (jQuery('#b2sUserVersion').val() < 1 && jQuery('#b2s-edit-template-network-id').val() != 1 && jQuery('#b2s-edit-template-network-id').val() != 3 && jQuery('#b2s-edit-template-network-id').val() != 19) {
+        return false;
+    }
+
+    if (jQuery('#b2s-edit-template-network-id').val() == 12) {
+        var matches = jQuery('.b2s-edit-template-post-content').val().match(/#/g);
+        if (matches != null && matches.length > 30) {
+            jQuery('.b2s-edit-template-post-content').addClass('error');
+            jQuery('.b2s-edit-template-hashtag-warning').show();
+            return false;
+        } else {
+            jQuery('.b2s-edit-template-post-content').removeClass('error');
+            jQuery('.b2s-edit-template-hashtag-warning').hide();
+        }
+    }
+
+    jQuery('.b2s-edit-template-content').hide();
+    jQuery('.b2s-edit-template-save-btn').hide();
+    jQuery('.b2s-edit-template-save-success').hide();
+    jQuery('.b2s-edit-template-save-failed').hide();
+    jQuery('.b2s-loading-area').show();
+
+    template_data = {};
+
+    jQuery('.b2s-edit-template-post-content').each(function (i, obj) {
+        var networkType = jQuery(obj).attr('data-network-type');
+        template_data[networkType] = {};
+        if (jQuery('.b2s-edit-template-multi-kind[data-network-type="' + networkType + '"]').val() == 1) {
+            template_data[networkType]['multi_kind'] = 1;
+            template_data[networkType]['type_kind'] = {};
+            jQuery('.b2s-edit-template-range[data-network-type="' + networkType + '"]').each(function (index) {
+                var type_kind = jQuery(this).data('network-type-kind');
+                template_data[networkType]['type_kind'][type_kind] = {};
+                template_data[networkType]['type_kind'][type_kind]['range_max'] = jQuery(this).val();
+                template_data[networkType]['type_kind'][type_kind]['excerpt_range_max'] = jQuery('.b2s-edit-template-excerpt-range[data-network-type="' + networkType + '"][data-network-type-kind="' + type_kind + '"]').val();
+            });
+        } else {
+            template_data[networkType]['multi_kind'] = 0;
+            template_data[networkType]['range_max'] = jQuery('.b2s-edit-template-range[data-network-type="' + networkType + '"]').val();
+            template_data[networkType]['excerpt_range_max'] = jQuery('.b2s-edit-template-excerpt-range[data-network-type="' + networkType + '"]').val();
+        }
+
+        template_data[networkType]['format'] = jQuery('.b2s-edit-template-post-format[data-network-type="' + networkType + '"]').val();
+        template_data[networkType]['content'] = jQuery('.b2s-edit-template-post-content[data-network-type="' + networkType + '"]').val();
+        
+        // Save default comment for networks that support comments
+        if (typeof jQuery('.b2s-edit-template-comment[data-network-type="' + networkType + '"]') != "undefined") {
+            var defaultCommentValue = jQuery('.b2s-edit-template-comment[data-network-type="' + networkType + '"]').val();
+            if (defaultCommentValue !== undefined) {
+                template_data[networkType]['comment'] = defaultCommentValue;
+            }
+            
+            // Save comment character limits
+            var commentRangeMax = jQuery('.b2s-edit-template-range-comment[data-network-type="' + networkType + '"]').val();
+            var commentExcerptRangeMax = jQuery('.b2s-edit-template-excerpt-range-comment[data-network-type="' + networkType + '"]').val();
+            if (commentRangeMax !== undefined && commentExcerptRangeMax !== undefined) {
+                template_data[networkType]['comment_range_max'] = commentRangeMax;
+                template_data[networkType]['comment_excerpt_range_max'] = commentExcerptRangeMax;
+            }
+        }
+        
+        if (jQuery('#b2s-edit-template-network-id').val() == 2 || jQuery('#b2s-edit-template-network-id').val() == 45){
+            if (jQuery('.b2s-twitter-thread[data-network-type="' + networkType + '"]').is(':checked')) {
+                template_data[networkType]['twitterThreads'] = true;
+            }else{
+                template_data[networkType]['twitterThreads'] = false;
+            }
+        }
+
+        if (typeof jQuery('.b2s-edit-template-enable-link') != "undefined") {
+            if (jQuery('.b2s-edit-template-enable-link[data-network-type="' + networkType + '"]').is(':checked')) {
+                template_data[networkType]['addLink'] = true;
+            } else {
+                template_data[networkType]['addLink'] = false;
+            }
+        }
+        if (jQuery('.b2s-edit-template-share-as-story[data-network-type="' + networkType + '"]').length) {
+            if (jQuery('.b2s-edit-template-share-as-story[data-network-type="' + networkType + '"]').is(':checked')) {
+                template_data[networkType]['share_as_story'] = 1;
+            } else {
+                template_data[networkType]['share_as_story'] = 0;
+            }
+        }
+        if (jQuery('#b2s-edit-template-network-id').val() == 12) {
+            if (jQuery('.b2s-edit-template-shuffle-hashtags[data-network-type="' + networkType + '"]').is(':checked')) {
+                template_data[networkType]['shuffleHashtags'] = true;
+            } else {
+                template_data[networkType]['shuffleHashtags'] = false;
+            }
+            template_data[networkType]['frameColor'] = jQuery('#b2s-edit-template-colorpicker').val();
+        }
+    });
+
+
+    jQuery.ajax({
+        url: ajaxurl,
+        type: "POST",
+        dataType: "json",
+        cache: false,
+        data: {
+            'action': 'b2s_save_post_template',
+            'template_data': template_data,
+            'networkId': jQuery('#b2s-edit-template-network-id').val(),
+            'link_no_cache': (jQuery("#link-no-cache").is(':checked') ? '1' : '0'),
+            'b2s_security_nonce': jQuery('#b2s_security_nonce').val()
+        },
+        error: function () {
+            jQuery('.b2s-loading-area').hide();
+            jQuery('.b2s-edit-template-content').show();
+            jQuery('.b2s-edit-template-save-btn').show();
+            jQuery('.b2s-edit-template-save-failed').show();
+            return false;
+        },
+        success: function (data) {
+            jQuery('.b2s-loading-area').hide();
+            jQuery('.b2s-edit-template-content').show();
+            jQuery('.b2s-edit-template-save-btn').show();
+            if (data.result == true) {
+            
+            var networkId= jQuery('#b2s-edit-template-network-id').val();
+            var activeTemplateType= getActiveTemplateType();
+            if(networkId == 12){
+                activeTemplateType = 1;
+            }
+
+            //Update the ship items with new template values
+            var authIdsToReload= getAuthIdsFromNetwork(networkId, activeTemplateType);
+                authIdsToReload.forEach(dataNetworkAuthId => {
+
+                    var chosenPostFormat = null;
+               
+                    if (template_data &&template_data[activeTemplateType] &&template_data[activeTemplateType]['format']){
+                        chosenPostFormat = template_data[activeTemplateType]['format'];
+                    }
+                    
+                    triggerReloadShipItem(dataNetworkAuthId, chosenPostFormat);
+    
+                });
+
+                jQuery('.b2s-edit-template-save-success').show();
+                setTimeout(function () {
+                    jQuery('.b2s-edit-template-save-success').fadeOut();
+                }, 3000);
+                jQuery('#b2s-edit-template').modal('hide');
+            } else {
+                if (data.error == 'nonce') {
+                    jQuery('.b2s-nonce-check-fail').show();
+                }
+                jQuery('.b2s-edit-template-save-failed').show();
+            }
+        }
+    });
+});
+
+function getPostFormatWpType(networkId, networkType){
+
+       var el = jQuery(
+        '.b2s-user-network-settings-post-format-area' +
+        '[data-network-id="' + networkId + '"]' +
+        '[data-network-type="' + networkType + '"]'
+    );
+
+    if (el.length > 0) {
+        return el.attr('data-post-wp-type');
+    }
+
+    return null; 
+   
+}
+
+function getPostFormatTypeByNetwork(networkId, networkType) {
+    var el = jQuery(
+        '.b2s-user-network-settings-post-format-area' +
+        '[data-network-id="' + networkId + '"]' +
+        '[data-network-type="' + networkType + '"]'
+    );
+
+    if (el.length > 0) {
+        return el.attr('data-post-format-type');
+    }
+
+    return null; 
+}
+
+function getActiveTemplateType() {
+
+    // Profile
+    if (jQuery('.b2s-template-profile').closest('li.active').length > 0) {
+        return 0;
+    }
+    // Page
+    if (jQuery('.b2s-template-page').closest('li.active').length > 0) {
+        return 1;
+    }
+    // Group
+    if (jQuery('.b2s-template-group').closest('li.active').length > 0) {
+        return 2;
+    }
+
+    return 0; 
+}
+
+function triggerClickByNetworkType(networkType) {
+
+    if(networkType == 0){
+        
+        jQuery('.b2s-template-profile').tab('show');
+    }
+
+    if(networkType == 1){
+    
+        jQuery('.b2s-template-page').tab('show');
+    }
+
+    if(networkType == 2){
+        
+        jQuery('.b2s-template-group').tab('show');
+    }
+}
+
+function triggerReloadShipItem(authId,chosenPostFormat) {
+
+    var selector = 'div.b2s-network-select-btn'+
+        '[data-network-auth-id="' + authId + '"]';
+
+    var element = jQuery(selector);
+
+    if (element.length > 0) {
+        element.trigger('click',[true, chosenPostFormat]);
+        return true;
+    }
+
+    return false;
+}
+
+function getAuthIdsFromNetwork(networkId, activeTemplateType) {
+    var ids = [];
+
+    jQuery('div.b2s-post-item[data-network-id="' + networkId + '"][data-network-type="' + activeTemplateType + '"]:visible').each(function () {
+        var authId = jQuery(this).attr('data-network-auth-id');
+        if (authId && ids.indexOf(authId) === -1) {
+            ids.push(authId);
+        }
+    });
+
+    return ids;
+}
+
+document.addEventListener('dragstart', function (event) {
+    event.dataTransfer.setData('Text', event.target.innerHTML);
+});
+
+document.addEventListener('drop', function (event) {
+    setTimeout(function () {
+        jQuery('.b2s-edit-template-post-content').trigger('keyup');
+    }, 0);
+});
+
+jQuery(document).on('mousedown mouseup keydown keyup', '.b2s-edit-template-post-content', function () {
+    var tb = jQuery(this).get(0);
+    jQuery('.b2s-edit-template-content-selection-start[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(tb.selectionStart);
+    jQuery('.b2s-edit-template-content-selection-end[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(tb.selectionEnd);
+});
+
+jQuery(document).on('keyup', '.b2s-edit-template-post-content', function () {
+    var post = generateExamplePost(
+        jQuery(this).val().replace(/\n/g, "<br>"),
+        jQuery('.b2s-edit-template-range[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val(),
+        jQuery('.b2s-edit-template-excerpt-range[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').val()
+    );
+    jQuery('.b2s-edit-template-preview-content[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').html(post);
+    if (typeof jQuery('#b2s_post_title').val() != 'undefined' && jQuery('#b2s_post_title').val() != '') {
+        jQuery('.b2s-edit-template-preview-title[data-network-type="' + jQuery(this).attr('data-network-type') + '"]').html(jQuery('#b2s_post_title').val());
+    }
+});
+
+function generateExamplePost(template, content_range, exerpt_range) {
+    if (jQuery('#b2s_use_post').val() == 'true') {
+        var content = '';
+        var exerpt = '';
+        var title = '';
+        var url = '';
+        var author = '';
+        var keywords = '';
+        if (typeof jQuery('#b2s_post_content').val() != 'undefined' && jQuery('#b2s_post_content').val() != '') {
+            content = jQuery('#b2s_post_content').val().substring(0, content_range);
+            content = content.substring(0, content.lastIndexOf(' '));
+        }
+        if (typeof jQuery('#b2s_post_excerpt').val() != 'undefined' && jQuery('#b2s_post_excerpt').val() != '') {
+            exerpt = jQuery('#b2s_post_excerpt').val().substring(0, exerpt_range);
+            exerpt = exerpt.substring(0, exerpt.lastIndexOf(' '));
+        }
+        if (typeof jQuery('#b2s_post_title').val() != 'undefined' && jQuery('#b2s_post_title').val() != '') {
+            title = jQuery('#b2s_post_title').val();
+        }
+        if (typeof jQuery('#b2s_post_url').val() != 'undefined' && jQuery('#b2s_post_url').val() != '') {
+            url = jQuery('#b2s_post_url').val();
+        }
+        if (typeof jQuery('#b2s_post_author').val() != 'undefined' && jQuery('#b2s_post_author').val() != '') {
+            author = jQuery('#b2s_post_author').val();
+        }
+        if (typeof jQuery('#b2s_post_keywords').val() != 'undefined' && jQuery('#b2s_post_keywords').val() != '') {
+            keywords = jQuery('#b2s_post_keywords').val();
+        }
+  
+        template = template.replace(/{CONTENT}/g, content);
+        template = template.replace(/{EXCERPT}/g, exerpt);
+        template = template.replace(/{TITLE}/g, title);
+        template = template.replace(/{URL}/g, url);
+        template = template.replace(/{AUTHOR}/g, author);
+        template = template.replace(/{KEYWORDS}/g, keywords);
+
+    }
+    if (typeof jQuery('.b2s-edit-template-limit').val() != 'undefined' && jQuery('.b2s-edit-template-limit').val() > 0) {
+        if (template.length > jQuery('.b2s-edit-template-limit').val() || jQuery('#b2s-edit-template-network-id').val() == 2 || jQuery('#b2s-edit-template-network-id').val() == 45) {
+            if ((jQuery('#b2s-edit-template-network-id').val() == 2 || jQuery('#b2s-edit-template-network-id').val() == 45) && jQuery('.b2s-edit-template-post-format').val() == 0) {
+                template = template.substring(0, (jQuery('.b2s-edit-template-limit').val() - 24));
+            } else {
+                template = template.substring(0, jQuery('.b2s-edit-template-limit').val());
+            }
+
+            
+            template = template.substring(0, template.lastIndexOf(' '));
+        }
+    }
+
+    //tumblr special preview case
+    if(jQuery('#b2s-edit-template-network-id').val() == 4){
+        var postFormat= jQuery('.b2s-edit-template-post-format').val();
+
+        if(postFormat == 3){
+            template= stripTags(template);
+            template= template.replace(/(\r\n|\n|\r)/gm, '');
+            template = template.substring(0, 125);
+            template = template + "...";
+        }
+
+        if(postFormat ==1){
+            template = title;
+        }else
+        {
+            jQuery('.b2s-edit-template-text-preview-tumblr-title').html(title);
+        }
+        
+        jQuery('.b2s-edit-template-text-preview-tumblr-hashtags').html(keywords);
+
+    }
+    return template;
+}
+
+function updateToggleCommentValue($toggle) {
+    if (!$toggle || $toggle.length === 0) {
+        return;
+    }
+    $toggle.each(function () {
+        var $item = jQuery(this);
+        $item.val($item.is(':checked') ? '1' : '0');
+    });
+}
+
+// Toggle First Comment Field
+jQuery(document).on('change', '.b2s-toggle-comment', function(e) {
+    var authId = jQuery(this).data('network-auth-id');
+    var networkCount = jQuery(this).data('network-count');
+    var commentArea = jQuery('.b2s-comment-area-' + authId + '[data-network-count="' + networkCount + '"]');
+    var isChecked = jQuery(this).is(':checked');
+    
+    // Check if toggle is disabled by story or thread
+    if (jQuery(this).attr('data-disabled-by-story') == 'true' || jQuery(this).attr('data-disabled-by-thread') == 'true') {
+        e.preventDefault();
+        return false;
+    }
+    
+    updateToggleCommentValue(jQuery(this));
+
+    // Toggle the comment area visibility
+    if (isChecked) {
+        commentArea.slideDown(300);
+        var commentTextarea = jQuery('.b2s-post-item-details-item-comment-input[data-network-auth-id="' + authId + '"][data-network-count="' + networkCount + '"]');
+        
+        // When comment is enabled, uncheck and grey out story button
+        var networkId = commentArea.attr('data-network-id');
+        if (jQuery('#is_video').val() == 1 && (networkId == 12 || networkId == 1)) {
+            var storyCheckbox = jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + authId + '"][data-network-count="-1"]');
+            
+            if (storyCheckbox.prop('checked')) {
+                storyCheckbox.prop('checked', false);
+                // Trigger the story unchecked logic to show other fields
+                storyCheckbox.trigger('click'); // This will uncheck it
+                storyCheckbox.prop('checked', false); // Make sure it stays unchecked
+            }
+            
+            // Grey out story option
+            var storyContainer = storyCheckbox.closest('.b2s-share-as-story-fields');
+            storyContainer.css({
+                'opacity': '0.5',
+                'pointer-events': 'none'
+            });
+            storyContainer.attr('data-disabled-by-comment', 'true');
+            storyCheckbox.attr('data-disabled-by-comment', 'true');
+        }
+        
+    } else {
+        // Re-enable story button when comment is hidden (toggle unchecked)
+        commentArea.slideUp(300);
+        var commentTextarea = jQuery('.b2s-post-item-details-item-comment-input[data-network-auth-id="' + authId + '"][data-network-count="' + networkCount + '"]');
+        var networkId = commentArea.attr('data-network-id');
+        if (jQuery('#is_video').val() == 1 && (networkId == 12 || networkId == 1)) {
+            var storyCheckbox = jQuery('.b2s-post-item-option-share-as-story[data-network-auth-id="' + authId + '"][data-network-count="-1"]');
+            var storyContainer = storyCheckbox.closest('.b2s-share-as-story-fields');
+            
+            if (storyContainer.attr('data-disabled-by-comment') == 'true') {
+                storyContainer.css({
+                    'opacity': '1',
+                    'pointer-events': 'auto'
+                });
+                storyContainer.removeAttr('data-disabled-by-comment');
+                storyCheckbox.removeAttr('data-disabled-by-comment');
+            }
+        }
+        
+    }
+});
+
+function enableCommentByThread(networkAuthId, networkCount) {
+    var commentArea = jQuery('.b2s-comment-area-' + networkAuthId + '[data-network-count="' + networkCount + '"]');
+    var toggleBtn = jQuery('.b2s-toggle-comment[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + networkCount + '"]');
+    var commentInput = commentArea.find('.b2s-post-item-details-item-comment-input');
+    
+    // Re-enable if it was disabled by thread
+    if (toggleBtn.attr('data-disabled-by-thread') == 'true') {
+        toggleBtn.removeAttr('data-disabled-by-thread');
+        
+        // Re-enable toggle switch
+        toggleBtn.prop('disabled', false);
+        toggleBtn.removeAttr('data-disabled-by-thread');
+        
+        // If there's a comment value, check toggle and show comment area
+        if (commentInput.val() && commentInput.val().trim() !== '') {
+            if (!commentArea.is(':visible')) {
+                commentArea.slideDown(300);
+                toggleBtn.prop('checked', true);
+                updateToggleCommentValue(toggleBtn);
+            }
+        }
+    }
+
+}
+
+function disableCommentByThread(networkAuthId, networkCount) {
+
+    var commentArea = jQuery('.b2s-comment-area-' + networkAuthId + '[data-network-count="' + networkCount + '"]');
+    var toggleBtn = jQuery('.b2s-toggle-comment[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + networkCount + '"]');
+        
+    // Hide comment area if visible
+    if (commentArea.is(':visible')) {
+        commentArea.slideUp(300);
+        // Uncheck the toggle
+        toggleBtn.prop('checked', false);
+        updateToggleCommentValue(toggleBtn);
+    }
+    
+    // Disable toggle switch
+    toggleBtn.prop('disabled', true);
+    toggleBtn.attr('data-disabled-by-thread', 'true');
+
+}
+
+function disableCommentByStory(networkAuthId, networkCount) {
+    var commentArea = jQuery('.b2s-comment-area-' + networkAuthId + '[data-network-count="' + networkCount + '"]');
+    var toggleBtn = jQuery('.b2s-toggle-comment[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + networkCount + '"]');
+    
+    // Hide comment area if visible
+    if (commentArea.is(':visible')) {
+        commentArea.slideUp(300);
+    }
+
+    
+    // Grey out and disable toggle switch
+    toggleBtn.prop('disabled', true);
+    toggleBtn.prop('checked', false);
+    updateToggleCommentValue(toggleBtn);
+    toggleBtn.attr('data-disabled-by-story', 'true');
+
+}
+
+function enableCommentByStory(networkAuthId, networkCount) {
+    var commentArea = jQuery('.b2s-comment-area-' + networkAuthId + '[data-network-count="' + networkCount + '"]');
+    var toggleBtn = jQuery('.b2s-toggle-comment[data-network-auth-id="' + networkAuthId + '"][data-network-count="' + networkCount + '"]');
+    var commentInput = commentArea.find('.b2s-post-item-details-item-comment-input');
+    
+    // Re-enable if it was disabled by story
+    if (toggleBtn.attr('data-disabled-by-story') == 'true') {
+        toggleBtn.removeAttr('data-disabled-by-story');
+        
+        // Re-enable toggle switch
+        toggleBtn.prop('disabled', false);
+        
+        // If there's a comment value, check the toggle and show comment area
+        if (commentInput.val() && commentInput.val().trim() !== '') {
+            if (!commentArea.is(':visible')) {
+                commentArea.slideDown(300);
+                toggleBtn.prop('checked', true);
+                updateToggleCommentValue(toggleBtn);
+            }
+        }
+    }
+}

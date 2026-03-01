@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Themes - Twenty Twenty-One package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2025-11-07 17:04:30+0000\n"
+"PO-Revision-Date: 2026-02-26 23:02:34+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,17 +18,17 @@ msgid "Twenty Twenty-One is a blank canvas for your ideas and it makes the block
 msgstr "Twenty Twenty-One ist wie eine leere Leinwand für deine Ideen und macht den Block-Editor zu deinem besten Werkzeug. Mit den neuen Block-Vorlagen, mit denen du in Sekundenschnelle ein wunderschönes Layout erstellen kannst, lassen die sanften Farben und das ansprechende - und dennoch zeitlose - Design dieses Themes deine Arbeit erstrahlen. Nutze es für einen kreativen Ausflug! Und sieh, wie Twenty Twenty-One dein Portfolio, deine Business-Website oder deinen persönlichen Blog aufwertet."
 
 #. Theme Name of the theme
-#: style.css classes/class-twenty-twenty-one-dark-mode.php:385
+#: style.css classes/class-twenty-twenty-one-dark-mode.php:390
 #: inc/block-patterns.php:24
 #, gp-priority: high
 msgid "Twenty Twenty-One"
 msgstr "Twenty Twenty-One"
 
-#: inc/template-tags.php:241
+#: inc/template-tags.php:224
 msgid "Older <span class=\"nav-short\">posts</span>"
 msgstr "Ältere <span class=\"nav-short\">Beiträge</span>"
 
-#: inc/template-tags.php:230
+#: inc/template-tags.php:223
 msgid "Newer <span class=\"nav-short\">posts</span>"
 msgstr "Neuere <span class=\"nav-short\">Beiträge</span>"
 
@@ -46,15 +46,15 @@ msgstr "Der Dark Mode ist eine Geräteeinstellung. Wenn ein Besucher deiner Webs
 msgid "Dark Mode can also be turned on and off with a button that you can find in the bottom corner of the page."
 msgstr "Der Dark Mode kann auch mit einem Button in der unteren Ecke der Seite an- und ausgeschaltet werden."
 
-#: classes/class-twenty-twenty-one-dark-mode.php:384
+#: classes/class-twenty-twenty-one-dark-mode.php:389
 msgid "This website uses LocalStorage to save the setting when Dark Mode support is turned on or off.<br> LocalStorage is necessary for the setting to work and is only used when a user clicks on the Dark Mode button.<br> No data is saved in the database or transferred."
 msgstr "Diese Website verwendet LocalStorage, um die Einstellung zu speichern, wenn die Unterstützung für den Dark Mode ein- oder ausgeschaltet wird.<br> LocalStorage ist notwendig, damit die Einstellung funktioniert, und wird nur verwendet, wenn ein Benutzer auf die Schaltfläche Dark Mode klickt.<br> Es werden keine Daten in die Datenbank gespeichert oder übertragen."
 
-#: classes/class-twenty-twenty-one-dark-mode.php:383
+#: classes/class-twenty-twenty-one-dark-mode.php:388
 msgid "Suggested text:"
 msgstr "Vorgeschlagener Text:"
 
-#: classes/class-twenty-twenty-one-dark-mode.php:382
+#: classes/class-twenty-twenty-one-dark-mode.php:387
 msgid "Twenty Twenty-One uses LocalStorage when Dark Mode support is enabled."
 msgstr "Twenty Twenty-One verwendet LocalStorage, wenn die Unterstützung für den Dark Mode aktiviert ist."
 
@@ -79,17 +79,17 @@ msgctxt "Label for sticky posts"
 msgid "Featured post"
 msgstr "Hervorgehobener Beitrag"
 
-#: inc/template-functions.php:424
+#: inc/template-functions.php:431
 msgctxt "Post password form"
 msgid "Submit"
 msgstr "Absenden"
 
-#: inc/template-functions.php:424
+#: inc/template-functions.php:431
 msgctxt "Post password form"
 msgid "Password"
 msgstr "Passwort"
 
-#: inc/template-functions.php:183
+#: inc/template-functions.php:190
 msgctxt "Added to posts and pages that are missing titles"
 msgid "Untitled"
 msgstr "Ohne Titel"
@@ -175,8 +175,8 @@ msgstr "Schreibe einen Kommentar"
 msgctxt "Comments title"
 msgid "%s comment"
 msgid_plural "%s comments"
-msgstr[0] "%s Kommentar"
-msgstr[1] "%s Kommentare"
+msgstr[0] "%s Kommentar"
+msgstr[1] "%s Kommentare"
 
 #: comments.php:34
 msgid "1 comment"
@@ -195,7 +195,7 @@ msgstr "Aus"
 msgid "Dark Mode: %s"
 msgstr "Dark Mode: %s"
 
-#: inc/template-functions.php:422
+#: inc/template-functions.php:429
 msgid "This content is password protected. Please enter a password to view."
 msgstr "Dieser Inhalt ist passwortgeschützt. Bitte gib ein Passwort ein, um ihn anzuzeigen."
 
@@ -221,7 +221,7 @@ msgstr "&#8222;Narzissen&#8220; von Berthe Morisot"
 msgid "&#8220;Roses Trémières&#8221; by Berthe Morisot"
 msgstr "&#8222;Roses Trémières (Stockrosen)&#8220; von Berthe Morisot"
 
-#: inc/template-functions.php:424
+#: inc/template-functions.php:431
 msgctxt "Post password form"
 msgid "Enter"
 msgstr "Absenden"
@@ -423,7 +423,7 @@ msgid "Categorized as %s"
 msgstr "Kategorisiert als %s"
 
 #. translators: Used between list items, there is a space after the comma.
-#: functions.php:653
+#: functions.php:662
 msgid ", "
 msgstr ", "
 
@@ -434,7 +434,7 @@ msgid "Edit %s"
 msgstr "%s bearbeiten"
 
 #. translators: %s: Post title. Only visible to screen readers.
-#: inc/template-functions.php:138
+#: inc/template-functions.php:145
 msgid "Continue reading %s"
 msgstr "%s weiterlesen"
 
@@ -557,7 +557,7 @@ msgstr "Vollständige Größe"
 msgid "Published %s"
 msgstr "Veröffentlicht am %s"
 
-#: comments.php:61 image.php:45 inc/template-tags.php:224
+#: comments.php:61 image.php:45 inc/template-tags.php:228
 #: template-parts/content/content-page.php:33
 #: template-parts/content/content-single.php:27
 #: template-parts/content/content.php:33
@@ -672,7 +672,7 @@ msgstr "Riesig"
 
 #: functions.php:167
 msgid "Extra large"
-msgstr "Extra groß"
+msgstr "Extragroß"
 
 #: functions.php:161
 msgid "Large"
@@ -697,7 +697,7 @@ msgstr "Mit Stolz präsentiert von %s."
 
 #: footer.php:24 functions.php:70 inc/starter-content.php:165
 msgid "Secondary menu"
-msgstr "Untermenü"
+msgstr "Sekundäres Menü"
 
 #: comments.php:78
 msgid "Comments are closed."

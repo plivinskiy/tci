@@ -11,7 +11,7 @@ class DocTemplate{
 
         if($data['doc'] == ''){ 
             echo '<h2>Ooops... You forgot to Select a document. Please select a file or paste a external document link to show here. </h2>';
-        } else{
+        } else {
             // show file name
             if($data['showName']){ echo '<p style="padding-left:10px;">File Name: '. esc_html(basename($data['doc'])) .'</p>';} 
 

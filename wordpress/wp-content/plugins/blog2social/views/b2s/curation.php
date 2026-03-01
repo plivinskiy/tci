@@ -1,5 +1,7 @@
 <?php
-
+if (!defined('ABSPATH')) {
+    exit;
+}
 /**
  * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
  */
@@ -58,6 +60,11 @@ $isImagePro = (B2S_PLUGIN_USER_VERSION < 2) ? ' <span class="label label-success
                         <div id="b2s-curation-saved-draft-info" class="alert alert-success">
                             <span class="glyphicon glyphicon-success glyphicon-ok"></span> <?php esc_html_e('Saved as draft.', 'blog2social'); ?>
                         </div>
+                        <div class="col-xs-12 del-padding-left del-padding-right">
+                            <div id="b2s-curation-customize-no-permission" class="alert alert-info" style="display:none;"><?php echo esc_html__('You need a higher user role to edit this blog post. Please contact your administrator.', 'blog2social'); ?>
+                        </div>
+                        </div>
+
                         <div class="b2s-curation-area">
                             <div class="row">
                                 <div class="col-md-8 col-sm-12">
@@ -110,7 +117,11 @@ $isImagePro = (B2S_PLUGIN_USER_VERSION < 2) ? ' <span class="label label-success
 
                                                             <textarea id="b2s-post-curation-comment-image" class="form-control b2s-post-item-details-item-message-input" name="comment_image" placeholder="<?php esc_html_e('Write something...', 'blog2social'); ?>"></textarea>
                                                             <button type="button" class="btn btn-sm b2s-post-item-details-item-message-emoji-btn"><img src="<?php echo esc_url(plugins_url('/assets/images/b2s-emoji.png', B2S_PLUGIN_FILE)); ?>"/></button>
+                                                            <br>
                                                         </div>
+                                                        <!-- Link field for image posts -->
+                                                        <input type="url" class="form-control b2s-post-item-details-item-link-input" name="b2s-instant-sharing-input-image-link-optional" id="b2s-instant-sharing-input-image-link-optional" value="" placeholder="<?php esc_html_e('Enter link (optional)', 'blog2social'); ?>">
+                                                        <small id="b2s-curation-input-image-link-help" class="form-text text-muted b2s-color-text-grey"><?php esc_html_e('Add an optional link that will be added at the end of your post.', 'blog2social'); ?></small>
                                                     </div>
                                                 </div>
                                                 <div class="clearfix"></div>
@@ -126,7 +137,11 @@ $isImagePro = (B2S_PLUGIN_USER_VERSION < 2) ? ' <span class="label label-success
                                                             <br>
                                                             <textarea id="b2s-post-curation-comment-text" class="form-control b2s-post-item-details-item-message-input" name="comment_text" placeholder="<?php esc_html_e('Write something...', 'blog2social'); ?>"></textarea>
                                                             <button type="button" class="btn btn-sm b2s-post-item-details-item-message-emoji-btn"><img src="<?php echo esc_url(plugins_url('/assets/images/b2s-emoji.png', B2S_PLUGIN_FILE)); ?>"/></button>
+                                                            <br>
                                                         </div>
+                                                        <!-- Link field for text posts -->
+                                                        <input type="url" class="form-control b2s-post-item-details-item-link-input" name="b2s-instant-sharing-input-text-link-optional" id="b2s-instant-sharing-input-text-link-optional" value="" placeholder="<?php esc_html_e('Enter link (optional)', 'blog2social'); ?>">
+                                                        <small id="b2s-curation-input-link-help" class="form-text text-muted b2s-color-text-grey"><?php esc_html_e('Add an optional link that will be added at the end of your post.', 'blog2social'); ?></small>
                                                     </div>
                                                     <div class="clearfix"></div>
                                                 </div>                                    

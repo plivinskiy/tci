@@ -3,8 +3,8 @@ Tags: widgets, blocks, contact form, blog, slider
 Requires at least: 4.2
 Tested up to: 6.9
 Requires PHP: 7.0.0
-Stable tag: 1.70.3
-Build time: 2025-12-04T12:49:40+00:00
+Stable tag: 1.71.0
+Build time: 2026-02-13T17:05:46+00:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -108,6 +108,23 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.71.0 - 13 February 2026 =
+* Accordion: Added a heading title tag option, aligned the default with existing markup, refined title handling, and lazy-loaded embedded iframes.
+* Social Media Buttons: Added the GitLab network and updated the Skype icon to Microsoft branding.
+* General: Widget preview requests now verify user permissions with a shared helper and capability checks.
+* General: Autocomplete fields can send additional request parameters.
+* General: Repeater fields now trigger setup on all visible fields at any nesting level.
+* General: Media fields now hide the image search button when users cannot upload media and skip the library check before opening the search modal.
+* General: Search posts field restored the class wrapper and refined order by handling.
+* General: Updated dependencies, including lodash-es 4.17.23.
+
+= 1.70.4 - 07 January 2026 =
+* Widget Block: Reworked the block editor widget block for Application Programming Interface (API) version 3 support, resolved the apiVersion notice, and added an extra site editor canvas check.
+* Widget Block: Improved preview request handling to abort stale requests per block, allow simultaneous previews, fix the `ajaxurl` value, and prevent missing preview data warnings.
+* Blog: Added the `siteorigin_widgets_blog_pagination_enabled` filter to allow pagination to be disabled.
+* General: Reinitialized media field controls after copying a repeater item to keep them usable.
+* General: Updated the JSON Web Signature (JWS) dependency to 3.2.3.
 
 = 1.70.3 - 04 December 2025 =
 * General: Confirmed compatibility with WordPress 6.9.

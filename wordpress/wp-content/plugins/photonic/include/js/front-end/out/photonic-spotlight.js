@@ -2442,7 +2442,7 @@ class PhotonicSpotlight extends _Lightbox.Lightbox {
           var current = gallery[idx - 1]; // idx is 1-based, not 0-based
 
           var title = document.querySelector("#spotlight .spl-title");
-          title.innerHTML = Util.HTMLSanitizer(current.title);
+          title.innerHTML = Util.HTMLSanitizer.SanitizeHTML(current.title);
           self.setHash(current.deep);
           var shareable = {
             'url': location.href,

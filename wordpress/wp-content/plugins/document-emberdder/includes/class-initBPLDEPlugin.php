@@ -3,21 +3,8 @@
 class BPLDEDocumentEmbedder {
     
     public function __construct() {
-        add_filter( 'plugin_row_meta', [$this, 'pluginRowMeta'], 10, 2 );
         add_action('plugins_loaded', [$this, 'load_dependencies'], 5);
         add_action('init', [$this, 'init']);
-    }
-
-    function pluginRowMeta( $plugin_meta, $plugin_file ) {
-        if ( strpos( $plugin_file, 'document-emberdder' ) !== false && time() < strtotime( '2025-12-06' ) ) {
-            $new_links = array(
-                'deal' => "<a href='https://bplugins.com/coupons/?from=plugins.php&plugin=document-embedder' target='_blank' style='font-weight: 600; color: #146ef5;'>🎉 Black Friday Sale - Get up to 80% OFF Now!</a>"
-            );
-            
-            $plugin_meta = array_merge( $plugin_meta, $new_links );
-        }
-    
-        return $plugin_meta;
     }
 
     public function load_dependencies() {

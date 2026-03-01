@@ -259,7 +259,8 @@ ul.b2s-network-item-auth-list li:last-child{
 
 
 
-.b2s-edit-template-content-post-item {
+.b2s-edit-template-content-post-item,
+.b2s-edit-template-comment-post-item {
     appearance:button;
     -moz-appearance:button; 
     -webkit-appearance:button;
@@ -267,6 +268,7 @@ ul.b2s-network-item-auth-list li:last-child{
     padding: 2px 5px;
     cursor: pointer;
     margin-right: 5px !important;
+    margin-top: 5px;
 }
 
 .b2s-edit-template-preview-profile-img-1 {
@@ -339,6 +341,32 @@ ul.b2s-network-item-auth-list li:last-child{
     font-family: Helvetica, Arial, sans-serif;
     font-size: 14px;
     font-weight: 600;
+}
+
+.b2s-edit-template-comment-section-1 {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e4e6eb;
+}
+
+.b2s-edit-template-preview-comment-img-1 {
+    width: 32px;
+    height: 32px;
+}
+
+.b2s-edit-template-comment-bubble-1 {
+    background-color: #e4e6eb;
+    border-radius: 18px;
+    padding: 8px 12px;
+}
+
+.b2s-edit-template-comment-name-1 {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.b2s-edit-template-preview-comment {
+    font-size: 13px;
 }
 
 .b2s-edit-template-preview-profile-name-7 {

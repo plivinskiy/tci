@@ -6735,6 +6735,11 @@ button.close {
     background-color: #79B232 !important;
 }
 
+.btn-success-assistini-connected{
+    background-color: #79B232 !important;
+    border-color: #79B232 !important;
+}
+
 .btn-primary, .label-primary{
     background-color: #337ab7 !important;
 }
@@ -8219,6 +8224,66 @@ CSS CheckBOX
     text-decoration:none !important;
 }
 
+.b2s-ass-logout-btn {
+    color: #333;
+    background-color: #e6e6e6;
+    border: 1px solid #d4d4d4;
+    border-radius: 18px;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 14px !important;
+    font-weight: bold;
+    padding: 5px 15px;
+    text-decoration: none !important;
+}
+
+.b2s-ass-logout-btn:hover,
+.b2s-ass-logout-btn:focus {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #bfbfbf;
+    text-decoration: none !important;
+}
+
+.b2s-ass-register-btn.b2s-ass-connected,
+.b2s-ass-register-btn.b2s-ass-connected:hover {
+    background-color: transparent !important;
+    border: 0 !important;
+    color: #79B232 !important;
+    opacity: 1 !important;
+    pointer-events: none;
+    cursor: default;
+    font-weight: 600;
+    padding-left: 24px;
+    position: relative;
+}
+
+.b2s-ass-register-btn.b2s-ass-connected::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: #79B232;
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 0 0 rgba(121, 178, 50, 0.6);
+    animation: b2sAssConnectedPulse 1.2s ease-out infinite;
+}
+
+@keyframes b2sAssConnectedPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(121, 178, 50, 0.6);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(121, 178, 50, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(121, 178, 50, 0);
+    }
+}
+
 .b2s-padding-15{
     padding: 15px !important;
 }
@@ -8521,6 +8586,24 @@ CSS CheckBOX
     height: 6px;
     margin-bottom: 1rem;
     border-top: 6px solid #79b331;
+}
+
+.hr-advertising-left.hr-advertising-gradient {
+    border: none !important;
+    background: linear-gradient(to right, #79b331, #c8e6a0) !important;
+}
+
+.hr-advertising-top {
+    margin-inline-start: 0;
+    width: 100%;
+    height: 2px;
+    margin-bottom: 1rem;
+    border-top: 2px solid #79b331;
+}
+
+.hr-advertising-top.hr-advertising-gradient {
+    border: none !important;
+    background: linear-gradient(to right, #79b331, #c8e6a0) !important;
 }
 
 .modal-advertising-body ul {

@@ -1,4 +1,8 @@
 <?php
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 
 /**
  * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
@@ -58,6 +62,7 @@ class B2S_Loader {
         define('B2S_PLUGIN_NETWORK_ALLOW_PROFILE', serialize(array(1, 2, 3, 4, 7, 9, 11, 14, 15, 16, 17, 18, 19, 21, 24, 25, 26, 27, 32, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46)));
         define('B2S_PLUGIN_NETWORK_ALLOW_PAGE', serialize(array(1, 3, 6, 12, 17, 19, 42)));
         define('B2S_PLUGIN_NETWORK_ALLOW_GROUP', serialize(array(11, 17)));
+        define('B2S_PLUGIN_NETWORK_ALLOW_COMMENT',serialize(array(1=>array(1),3,12,43,45))); //just numbers->all types, array->only listed types allowed
         define('B2S_PLUGIN_NETWORK_SUPPORT_VIDEO', serialize(array(1, 2, 3, 4, 6, 7, 12, 32, 35, 36, 38, 39, 44, 45)));
         define('B2S_PLUGIN_NETWORK_SUPPORT_SOCIAL', serialize(array(1, 2, 3, 4, 6, 7, 9, 11, 12, 14, 15, 16, 17, 18, 19, 21, 24, 25, 26, 27, 36, 37, 38, 39, 42, 43, 44, 45, 46)));
         define('B2S_PLUGIN_NETWORK_CROSSPOSTING_LIMIT', serialize(array(19 => array(2 => 3)))); //2=group
@@ -71,20 +76,36 @@ class B2S_Loader {
         define('B2S_PLUGIN_ALLOW_ADD_LINK', serialize(array(1, 2, 3, 12, 43, 44, 45, 46)));
         define('B2S_PLUGIN_REMOVE_PAGE_TITLE', serialize(array('blog2social', 'blog2social-video', 'blog2social-onboarding', 'blog2social-curation', 'blog2social-ship')));
         define('B2S_PLUGIN_CHANGELOG_CONTENT', serialize(array(
-            'version_info' => esc_html__('Blog2Social Version 8.6 (September 2025)', 'blog2social'),
-            'new' => array(esc_html__('TikTok: Post TikTok videos & images faster – Share your visual content directly on TikTok (no extra steps needed) and schedule posts on TikTok for specific dates and times.', 'blog2social'), esc_html__('Video Add-on: Tumblr was added for your video posts', 'blog2social'), esc_html__('Tumbr: Individual templates for links, text and image posts', 'blog2social')),
+            'version_info' => esc_html__('Blog2Social Version 8.8 (February 2025)', 'blog2social'),
+            'new' => array(
+                // translators: %s is a link
+                sprintf(__('First Comment (X, Bluesky, Facebook, Instagram, LinkedIn): Publish clean posts and add links, hashtags, or CTAs right after posting. <a target="_blank" href="%s">Find detailed instructions</a>', 'blog2social'), esc_url(B2S_Tools::getSupportLink('faq_first_comment'))),
+                // translators: %s is a link
+                sprintf(__('WooCommerce: Improve product sharing with richer link preview data (currency, availability, stock) and product details in post templates via shortcodes. <a target="_blank" href="%s">Find detailed instructions</a>', 'blog2social'), esc_url(B2S_Tools::getSupportLink('faq_woocommerce_product_sharing'))),
+                // translators: %s is a link
+                sprintf(__('Auto-Poster: Filter automated posting by categories and tags so only the content you want is shared. <a target="_blank" href="%s">Find detailed instructions</a>', 'blog2social'), esc_url(B2S_Tools::getSupportLink('autopost_checklist_wp'))),
+                // translators: %s is a link
+                sprintf(__('Post Templates: Access and adjust templates directly in the editor view while editing your social media posts. <a target="_blank" href="%s">See how to set this up</a>', 'blog2social'), esc_url(B2S_Tools::getSupportLink('post_templates_without_highlight'))),
+                ),
             'improvements' => array(),
-            'fixed' => array(esc_html__('Tumblr: Post preview optimized', 'blog2social'), esc_html__('Tumblr: Post preview optimized', 'blog2social'), esc_html__('Facebook: Gallery posts fixed', 'blog2social'), esc_html__('Re-sharer: "No post found" fixed', 'blog2social'), esc_html__('Threads: Choose between image and link post', 'blog2social')),
+            'fixed' => array(
+             esc_html__('Meta tags: New info modal to explain preview behavior', 'blog2social'),
+             esc_html__('YouTube: Improved guidance for Shorts', 'blog2social'), 
+             esc_html__('Bug fixes: missing template logos, Free version post-format submission, Assistini error and connection flow', 'blog2social')
+            ), 
             'upcoming' => array()
         )));
 
         define('B2S_PLUGIN_NETWORK_SETTINGS_TEMPLATE_DEFAULT', serialize(array(
-            1 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 200, 'excerpt_range_max' => 400, 'limit' => 500), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 0, 'addLink' => true),
-                1 => array('short_text' => array('active' => 0, 'range_min' => 500, 'range_max' => 1000, 'excerpt_range_min' => 250, 'excerpt_range_max' => 500, 'limit' => 0), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 0, 'addLink' => true)
+            1 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 200, 'excerpt_range_max' => 400, 'limit' => 500), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 0, 'addLink' => true ),
+                       1 => array('short_text' => array('active' => 0, 'range_min' => 500, 'range_max' => 1000, 'excerpt_range_min' => 250, 'excerpt_range_max' => 500, 'limit' => 0), 
+                               'short_comment' => array('active' => 0, 'range_min' => 500, 'range_max' => 1000, 'excerpt_range_min' => 250, 'excerpt_range_max' => 500, 'limit' => 8000), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 0, 'addLink' => true),
             ),
             2 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 254, 'excerpt_range_min' => 200, 'excerpt_range_max' => 254, 'limit' => 280), 'content' => '{CONTENT} {KEYWORDS}', 'format' => 1, 'addLink' => true, 'twitterThreads' => false)),
-            3 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 200, 'excerpt_range_max' => 400, 'limit' => 3000), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 0, 'addLink' => true),
-                1 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 200, 'excerpt_range_max' => 400, 'limit' => 3000), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 0, 'addLink' => true),
+            3 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 200, 'excerpt_range_max' => 400, 'limit' => 3000),
+                               'short_comment' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 200, 'excerpt_range_max' => 400, 'limit' => 1250),'content' => "{CONTENT}\n{KEYWORDS}", 'format' =>  0, 'addLink' => true),
+                       1 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 200, 'excerpt_range_max' => 400, 'limit' => 3000),
+                               'short_comment' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 200, 'excerpt_range_max' => 400, 'limit' => 1250),'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 0, 'addLink' => true),
             ),
             4 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 1000, 'range_max' => 20000, 'excerpt_range_min' => 1000, 'excerpt_range_max' => 20000, 'limit' => 0), 'content' => "{CONTENT}", 'format' => 0, 'separateKeywords' => true)), //tumblr 0->defaults to text/html
             6 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 350, 'range_max' => 421, 'excerpt_range_min' => 350, 'excerpt_range_max' => 421, 'limit' => 495), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => false),
@@ -93,7 +114,8 @@ class B2S_Loader {
             9 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 250, 'excerpt_range_min' => 200, 'excerpt_range_max' => 250, 'limit' => 0), 'content' => '{CONTENT}', 'format' => false, 'disableKeywords' => true)),
             11 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 1000, 'range_max' => 20000, 'excerpt_range_min' => 1000, 'excerpt_range_max' => 20000, 'limit' => 0), 'content' => '{CONTENT}', 'format' => false, 'separateKeywords' => true),
                 2 => array('short_text' => array('active' => 0, 'range_min' => 1000, 'range_max' => 20000, 'excerpt_range_min' => 1000, 'excerpt_range_max' => 20000, 'limit' => 0), 'content' => '{CONTENT}', 'format' => false, 'separateKeywords' => true)),
-            12 => array(1 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 240, 'excerpt_range_max' => 400, 'limit' => 2200), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 1, 'addLink' => false, 'shuffleHashtags' => false, 'framecolor' => '#ffffff')),
+            12 => array(1 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 240, 'excerpt_range_max' => 400, 'limit' => 2200), 
+                                'short_comment' => array('active' => 0, 'range_min' => 200, 'range_max' => 400, 'excerpt_range_min' => 240, 'excerpt_range_max' => 400, 'limit' => 2200), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 1, 'addLink' => false, 'shuffleHashtags' => false, 'framecolor' => '#ffffff')),
             14 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 1000, 'range_max' => 20000, 'excerpt_range_min' => 1000, 'excerpt_range_max' => 20000, 'limit' => 0), 'content' => '{CONTENT}', 'format' => false, 'disableKeywords' => true)),
             15 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 300, 'excerpt_range_min' => 200, 'excerpt_range_max' => 300, 'limit' => 0), 'content' => '{CONTENT}', 'format' => false, 'disableKeywords' => true)),
             16 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 1000, 'range_max' => 1500, 'excerpt_range_min' => 1000, 'excerpt_range_max' => 1500, 'limit' => 0), 'content' => '{CONTENT}', 'format' => false, 'disableKeywords' => true)),
@@ -113,9 +135,11 @@ class B2S_Loader {
             39 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 0, 'range_max' => 2000, 'excerpt_range_min' => 0, 'excerpt_range_max' => 2000, 'limit' => 2000), 'content' => "{TITLE} {CONTENT}", 'format' => false, 'disableKeywords' => true)),
             42 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 0, 'range_max' => 1000, 'excerpt_range_min' => 0, 'excerpt_range_max' => 2000, 'limit' => 0), 'content' => "{CONTENT}", 'format' => false, 'addLink' => true),
                 1 => array('short_text' => array('active' => 0, 'range_min' => 0, 'range_max' => 1000, 'excerpt_range_min' => 0, 'excerpt_range_max' => 2000, 'limit' => 0), 'content' => "{CONTENT}", 'format' => false, 'addLink' => true)),
-            43 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 300, 'excerpt_range_min' => 200, 'excerpt_range_max' => 300, 'limit' => 300), 'content' => '{CONTENT} {KEYWORDS}', 'format' => 1, 'addLink' => true)),
+            43 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 300, 'excerpt_range_min' => 200, 'excerpt_range_max' => 300, 'limit' => 300),
+                                 'short_comment'=> array('active' => 0, 'range_min' => 200, 'range_max' => 300, 'excerpt_range_min' => 200, 'excerpt_range_max' => 300, 'limit' => 300),'content' => '{CONTENT} {KEYWORDS}', 'format' => 1, 'addLink' => true)),
             44 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 0, 'range_max' => 500, 'excerpt_range_min' => 0, 'excerpt_range_max' => 500, 'limit' => 500), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => 1, 'addLink' => true)),
-            45 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 254, 'excerpt_range_min' => 200, 'excerpt_range_max' => 254, 'limit' => 280), 'content' => "{CONTENT} {KEYWORDS}", 'format' => 1, 'addLink' => true, 'twitterThreads' => false)),
+            45 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 254, 'excerpt_range_min' => 200, 'excerpt_range_max' => 254, 'limit' => 280), 
+                                'short_comment' => array('active' => 0, 'range_min' => 200, 'range_max' => 254, 'excerpt_range_min' => 200, 'excerpt_range_max' => 254, 'limit' => 280),'content' => "{CONTENT} {KEYWORDS}", 'format' => 1, 'addLink' => true, 'twitterThreads' => false)),
             46 => array(0 => array('short_text' => array('active' => 0, 'range_min' => 200, 'range_max' => 600, 'excerpt_range_min' => 500, 'excerpt_range_max' => 2000, 'limit' => 0), 'content' => "{CONTENT}\n{KEYWORDS}", 'format' => false, 'addLink' => true)),
         )));
 
@@ -674,13 +698,10 @@ class B2S_Loader {
     }
 
     public function b2s_save_post_box() {
-
         if (isset($_POST['b2s-meta-box-nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['b2s-meta-box-nonce'])), 'b2s-meta-box-nonce-post-area') && isset($_POST['post_ID']) && !wp_is_post_autosave((int) $_POST['post_ID'])) {
-
             if (!isset($_POST['wphb-clear-cache'])) {  // WP-Hummingbird  BTN clear cache - protection
                 if (!isset($_POST['wp-preview']) || (isset($_POST['wp-preview']) && sanitize_text_field(wp_unslash($_POST['wp-preview'])) != 'dopreview')) {
                     if (isset($_POST['post_ID']) && (int) $_POST['post_ID'] > 0) {
-
                         //Gutenberg WP V5.0 - B2S V5.1.0 optimization
                         if (!isset($_POST['post_title']) || !isset($_POST['content'])) {
                             $content = get_post((int) $_POST['post_ID']);
@@ -734,6 +755,72 @@ class B2S_Loader {
 
                         if (isset($_POST['post_ID']) && isset($_POST['user_ID']) && (int) $_POST['post_ID'] > 0 && (int) $_POST['user_ID'] > 0 && (int) $_POST['user_ID'] == B2S_PLUGIN_BLOG_USER_ID && !defined("B2S_SAVE_META_BOX_AUTO_SHARE") && isset($_POST['post_status'])) {
                             $ship = false;
+
+                            // Check category and tag filters for auto-post
+                            $filter = true;
+                            $options = new B2S_Options(B2S_PLUGIN_BLOG_USER_ID);
+                            $optionAutoPost = $options->_getOption('auto_post');
+                            
+                            if ($optionAutoPost !== false && is_array($optionAutoPost)) {
+                                // Check categories filter
+                                if (isset($optionAutoPost['categories_data']) && is_array($optionAutoPost['categories_data']) && !empty($optionAutoPost['categories_data'])) {
+                                    $postcat = get_the_category((int) $_POST['post_ID']);
+                                    if ($postcat != false && is_array($postcat) && !empty($postcat)) {
+                                        $categoryMatch = false;
+                                        foreach ($postcat as $k => $v) {
+                                            if (in_array($v->term_taxonomy_id, $optionAutoPost['categories_data'])) {
+                                                $categoryMatch = true;
+                                                break;
+                                            }
+                                        }
+                                        
+                                        if (isset($optionAutoPost['categories_state']) && (int) $optionAutoPost['categories_state'] == 0) { //include
+                                            if (!$categoryMatch) {
+                                                $filter = false;
+                                            }
+                                        } else { //exclude
+                                            if ($categoryMatch) {
+                                                $filter = false;
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                // Check tags filter
+                                if ($filter && isset($optionAutoPost['tags_data']) && is_array($optionAutoPost['tags_data']) && !empty($optionAutoPost['tags_data'])) {
+                                    $postTags = get_the_tags((int) $_POST['post_ID']);
+                                    if ($postTags != false && is_array($postTags) && !empty($postTags)) {
+                                        $tagMatch = false;
+                                        foreach ($postTags as $k => $v) {
+                                            if (in_array($v->term_taxonomy_id, $optionAutoPost['tags_data'])) {
+                                                $tagMatch = true;
+                                                break;
+                                            }
+                                        }
+                                        
+                                        if (isset($optionAutoPost['tags_state']) && (int) $optionAutoPost['tags_state'] == 0) { //include
+                                            if (!$tagMatch) {
+                                                $filter = false;
+                                            }
+                                        } else { //exclude
+                                            if ($tagMatch) {
+                                                $filter = false;
+                                            }
+                                        }
+                                    } else {
+                                        // If no tags on post and we're in include mode, filter out
+                                        if (isset($optionAutoPost['tags_state']) && (int) $optionAutoPost['tags_state'] == 0) {
+                                            $filter = false;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // If filters do not pass, skip auto-posting
+                            if(!$filter){
+                                return;
+                            }
+
                             if (isset($_POST['b2s-enable-auto-post'])) {
                                 if ((int) $_POST['b2s-enable-auto-post'] == 1) {
                                     if ((strtolower(sanitize_text_field(wp_unslash($_POST['post_status']))) == "publish" || strtolower(sanitize_text_field(wp_unslash($_POST['post_status']))) == "future") && isset($_POST['b2s-post-meta-box-profil-dropdown'])) {
@@ -1658,6 +1745,8 @@ class B2S_Loader {
 //PageFunktion
     public function b2sShip() {
         if (B2S_Tools::showNotice() == false) {
+            wp_enqueue_style('B2SCOLORISCSS');
+            wp_enqueue_script('B2SCOLORISJS');
             wp_enqueue_script('B2SVALIDATEJS');
             wp_enqueue_style('B2SFULLCALLENDARCSS');
             wp_enqueue_style('B2SCALENDARCSS');

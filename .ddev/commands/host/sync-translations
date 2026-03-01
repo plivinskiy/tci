@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 
-rsync -avz my.evidew:/data/sites/web/evidenach/www/wp-content/languages/ wordpress/wp-content/languages/
+rsync -avz tci:/kunden/homepages/41/d100076765/htdocs/clickandbuilds/TCIllertissen/wp-content/languages/ wordpress/wp-content/languages/
