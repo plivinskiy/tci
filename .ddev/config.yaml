@@ -1,7 +1,7 @@
 name: tci.develop
 type: wordpress
 docroot: wordpress
-php_version: "7.4"
+php_version: "8.3"
 webserver_type: apache-fpm
 xdebug_enabled: true
 additional_hostnames: []
@@ -16,7 +16,7 @@ web_environment: []
 corepack_enable: false
 hooks:
     post-start:
-        - exec-host: rsync -avz --exclude wp-config.php tci:/kunden/homepages/41/d100076765/htdocs/clickandbuilds/TCIllertissen/ wordpress/
+#        - exec-host: rsync -avz --exclude wp-config.php tci:/kunden/homepages/41/d100076765/htdocs/clickandbuilds/TCIllertissen/ wordpress/
     post-import-db:
         - exec: wp --path='/var/www/html/wordpress' search-replace https://www.tc-illertissen.de/ https://tci.develop.ddev.site/
         - exec: wp --path='/var/www/html/wordpress' search-replace https://tc-illertissen.de/ https://tci.develop.ddev.site/

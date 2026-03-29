@@ -1,0 +1,84 @@
+@charset "UTF-8";
+
+.meta-data > div > span.comments_post i,
+.meta-data > div > span.post_views i{
+    display: inline-block;
+}
+.wgl-video_popup .videobox_icon {
+    transform: translate(60%, -50%);
+}
+.wgl-image_comparison.cocoen{
+    direction: ltr;
+}
+.wgl-image_comparison.cocoen > div{
+    left: 0;
+    right: auto;
+}
+.wgl-image_comparison.cocoen .cocoen-drag{
+    left: 50%;
+    margin-left: -1px;
+}
+.wgl-pagination .page .page-numbers.prev i,
+.wgl-pagination .page .post-page-link.prev i,
+.wgl-pagination .post-page-numbers .page-numbers.prev i,
+.wgl-pagination .post-page-numbers .post-page-link.prev i,
+.woocommerce nav.woocommerce-pagination ul li span.prev i,
+.woocommerce nav.woocommerce-pagination ul li a.prev i{
+    transform: scaleX(1);
+}
+.wgl-pagination .page .page-numbers.next i,
+.wgl-pagination .page .post-page-link.next i,
+.wgl-pagination .post-page-numbers .page-numbers.next i,
+.wgl-pagination .post-page-numbers .post-page-link.next i,
+.woocommerce nav.woocommerce-pagination ul li span.next i,
+.woocommerce nav.woocommerce-pagination ul li a.next i{
+    transform: scaleX(-1);
+    display: inline-block;
+}
+.wgl-carousel .slick-next:after{
+    transform: scaleX(-1);
+}
+.wgl-carousel .slick-prev:after {
+    transform: scaleX(1);
+}
+.wgl-countdown .countdown-section .countdown-amount {
+    direction: ltr;
+}
+#scroll_up:empty:after{
+    transform: rotate(90deg) translateX(-2px) translateZ(0);
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0turn);
+    }
+    100% {
+        transform: rotate(1turn);
+    }
+}
+@keyframes scroll_up_anim {
+    0% {
+        transform: rotate(90deg) translateX(-2px) translateZ(0);
+    }
+    50% {
+        transform: rotate(90deg) translateX(2px) translateZ(0);
+    }
+    100% {
+        transform: rotate(90deg) translateX(-2px) translateZ(0);
+    }
+}
+
+/* WooCommerce*/
+.woocommerce .star-rating{
+    letter-spacing: 0 !important;
+    width: 5.25em;
+}
+.woocommerce .woocommerce-product-rating .star-rating{
+    width: 5.25em;
+}
+
+/* Swiper */
+.swiper-pagination-progressbar .swiper-pagination-progressbar-fill{
+    transform-origin: right top;
+    right: 0;
+}

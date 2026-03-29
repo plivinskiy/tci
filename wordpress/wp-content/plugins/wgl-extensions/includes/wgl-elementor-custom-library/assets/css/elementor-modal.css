@@ -1,0 +1,113 @@
+#wgl-elementor-custom-library-modal p {
+	margin: 1em 0;
+}
+
+#wgl-elementor-custom-library {
+    text-align: left;
+}
+
+#wgl-elementor-custom-library input[type=checkbox]:checked:before {
+	margin: -5px 0 0 -9px;
+}
+
+#wgl-elementor-custom-library label {
+	cursor: pointer;
+}
+
+#wgl-elementor-custom-library-modal .dialog-message {
+    padding: 0;
+}
+
+#wgl-elementor-custom-library > div {
+	margin: 0;
+}
+
+#wgl-elementor-custom-library-modal .wgl-elementor-custom-library-notices p {
+	margin: 0;
+}
+
+.elementor-add-wgl-elementor-custom-library-button {
+	background-color: transparent !important;
+	background-image: url('../img/icon-btn.svg');
+	background-repeat: no-repeat;
+	background-size: 40px;
+	background-position: center;
+	border-radius: 0 !important;
+}
+
+.dialog-widget.wgl-elementor-custom-library-notice,
+.elementor-panel .wgl-elementor-custom-library-notice {
+	display: inline-block;
+	padding: 10px;
+	line-height: 1.4;
+	font-size:12px;
+	font-style:normal;
+	color: rgba(0, 0, 0, 0.7) !important;
+	background: #EFEFEF !important;
+	border-radius: 4px;
+}
+
+.dialog-widget.wgl-elementor-custom-library-notice a,
+.elementor-panel .wgl-elementor-custom-library-notice a {
+	text-decoration: underline;
+}
+
+.dialog-widget.wgl-elementor-custom-library-notice a:hover,
+.elementor-panel .wgl-elementor-custom-library-notice a:hover {
+	text-decoration: none;
+}
+
+.dialog-widget.wgl-elementor-custom-library-notice {
+	padding: 10px !important;
+	left: 10px !important;
+	width: 260px !important;
+}
+
+.dialog-widget.wgl-elementor-custom-library-notice.description,
+.elementor-panel .wgl-elementor-custom-library-notice.description {
+	width: 100%;
+	background: #E6F6FF !important;
+}
+
+.dialog-widget.wgl-elementor-custom-library-notice.description a,
+.elementor-panel .wgl-elementor-custom-library-notice.description a{
+	color: currentColor;
+}
+
+.wgl-elementor-custom-library-description-wide .elementor-control-field-description {
+	display: block;
+}
+
+.sub-arrow + .sub-arrow {
+	display: none;
+}
+
+#elementor-template-library-save-template #elementor-template-library-save-template-form {
+	position: relative;
+}
+
+#elementor-template-library-save-template .wgl-elementor-custom-library-template-syncer:not(.with-sources) {
+	position: absolute;
+	bottom: -50px;
+	height: auto;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+#elementor-template-library-save-template .wgl-elementor-custom-library-template-syncer.with-sources .wgl-elementor-custom-library-template-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+#elementor-template-library-save-template .wgl-elementor-custom-library-template-description {
+	text-align: left;
+    margin-top: 4px;
+    font-size: 14px;
+    font-style: italic;
+}
+
+#elementor-template-library-modal .dialog-message {
+    overflow-y: scroll !important;
+}

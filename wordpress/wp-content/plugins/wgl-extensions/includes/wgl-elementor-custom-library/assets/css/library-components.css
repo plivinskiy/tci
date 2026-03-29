@@ -1,0 +1,415 @@
+#wgl-elementor-custom-library{
+	position: relative;
+}
+.wgl-elementor-library-wrapper {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	padding: 20px;
+}
+.wgl-elementor-custom-library__header .components-button{
+	color: #fff;
+	padding: 0;
+	height: auto;
+	box-shadow: none;
+	border: 0;
+}
+.wgl-elementor-custom-library__header .components-button:hover:not(:disabled),
+.wgl-elementor-custom-library__header .components-button:focus:not(:disabled),
+.wgl-elementor-custom-library__header .components-button:active:not(:disabled){
+	color: #fff;
+	outline: none;
+	box-shadow: none;
+	border: 0;
+}
+.wgl-elementor-custom-library__header .components-button.wgl-elementor-custom-library-sync{
+	margin-right: 16px;
+}
+.wgl-elementor-custom-library__header .components-button.wgl-elementor-custom-library-sync.is-active {
+	animation: wgl-library-spin 1s linear infinite;
+}
+
+@keyframes wgl-library-spin {
+	to {
+		transform: rotate(1turn)
+	}
+}
+#wgl-elementor-custom-library .wgl-elementor-custom-library-notices {
+	position: absolute;
+	z-index: 10000;
+	right: 0;
+	top: 0;
+	display: none;
+}
+
+.wgl-elementor-custom-library__toolbar{
+	align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item{
+    font-size: 11px;
+	text-transform: uppercase;
+	color: var(--e-a-color-txt);
+	transition: all .45s;
+	padding: 0;
+	height: auto !important;
+	margin-right: 22px;
+}
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item:after{
+	display: none;
+}
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item.tab-favorites{
+    order: 9999999999;
+    margin-right: 0;
+    padding-left: 21px;
+	margin-left: 20px;
+    text-align: left;
+}
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item.tab-favorites:only-child{
+	margin-left: 0;
+}
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item.tab-favorites:only-child:after{
+	display: none;
+}
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item.tab-favorites:after{
+	content: '';
+    border-left: 1px solid var(--e-a-border-color);
+    position: absolute;
+    left: -20px;
+    top: 0;
+    display: block;
+    right: auto;
+    width: 1px;
+    height: 100%;
+    background: none;
+}
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item.tab-favorites:before{
+	display: inline-block;
+    font-family: eicons;
+    font-size: inherit;
+    font-weight: 400;
+    font-style: normal;
+    font-variant: normal;
+    line-height: 1;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+	content: "\e923";
+	position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item.active-tab,
+.wgl-elementor-custom-library__toolbar .block-categories-tabs .components-tab-panel__tabs-item:hover{
+	color: var(--e-a-color-txt-active);
+}
+
+.wgl-elementor-custom-library__toolbar.no-templates + .wgl-elementor-custom-library__templates .empty-container,
+.wgl-elementor-custom-library__templates .empty-container{
+    padding: 10px 15px;
+}
+.wgl-elementor-custom-library__toolbar.no-templates + .wgl-elementor-custom-library__templates .empty-container p,
+.wgl-elementor-custom-library__templates .empty-container p{
+    margin: 0 !important;
+    font-size: 16px;
+}
+.wgl-elementor-custom-library__templates{
+	margin: 10px -15px 0;
+	align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+}
+.wgl-elementor-custom-library__templates .wgl-elementor-custom-library-template{
+	width:calc(25% - 30px)
+}
+.wgl-elementor-custom-library__templates .wgl-elementor-custom-library-template > div{
+    margin: calc(30px / 2);
+}
+.wgl-elementor-custom-library__templates .wgl-elementor-custom-library-template > div:hover .wgl-elementor-library-template-body .actions{
+	opacity: 1;
+}
+
+.wgl-elementor-custom-library-template > div > div{
+	background: transparent;
+    box-shadow: none;
+}
+.wgl-elementor-custom-library-template .components-card__body{
+	border-radius: 0;
+	padding: 0;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--e-a-border-color);
+    border-radius: 3px;
+    padding: 8px;
+}
+.wgl-elementor-custom-library-template img{
+	border: none;
+    border-radius: 0;
+    box-shadow: none;
+    height: auto;
+    max-width: 100%;
+}
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body{
+	position: relative;
+	line-height: 0;
+    min-height: 65px;
+}
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body .actions{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+	background-color: rgba(0, 0, 0, .5);
+    inset: 0;
+    transition: opacity .5s;
+	opacity: 0;
+}
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body .actions a:hover,
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body .actions a:focus,
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body .actions a:active,
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body .actions button:hover,
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body .actions button:focus,
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body .actions button:active{
+	border: 0;
+    outline: none;
+    box-shadow: none;
+	background: none;
+	border: 0;
+}
+
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body a{
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	display: block;
+}
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-body button{
+	background: none;
+    font-size: 15px;
+    color: #fff;
+    fill: #fff;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+	border: 0; 
+	display: block;
+	transition: all .45s;
+	outline: none;
+}
+
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-footer{
+    align-items: center;
+    display: flex;
+    font-size: 11px;
+    height: 40px;
+    justify-content: space-between;
+    line-height: 1;
+    background-color: var(--e-a-bg-default);
+    bottom: 0;
+    left: 0;
+    padding: 10px;
+    position: absolute;
+    transition: transform .5s;
+    width: 100%;
+}
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-footer .template-insert{
+    background-color: var(--e-a-btn-bg-primary);
+    color: var(--e-a-btn-color);
+    border: none;
+    border-radius: var(--e-a-border-radius);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    outline: none;
+    padding: 8px 16px;
+    transition: var(--e-a-transition-hover);
+    height: auto;
+}
+
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-footer .template-insert:hover:not(:disabled),
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-footer .template-insert:focus:not(:disabled),
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-footer .template-insert:active:not(:disabled){
+	background-color: var(--e-a-btn-bg-primary-hover);
+    color: var(--e-a-btn-color);
+	box-shadow: none;
+	outline: none;
+}
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-footer .wgl-elementor-library-template-name{
+	flex-grow: 1;
+    overflow: hidden;
+    padding-inline-end: 5px;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	color: var(--e-a-color-txt);
+    display: none;
+}
+
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-footer .favorite{
+	margin-inline-start: auto;
+	background: none;
+    border: 0;
+    outline: none;
+	cursor: pointer;
+}
+
+.wgl-elementor-custom-library-template .wgl-elementor-library-template-footer .favorite.is-active i:before{ 
+    color: var(--e-a-color-primary-bold);
+    content: "\e93f";
+}
+
+.wgl-elementor-custom-library-template > div:not(:hover) .wgl-elementor-library-template-footer{
+    transform: translateY(100%);
+}
+.wgl-elementor-custom-library-template > div:not(:hover) .wgl-elementor-library-template-footer .template-insert,
+.wgl-elementor-custom-library-template > div:not(:hover) .wgl-elementor-library-template-footer .favorite{
+	display: none;
+}
+.wgl-elementor-custom-library-template > div:hover .wgl-elementor-library-template-footer .wgl-elementor-library-template-name{
+	display: none;
+}
+
+.wgl-elementor-custom-library .popup-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.62);
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wgl-elementor-custom-library .popup-container .inner{
+    background: #fff;
+    overflow: visible;
+    width: 600px;
+    max-height: 80vh;
+    animation-fill-mode: forwards;
+    animation: sk-popup-anim-1 0.1s ease-out;
+}
+
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    background: #fff;
+}
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-header h1{
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+    margin: 0;
+    padding: 9px 0 4px 0;
+    line-height: 1.3;
+}
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-header button{
+    padding: 0px;
+    margin: 0px;
+    border: none;
+    border-radius: 0px;
+    box-shadow: none;
+    cursor: pointer;
+    appearance: none;
+    outline: 0px;
+    background: transparent;
+    font-weight: bold;
+    color: var(--analog-custom-library-btn-text);
+}
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-header button .elementor-templates-modal__header__close--normal{
+    border: 0;
+    width: auto;
+}
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-content{
+    font-size: 14px;
+    padding-bottom: 20px;
+}
+
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-content .animation-loader{
+    padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 20px;
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-content .animation-loader div{
+	position: absolute;
+	top: 33px;
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	background: #f3bafd;
+	animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-content .animation-loader div:nth-child(1){
+	left: 8px;
+	animation: custom-library-loader-animation1 0.6s infinite;
+}
+
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-content .animation-loader div:nth-child(2){
+	left: 8px;
+	animation: custom-library-loader-animation2 0.6s infinite;
+}
+
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-content .animation-loader div:nth-child(3){
+	left: 32px;
+	animation: custom-library-loader-animation2 0.6s infinite;
+}
+
+.wgl-elementor-custom-library .popup-container .inner .inner-popup-content .animation-loader div:nth-child(4){
+	left: 56px;
+	animation: custom-library-loader-animation3 0.6s infinite;
+}
+
+@keyframes custom-library-loader-animation1 {
+	0% {
+		transform: scale(0);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes custom-library-loader-animation2 {
+	0% {
+		transform: translate(0, 0);
+	}
+	100% {
+		transform: translate(24px, 0);
+	}
+}
+
+@keyframes custom-library-loader-animation3 {
+	0% {
+		transform: scale(1);
+	}
+	100% {
+		transform: scale(0);
+	}
+}
+
+@keyframes sk-popup-anim-1 {
+	from {
+    margin-top: 50px;
+  }
+
+  to {
+    margin-top: 0;
+  }
+}

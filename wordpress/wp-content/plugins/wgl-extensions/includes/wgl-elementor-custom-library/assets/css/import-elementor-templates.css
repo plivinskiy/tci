@@ -1,0 +1,23 @@
+.wgl-import-progress-library {
+    margin-top: 10px;
+    width: 100%;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.wgl-import-progress-library .progress-bar {
+    width: 0;
+    height: 20px;
+    background-color: #2271b1;
+    animation: wgl_progress_library 2s ease-in-out infinite;
+}
+
+@keyframes wgl_progress_library {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%;
+    }
+}

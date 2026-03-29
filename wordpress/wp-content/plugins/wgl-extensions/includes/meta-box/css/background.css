@@ -1,0 +1,39 @@
+.rwmb-background-row {
+	margin-bottom: 5px;
+	display: flex;
+	gap: 5px;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+.rwmb-background-wrapper .wp-picker-container {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+}
+.rwmb-background-wrapper .wp-picker-holder {
+	position: absolute;
+	z-index: 9;
+	min-width: 255px;
+}
+.rwmb-background-wrapper .rwmb-select {
+	flex: 1;
+	margin-bottom: 5px;
+	max-width: 100%;
+}
+.rwmb-wgl_background-wrapper .rwmb-file-input-hidden{
+	display: none;
+}
+
+.rwmb-wgl_background-wrapper .rwmb-file-input-inner{
+    width: 100%;
+    display: block;
+}
+
+.rwmb-wgl_background-wrapper .rwmb-file-input-inner input{
+	width: auto;
+}
+
+#advanced-sortables .rwmb-wgl_background-wrapper .rwmb-background-image .rwmb-file-input-image {
+    display: none;
+}
