@@ -178,6 +178,10 @@ jQuery(document).on('click', '.b2s-re-post-submit-btn', function () {
                     jQuery('.b2s-nonce-check-fail').show();
                     return false;
                 }
+                if (data.error == 'permission_author') {
+                    jQuery('.b2s-no-permission-author').show();
+                    return false;
+                }
                 if (data.error == 'no_content') {
                     jQuery('.b2s-re-post-no-content').show();
                     return false;
@@ -378,6 +382,9 @@ jQuery(document).on('click', '.b2s-sched-delete-confirm-multi-btn', function () 
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
                 }
+                if (data.error == 'permission_author') {
+                    jQuery('.b2s-no-permission-author').show();
+                }
                 jQuery('.b2s-post-remove-fail').show();
             }
             wp.heartbeat.connectNow();
@@ -443,6 +450,9 @@ jQuery(document).on('click', '.b2s-sched-delete-confirm-btn', function () {
             } else {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
+                }
+                if (data.error == 'permission_editor') {
+                    jQuery('.b2s-no-permission-editor').show();
                 }
                 jQuery('.b2s-post-remove-fail').show();
             }
@@ -1075,6 +1085,11 @@ function renderCalender() {
                     'b2s_security_nonce': jQuery('#b2s_security_nonce').val()
                 },
                 success: function (data) {
+                    if (data && data.result === false && data.error == 'permission_author') {
+                        jQuery('.b2s-no-permission-author').show();
+                        revertFunc();
+                        return;
+                    }
                     refreshCalender();
                     wp.heartbeat.connectNow();
                 }

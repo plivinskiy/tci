@@ -862,6 +862,9 @@ jQuery(document).on('click', '.b2s-approve-delete-confirm-btn', function () {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
                 }
+                if (data.error == 'permission_author') {
+                    jQuery('.b2s-no-permission-author').show();
+                }
                 jQuery('.b2s-post-remove-fail').show();
             }
             wp.heartbeat.connectNow();
@@ -928,6 +931,9 @@ jQuery(document).on('click', '.b2s-publish-delete-confirm-btn', function () {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
                 }
+                if (data.error == 'permission_author') {
+                    jQuery('.b2s-no-permission-author').show();
+                }
                 jQuery('.b2s-post-remove-fail').show();
             }
             wp.heartbeat.connectNow();
@@ -976,6 +982,9 @@ jQuery(document).on('click', '.b2s-all-posts-delete-confirm-btn', function () {
             } else {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
+                }
+                if (data.error == 'permission_author') {
+                    jQuery('.b2s-no-permission-author').show();
                 }
                 jQuery('.b2s-post-remove-fail').show();
             }
@@ -1030,6 +1039,9 @@ jQuery(document).on('click', '.b2s-all-sched-posts-delete-confirm-btn', function
             } else {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
+                }
+                if (data.error == 'permission_editor') {
+                    jQuery('.b2s-no-permission-editor').show();
                 }
                 jQuery('.b2s-post-remove-fail').show();
             }
@@ -1410,6 +1422,9 @@ jQuery(document).on('click', '.b2s-draft-delete-confirm-btn', function () {
             } else {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
+                }
+                if (data.error == 'permission_author') {
+                    jQuery('.b2s-no-permission-author').show();
                 }
                 jQuery('.b2s-post-remove-fail').show();
             }

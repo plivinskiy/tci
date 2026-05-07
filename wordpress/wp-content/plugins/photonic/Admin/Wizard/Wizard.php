@@ -427,21 +427,23 @@ class Wizard {
 
 			switch ($field['type']) {
 				case 'text':
-					$ret = "<label class='photonic-flow-option-name'>" . wp_kses_post($field['desc']) . $req . "<input type='text' name='$id' value='" . $default . "' $hint_in/>" . wp_kses_post($hint) . "</label>";
+					$ret = "<label class='photonic-wizard-option-name'>" . wp_kses_post($field['desc']) . $req . "<input type='text' name='$id' value='" . $default . "' $hint_in/>" . wp_kses_post($hint) . "</label>";
 					break;
 
 				case 'radio':
-					$ret = !empty($field['desc']) ? '<div class="photonic-flow-option-name">' . wp_kses_post($field['desc']) . $req . '</div>' : '';
+					$ret = !empty($field['desc']) ? '<div class="photonic-wizard-option-name">' . wp_kses_post($field['desc']) . $req . '</div>' : '';
+					$ret .= "<div class='photonic-flow-field-radio-group'>\n";
 					foreach ($field['options'] as $option_value => $option_description) {
 						$option_condition = (empty($field['option-conditions']) || empty($field['option-conditions'][$option_value])) ? '' :
 							"data-photonic-option-condition='" . wp_json_encode($field['option-conditions'][$option_value]) . "'";
 						$checked = checked($default, $option_value, false);
-						$ret .= "\t<div class='photonic-flow-field-radio'><label><input type='radio' name='$id' value='" . esc_attr($option_value) . "' $checked $option_condition/>" . wp_kses_post($option_description) . "</label></div>\n";
+						$ret .= "\t<div class='photonic-flow-field-radio'><label><input type='radio' name='$id' value='" . esc_attr($option_value) . "' $checked $option_condition />" . wp_kses_post($option_description) . "</label></div>\n";
 					}
+					$ret .= "</div>\n";
 					break;
 
 				case 'select':
-					$ret = "<label class='photonic-flow-option-name'>" . wp_kses_post($field['desc']) . $req . "\n\t<select name='$id' $hint_in>\n";
+					$ret = "<label class='photonic-wizard-option-name'>" . wp_kses_post($field['desc']) . $req . "\n\t<select name='$id' $hint_in>\n";
 					foreach ($field['options'] as $option_value => $option_description) {
 						$option_condition = (empty($field['option-conditions']) || empty($field['option-conditions'][$option_value])) ? '' :
 							"data-photonic-option-condition='" . wp_json_encode($field['option-conditions'][$option_value]) . "'";
@@ -460,7 +462,7 @@ class Wizard {
 					}
 
 					$ret = "<div class='photonic-flow-selector-container photonic-flow-$id' data-photonic-flow-selector-mode='single-no-plus' data-photonic-flow-selector-for=\"$id\">\n<input type=\"hidden\" id=\"$id\" name=\"$id\" value='$selection'/>\n";
-					$ret .= '<div class="photonic-flow-option-name">' . wp_kses_post($field['desc']) . '</div>';
+					$ret .= '<div class="photonic-wizard-option-name">' . wp_kses_post($field['desc']) . '</div>';
 					foreach ($field['options'] as $option_name => $desc) {
 						$option_name = esc_attr($option_name);
 						$esc_desc = esc_attr($desc);
@@ -472,7 +474,7 @@ class Wizard {
 
 				case 'multi-select':
 					$ret = "<div class='photonic-flow-multi-select-container'>\n";
-					$ret .= '<div class="photonic-flow-option-name">' . wp_kses_post($field['desc']) . '</div>';
+					$ret .= '<div class="photonic-wizard-option-name">' . wp_kses_post($field['desc']) . '</div>';
 					$selection = explode(',', $default);
 					foreach ($field['options'] as $option_value => $desc) {
 						$checked = in_array($option_value, $selection, true) ? 'checked' : '';
@@ -483,7 +485,7 @@ class Wizard {
 
 				case 'date-filter':
 					$ret = '';
-					$ret .= '<div class="photonic-flow-option-name">' . wp_kses_post($field['desc']) . '</div>';
+					$ret .= '<div class="photonic-wizard-option-name">' . wp_kses_post($field['desc']) . '</div>';
 					$dates = !empty($default) ? explode(',', $default) : [];
 					$count = isset($field['count']) && is_numeric($field['count']) ? intval($field['count']) : 1;
 					$ret .= "<ol data-photonic-date-filter='$id' data-photonic-filter-count='$count'>\n";
@@ -517,7 +519,7 @@ class Wizard {
 
 				case 'date-range-filter':
 					$ret = '';
-					$ret .= '<div class="photonic-flow-option-name">' . wp_kses_post($field['desc']) . '</div>';
+					$ret .= '<div class="photonic-wizard-option-name">' . wp_kses_post($field['desc']) . '</div>';
 					$date_ranges = !empty($default) ? explode(',', $default) : [];
 					$count = esc_attr(isset($field['count']) && is_numeric($field['count']) ? intval($field['count']) : 1);
 					$ret .= "<ol data-photonic-date-range-filter='$id' data-photonic-filter-count='$count'>\n";
@@ -916,8 +918,12 @@ class Wizard {
 	private function deconstruct_shortcode($input): array {
 		$deconstructed = [];
 		if (!empty($input)) {
+			global $photonic_alternative_shortcode;
+			$shortcode_tag = $photonic_alternative_shortcode ?: 'gallery';
+
 			if ((!empty($input->type) && in_array($input->type, ['wp', 'default', 'flickr', 'smugmug', 'zenfolio'], true)) ||
-				((empty($input->type) && !empty($input->style)) && in_array($input->style, ['square', 'circle', 'random', 'masonry', 'masonry-horizontal', 'mosaic', 'strip-above', 'strip-below', 'strip-right', 'no-strip'], true))
+				((empty($input->type) && !empty($input->style)) && in_array($input->style, ['square', 'circle', 'random', 'masonry', 'masonry-horizontal', 'mosaic', 'strip-above', 'strip-below', 'strip-right', 'no-strip'], true)) ||
+				(empty($input->type) && empty($input->style) && 'gallery' !== $shortcode_tag)
 			) {
 				$deconstructed['provider'] = !empty($input->type) ? $input->type : 'wp';
 

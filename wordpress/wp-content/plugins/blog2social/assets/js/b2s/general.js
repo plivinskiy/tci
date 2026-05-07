@@ -381,13 +381,13 @@ function updateAssConnectButtons(isConnected) {
             if (connectedLabel) {
                 button.text(connectedLabel);
             }
-            button.addClass('btn btn-success-assistini-connected b2s-btn-disabled b2s-ass-connected');
+            button.addClass('btn btn-success-assistini-connected is-connected b2s-btn-disabled b2s-ass-connected');
             button.attr('aria-disabled', 'true');
         } else {
             if (defaultLabel) {
                 button.text(defaultLabel);
             }
-            button.removeClass('btn btn-success-assistini-connected b2s-btn-disabled b2s-ass-connected');
+            button.removeClass('btn btn-success-assistini-connected is-connected b2s-btn-disabled b2s-ass-connected');
             button.removeAttr('aria-disabled');
         }
     });
@@ -396,6 +396,22 @@ function updateAssConnectButtons(isConnected) {
         jQuery('.b2s-ass-logout-btn').show();
     } else {
         jQuery('.b2s-ass-logout-btn').hide();
+    }
+
+    if (isConnected) {
+        jQuery('.b2s-ai-template-connect-gate').hide();
+        jQuery('.b2s-ai-template-config').show();
+        jQuery('.b2s-ai-ass-connected-indicator').show();
+        jQuery('#b2s-global-ai-settings-not-connected-overlay').remove();
+        jQuery('.b2s-ai-template-not-connected-overlay').remove();
+    } else {
+        jQuery('.b2s-ai-template-connect-gate').show();
+        jQuery('.b2s-ai-template-config').hide();
+        jQuery('.b2s-ai-ass-connected-indicator').hide();
+    }
+
+    if (typeof initAiTemplateSettings === 'function') {
+        initAiTemplateSettings(jQuery('.b2s-edit-template-content'));
     }
 }
 
@@ -605,6 +621,41 @@ jQuery(document).on('click', '.b2s-network-auth-info-close', function () {
     jQuery(this).closest('.b2s-network-auth-info').hide();
 });
 
+jQuery(document).on('click', '.b2s-warning-close', function () {
+    jQuery(this).closest('.panel').hide();
+});
+
+
+(function () {
+    var noticeTimers = {};
+
+    function onNoticeVisible(el) {
+        var index = jQuery('.b2s-header-notice').index(el);
+        jQuery('html, body').animate({scrollTop: 0}, 'fast');
+        clearTimeout(noticeTimers[index]);
+        noticeTimers[index] = setTimeout(function () {
+            jQuery(el).fadeOut();
+        }, 8000);
+    }
+
+    var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            var el = mutation.target;
+            if (jQuery(el).is(':visible')) {
+                onNoticeVisible(el);
+            }
+        });
+    });
+
+    jQuery(document).ready(function () {
+        jQuery('.b2s-header-notice').each(function () {
+            observer.observe(this, {attributes: true, attributeFilter: ['style', 'class']});
+        });
+    });
+}());
+
+
+
 jQuery(document).on('click', '.b2s-metrics-banner-close', function () {
     jQuery('#b2s-metrics-banner-modal').modal('hide');
     jQuery.ajax({
@@ -712,7 +763,9 @@ jQuery(document).on('click', '#b2s-debug-connection-btn', function () {
             if (data.result == false) {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
-                } else {
+                } else if (data.error == 'permission_administrator') {
+                    jQuery('.b2s-no-permission-administrator').show();
+                }else {
                     jQuery('.b2s-debug-connection-result-area').show();
                     jQuery('.b2s-debug-connection-result-code').hide();
                     jQuery('.b2s-debug-connection-result-code-info').hide();

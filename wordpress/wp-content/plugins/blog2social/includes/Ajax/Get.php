@@ -54,7 +54,7 @@ class Ajax_Get {
 
     public function getBlogPostStatus() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -70,7 +70,7 @@ class Ajax_Get {
 
     public function scrapeUrl() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -137,7 +137,7 @@ class Ajax_Get {
     public function getSortData() {
 
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -207,7 +207,7 @@ class Ajax_Get {
 
     public function getNetworkBoardAndGroup() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -227,7 +227,7 @@ class Ajax_Get {
 
     public function getFaqEntries() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -244,7 +244,7 @@ class Ajax_Get {
 
     public function getShipItemFullText() {
       
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -253,7 +253,7 @@ class Ajax_Get {
             
             // Add authorization check for the specific post
             if (!current_user_can('read_post',(int) $_POST['postId'])) {
-                echo wp_json_encode(array('result' => false, 'error' => 'permission'));
+                echo wp_json_encode(array('result' => false, 'error' => 'permission_author'));
                 wp_die();
             }
             
@@ -275,7 +275,7 @@ class Ajax_Get {
 
     public function getShipItem() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -387,7 +387,7 @@ class Ajax_Get {
 
     public function getPublishPostData() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -414,7 +414,7 @@ class Ajax_Get {
 
     public function getVideoUploadData() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -436,7 +436,7 @@ class Ajax_Get {
 
     public function getApprovePostData() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -459,7 +459,7 @@ class Ajax_Get {
 
     public function getSchedPostsByUserAuth() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -502,7 +502,7 @@ class Ajax_Get {
 
     public function getSchedPostData() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -527,7 +527,7 @@ class Ajax_Get {
 
     public function getNavbarItem() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -572,7 +572,7 @@ class Ajax_Get {
 
     public function getSettingsSchedTimeDefault() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -590,7 +590,7 @@ class Ajax_Get {
     //NEW V5.1.0
     public function getUserTimeSettings() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -633,7 +633,7 @@ class Ajax_Get {
 
     public function getShipItemReloadUrl() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -660,7 +660,7 @@ class Ajax_Get {
 
     public function getCalendarEvents() {
   
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -691,7 +691,7 @@ class Ajax_Get {
 
     public function getCalendarFilterNetworkAuth() {
         
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -711,7 +711,7 @@ class Ajax_Get {
 
     public function getPostEditModal() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -745,7 +745,7 @@ class Ajax_Get {
 
     public function getImageModal() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -766,7 +766,7 @@ class Ajax_Get {
 
     public function getMultiWidgetContent() {
 
-            if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+            if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
                 echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
                 wp_die();
             }
@@ -810,7 +810,7 @@ class Ajax_Get {
 
     public function getCalendarWidgetContent() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -838,7 +838,7 @@ class Ajax_Get {
 
     public function b2sSupportSystemRequirements() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -865,7 +865,7 @@ class Ajax_Get {
 
     public function searchUser() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -882,7 +882,7 @@ class Ajax_Get {
 
     public function getSelectMandantUser() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -915,21 +915,18 @@ class Ajax_Get {
 
     public function getEditTemplateForm() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
 
-        if (B2S_PLUGIN_USER_VERSION < 1) {
-            echo json_encode(array('result' => true, 'content' => 'b2s_upgrade_required'));
-            wp_die();
-        }
+        $isFreeUser = B2S_PLUGIN_USER_VERSION < 1;
 
         if (isset($_GET['networkId']) && (int) $_GET['networkId'] > 0) {
             require_once (B2S_PLUGIN_DIR . 'includes/B2S/Network/Item.php');
             $networkItem = new B2S_Network_Item(false);
 
-            $content = $networkItem->getEditTemplateForm((int) $_GET['networkId']);
+            $content = $networkItem->getEditTemplateForm((int) $_GET['networkId'], $isFreeUser);
 
             echo json_encode(array('result' => true, 'content' => $content));
             wp_die();
@@ -941,7 +938,7 @@ class Ajax_Get {
 
     public function checkDraftExists() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -963,7 +960,7 @@ class Ajax_Get {
 
     public function getCurationShipDetails() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1012,7 +1009,7 @@ class Ajax_Get {
 
     public function getNetworkAuthSettings() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1056,7 +1053,7 @@ class Ajax_Get {
 
     public function updatePostBox() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1073,7 +1070,7 @@ class Ajax_Get {
 
     public function getImageCaption() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1088,7 +1085,7 @@ class Ajax_Get {
 
     public function loadInsights() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1107,7 +1104,7 @@ class Ajax_Get {
 
     public function getPostsDetailData() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1132,7 +1129,7 @@ class Ajax_Get {
 
     public function getAssDetails() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1171,7 +1168,7 @@ class Ajax_Get {
 
     public function getAssSettings() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1187,7 +1184,7 @@ class Ajax_Get {
 
     public function getDashboardActivity() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }

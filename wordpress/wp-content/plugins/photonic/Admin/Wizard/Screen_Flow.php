@@ -59,6 +59,7 @@ class Screen_Flow {
 					   value="<?php echo !empty($_REQUEST['shortcode']) ? esc_attr($_REQUEST['shortcode']) : ''; ?>"/>
 				<input name="photonic-editor-json" id="photonic-editor-json" type="hidden" value=""/>
 				<input name="photonic-gutenberg-active" id="photonic-gutenberg-active" type="hidden" value=""/>
+
 				<div id="photonic-flow-provider" class="photonic-flow-screen photonic-gallery" data-screen="1">
 					<!-- Provider selection -->
 					<h1><?php esc_html_e('Choose Gallery Source', 'photonic'); ?></h1>

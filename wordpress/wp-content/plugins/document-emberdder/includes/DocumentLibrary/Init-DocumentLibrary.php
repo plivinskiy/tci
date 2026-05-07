@@ -8,7 +8,7 @@ class BPLDocumentLibrary {
         add_action('admin_enqueue_scripts', [$this, 'bplde_admin_scripts']);
         add_shortcode('document_library', [$this, 'bplde_document_library_shortcode']);
 
-        // AJAX actions
+        // AJAX Actions
         add_action('wp_ajax_bplde_save_document_library', [$this, 'bplde_save_document_library']);   
         add_action('wp_ajax_bplde_get_single', [$this, 'bplde_get_single']);
         add_action('wp_ajax_bplde_delete_document_library', [$this, 'bplde_delete_document_library']);

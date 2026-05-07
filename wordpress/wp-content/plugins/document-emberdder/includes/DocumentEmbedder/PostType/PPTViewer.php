@@ -12,13 +12,12 @@ class PPTViewer {
         if(is_admin()){
             add_filter("manage_{$this->post_type}_posts_columns", [$this, 'postTypeColumns'], 1);
             add_action("manage_{$this->post_type}_posts_custom_column", [$this, 'postTypeContent'], 10, 2);
-            add_action('edit_form_after_title', [$this, 'ppv_shortcode_area']);
-
             add_filter('post_row_actions', [$this, 'removeRowAction'], 10, 2);
             add_action('admin_head-post.php', [$this, 'ppv_hide_publishing_actions']);
             add_action('admin_head-post-new.php', [$this, 'ppv_hide_publishing_actions']);
             add_filter('gettext', [$this, 'ppv_change_publish_button'], 10, 2);
             add_filter('post_updated_messages', [$this, 'ppv_updated_messages']);
+            add_action('edit_form_after_title', [$this, 'shortcode_area']);
         }
     }
 
@@ -33,11 +32,11 @@ class PPTViewer {
         $cpt_title = __('Document Embedder', 'document-embedder');
         $show_in_menu = true;
         
-        
         register_post_type( $this->post_type, array(
             'labels' => array(
                 'name' => $cpt_title,
-                'singular_name' => __( 'Document Embedder' ),
+                'singular_name' => __( 'Doc Embedder' ),
+                 'all_items' => __( 'Doc Embedder', 'document-embedder' ),
                 'add_new' => __( 'Add New Doc' ),
                 'add_new_item' => __( 'Add New Doc' ),
                 'edit_item' => __( 'Edit' ),
@@ -61,8 +60,6 @@ class PPTViewer {
             'show_in_menu' => $show_in_menu
         ));
     }
-
-    
 
     public function register_taxonomy() {
         $post_type = $this->post_type;
@@ -120,6 +117,8 @@ class PPTViewer {
             'shortcode'                      => 'Shortcode',
             'taxonomy-ppv_document_tags'     => 'Tags',
             'taxonomy-ppv_file_type'         => 'File Type',
+            'download_count'                 => 'Downloads',
+            'download_leads'                 => 'Download Leads',
             'date'                           => $columns['date'],
         ];
         return $new;
@@ -128,37 +127,53 @@ class PPTViewer {
     public function postTypeContent($column_name, $post_id) {
         switch ( $column_name ) {
             case 'shortcode':
-                echo '<div class="ppv_front_shortcode"><input style="text-align: center; border: none; outline: none; background-color: #1e8cbe; color: #fff; padding: 4px 10px; border-radius: 3px;" value="[doc id=' . esc_attr($post_id) . ']" ><span class="htooltip">Copy To Clipboard</span></div>';
+                echo '<div class="ppv_front_shortcode"><input style="text-align: center; border: none; outline: none; background-color: #2664eb; color: #fff; padding: 4px 10px; border-radius: 3px;" value="[doc id=' . esc_attr($post_id) . ']" ><span class="htooltip">Copy To Clipboard</span></div>';
+                break;
+            case 'download_count':
+                $count = get_post_meta($post_id, '_de_download_count', true);
+                echo '<strong>' . intval($count) . '</strong>';
+                break;
+            case 'download_leads':
+                $leads_link = admin_url('edit.php?post_type=ppt_viewer&page=ppv-download-leads&filter_document_id=' . $post_id);
+                echo '<a href="' . esc_url($leads_link) . '" class="button button-small">View Download Leads</a>';
                 break;
         }
     }
 
-    function ppv_shortcode_area() {
-        global $post;	
-        if($post->post_type=='ppt_viewer'){ ?>
-            <div class="ppv_playlist_shortcode">
-                <div class="shortcode-heading">
-                    <div class="icon"><img src="<?php echo esc_url(BPLDE_PLUGIN_DIR .'assets/img/doc.png') ?>" alt=""> <?php _e("Document Embedder", "ppv") ?></div>
-                    <div class="text"> <a href="https://bplugins.com/support/" target="_blank"><?php _e("Supports", "ppv") ?></a></div>
+    public function shortcode_area() {
+            global $post; 
+            if ( $post->post_type === $this->post_type ) : ?>
+                <div class="ppv_shortcode">
+                    <code 
+                        class="shortcode_copy" 
+                        data-code="[doc id='<?php echo esc_attr( $post->ID ); ?>']">
+                        [doc id='<?php echo esc_attr( $post->ID ); ?>']
+                    </code>
+
+                    <p class="shortcode_desc">
+                        <?php echo esc_html__( "Copy this shortcode and paste it into your post, page, or text widget content.", "ppv" ); ?>
+                    </p>
                 </div>
-                <div class="shortcode-left">
-                    <h3><?php _e("Shortcode", "ppv") ?></h3>
-                    <p><?php _e("Copy and paste this shortcode into your posts, pages and widget:", "ppv") ?></p>
-                    <div class="shortcode" selectable>[doc id=<?php echo esc_attr($post->ID); ?>]</div>
-                </div>
-                <div class="shortcode-right">
-                    <h3><?php _e("Template Include", "ppv") ?></h3>
-                    <p><?php _e("Copy and paste the PHP code into your template file:", "ppv"); ?></p>
-                    <div class="shortcode">&lt;?php echo do_shortcode('[doc id=<?php echo esc_html($post->ID); ?>]'); ?&gt;</div>
-                </div>
-            </div>
-            <div style="background:black; color: white;padding:5px; font-size:16px;">
-                <?php echo esc_html__('! Important : Document Embedder Plugin does not preview any documents in localhost. No worries, when you will live your site you will see all the document are previewing perfectly.', 'ppv') ?> 
-            </div>
-        <?php }
+
+                <script>
+                    document.addEventListener('click', function (e) {
+                        var el = e.target.closest('.shortcode_copy');
+                        if (!el) return;
+
+                        navigator.clipboard.writeText(el.dataset.code).then(function () {
+                            var original = el.textContent;
+                            el.textContent = 'Copied!';
+
+                            setTimeout(function () {
+                                el.textContent = original;
+                            }, 1000);
+                        });
+                    });
+                </script>
+            <?php endif;
     }
 
-    public function removeRowAction($row){
+    public function removeRowAction($row) {
         global $post;
         if ($post->post_type == 'ppt_viewer') {
             unset($row['view']);
@@ -167,21 +182,21 @@ class PPTViewer {
         return $row;
     }
 
-    function ppv_hide_publishing_actions(){
+    public function ppv_hide_publishing_actions() {
         global $post;
         if($post && $post->post_type == $this->post_type){
             echo '<style type="text/css">#misc-publishing-actions,#minor-publishing-actions{display:none;}</style>';
         }
     }
 
-    function ppv_change_publish_button( $translation, $text ) {
+    public function ppv_change_publish_button( $translation, $text ) {
         if ( 'ppt_viewer' == get_post_type() && $text == 'Publish' ) {
             return 'Save';
         }
         return $translation;
     }
 
-    function ppv_updated_messages($messages) {
+    public function ppv_updated_messages($messages) {
         $messages['ppt_viewer'][1] = __('Updated', 'ppv');
         return $messages;
     }

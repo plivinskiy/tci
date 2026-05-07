@@ -6,7 +6,7 @@ Donate link: https://paypal.me/adenion
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 8.8.2
+Stable tag: 8.9.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,11 @@ Blog2Social automatically creates social media posts for your content and shares
 
 _Compatible with WooCommerce, Gutenberg Editor, Hummingbird, Bitly, Rebrand.ly, Sniply, WP Automatic Plugin, Page Builder & RSS Importer._
 
-**#New: Comment feature for X, Bluesky, Facebook, Instagram, and LinkedIn**
+**#New: AI Post Templates, Extended Comment Feature & Improved Preview**
+
+* AI Post Templates: Define individual prompts per network (e.g. Facebook, X, Instagram) and customize tone and writing style for AI-generated content
+* Extended Comment Feature: "First" Comment now available for Flickr, Reddit, VKontakte, YouTube, Vimeo, Mastodon, Discord, Threads, and Band
+* Improved Post Preview: More stable and reliable preview through optimized post templates
 
 Blog2Social is a freemium WordPress plugin with a free basic version and Premium plans offering advanced features. Some functions of the auto-poster are Premium features to comply with the API rules and community guidelines of the social networks.  
 
@@ -73,7 +77,7 @@ BLOG2SOCIAL FREE
 * Automatically generate hashtags from WordPress tags.
 * Edit meta tag information of your blog posts and pages.
 * Use the [free Blog2Social Extension for Firefox and Chrome](https://www.blog2social.com/en/webapp/extension/).
-* Let AI write, refine and optimize your social media posts.
+* Let AI write, refine and optimize your social media posts with customizable templates per network (including tone and writing style adjustments)
 
 
 BLOG2SOCIAL PREMIUM
@@ -89,7 +93,7 @@ BLOG2SOCIAL PREMIUM
 * Manage multiple accounts per network.
 * Team management for Business licenses.
 * Priority support by email and phone.
-
+* Advanced AI control: Define individual prompts, tone, and writing style per network for optimized social media performance
 
 10 REASONS FOR CHOOSING BLOG2SOCIAL PREMIUM
 
@@ -153,6 +157,16 @@ No. Default WordPress plugin permissions (755) are sufficient.
 
 
 == Changelog ==
+= 8.9.1 =
+Additional Security Update
+= 8.9.0 =
+AI Post Templates, Extended Comment Feature & Improved Preview
+= 8.8.5 =
+Usability Optimization
+= 8.8.4 =
+Additional Security Update
+= 8.8.3 =
+Additional Security Update
 = 8.8.2 =
 Usability Optimization
 = 8.8.1 =
@@ -271,6 +285,16 @@ Bugfix: Autoposting
 Publish and share videos
 
 == Upgrade Notice ==
+= 8.9.1 =
+Additional Security Update
+= 8.9.0 =
+AI Post Templates, Extended Comment Feature & Improved Preview
+= 8.8.5 =
+Usability Optimization
+= 8.8.4 =
+Additional Security Update
+= 8.8.3 =
+Additional Security Update
 = 8.8.2 =
 Usability Optimization
 = 8.8.1 =

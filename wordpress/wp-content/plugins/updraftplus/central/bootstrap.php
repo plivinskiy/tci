@@ -1,5 +1,6 @@
 <?php
-
+// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_print_r -- print_r is intentionally used to convert an array into a readable string or for controlled logging purposes..
+// phpcs:disable Squiz.PHP.DiscouragedFunctions.Discouraged -- some functions, like set_time_limit() and ini_set(), are used to temporarily change PHP configuration values based on the script's needs (e.g., processing large datasets or performing long operations).
 if (!defined('ABSPATH')) die('No direct access.');
 
 global $updraftcentral_host_plugin;
@@ -56,7 +57,11 @@ class UpdraftCentral_Main {
 		$command_classes = apply_filters('updraftplus_remotecontrol_command_classes', $command_classes);
 	
 		// If nothing was sent, then there is no incoming message, so no need to set up a listener (or CORS request, etc.). This avoids a DB SELECT query on the option below in the case where it didn't get autoloaded, which is the case when there are no keys.
-		if (!empty($_SERVER['REQUEST_METHOD']) && ('GET' == $_SERVER['REQUEST_METHOD'] || 'POST' == $_SERVER['REQUEST_METHOD']) && (empty($_REQUEST['action']) || 'updraft_central' !== $_REQUEST['action']) && empty($_REQUEST['udcentral_action']) && empty($_REQUEST['udrpc_message'])) return;
+		$request_action = UpdraftPlus_Manipulation_Functions::fetch_superglobal('request', 'action');
+		$udcentral_action = UpdraftPlus_Manipulation_Functions::fetch_superglobal('request', 'udcentral_action');
+		$udrpc_message = UpdraftPlus_Manipulation_Functions::fetch_superglobal('request', 'udrpc_message');
+		$request_method = UpdraftPlus_Manipulation_Functions::fetch_superglobal('server', 'REQUEST_METHOD');
+		if (!empty($request_method) && ('GET' == $request_method || 'POST' == $request_method) && (empty($request_action) || 'updraft_central' !== $request_action) && empty($udcentral_action) && empty($udrpc_message)) return;
 		
 		// Remote control keys
 		// These are different from the remote send keys, which are set up in the Migrator add-on
@@ -114,17 +119,20 @@ class UpdraftCentral_Main {
 		// Within an UpdraftCentral context, there should be no prefix on the anchor link
 		if (defined('UPDRAFTCENTRAL_COMMAND') && UPDRAFTCENTRAL_COMMAND || defined('WP_CLI') && WP_CLI) return '';
 		
-		if (defined('DOING_AJAX') && DOING_AJAX && !empty($_SERVER['HTTP_REFERER'])) {
-			$current_url = $_SERVER['HTTP_REFERER'];
+		$server_http_referer = UpdraftPlus_Manipulation_Functions::fetch_superglobal('server', 'HTTP_REFERER');
+		if (defined('DOING_AJAX') && DOING_AJAX && !empty($server_http_referer)) {
+			$current_url = $server_http_referer;
 		} else {
 			$url_prefix = is_ssl() ? 'https' : 'http';
-			$host = empty($_SERVER['HTTP_HOST']) ? parse_url(network_site_url(),  PHP_URL_HOST) : $_SERVER['HTTP_HOST'];
-			$current_url = $url_prefix."://".$host.wp_unslash($_SERVER['REQUEST_URI']);
+			$server_http_host = UpdraftPlus_Manipulation_Functions::fetch_superglobal('server', 'HTTP_HOST');
+			$host = empty($server_http_host) ? parse_url(network_site_url(),  PHP_URL_HOST) : $server_http_host;
+			$server_request_uri = UpdraftPlus_Manipulation_Functions::wp_unslash(UpdraftPlus_Manipulation_Functions::fetch_superglobal('server', 'REQUEST_URI'));
+			$current_url = $url_prefix."://".$host.$server_request_uri;
 		}
 		$remove_query_args = array('state', 'action', 'oauth_verifier', 'nonce', 'updraftplus_instance', 'access_token', 'user_id', 'updraftplus_googledriveauth');
 
 		$query_string = remove_query_arg($remove_query_args, $current_url);
-		return function_exists('wp_unslash') ? wp_unslash($query_string) : stripslashes_deep($query_string);
+		return UpdraftPlus_Manipulation_Functions::wp_unslash($query_string);
 	}
 	
 	/**
@@ -177,7 +185,10 @@ class UpdraftCentral_Main {
 		global $updraftcentral_host_plugin;
 	
 		// The actual nonce check is done in the method below
-		if (empty($_GET['_wpnonce']) || empty($_GET['public_key']) || !isset($_GET['updraft_key_index'])) die;
+		$global_wp_nonce = UpdraftPlus_Manipulation_Functions::fetch_superglobal('get', '_wpnonce');
+		$public_key = UpdraftPlus_Manipulation_Functions::fetch_superglobal('get', 'public_key');
+		$updraft_key_index = UpdraftPlus_Manipulation_Functions::fetch_superglobal('get', 'updraft_key_index');
+		if (empty($global_wp_nonce) || empty($public_key) || !isset($updraft_key_index)) die;
 		
 		$result = $this->receive_public_key();
 		if (!is_array($result) || empty($result['responsetype'])) die;
@@ -244,22 +255,25 @@ class UpdraftCentral_Main {
 			return array('responsetype' => 'error', 'code' => 'not_logged_in');
 		}
 
-		if (!wp_verify_nonce($_GET['_wpnonce'], 'updraftcentral_receivepublickey')) return array('responsetype' => 'error', 'code' => 'nonce_failure');
+		$global_get_wp_nonce = UpdraftPlus_Manipulation_Functions::fetch_superglobal('get', '_wpnonce');
+		if (empty($global_get_wp_nonce) || !wp_verify_nonce($global_get_wp_nonce, 'updraftcentral_receivepublickey')) return array('responsetype' => 'error', 'code' => 'nonce_failure');
 		
-		$updraft_key_index = $_GET['updraft_key_index'];
+		$updraft_key_index = UpdraftPlus_Manipulation_Functions::fetch_superglobal('get', 'updraft_key_index');
 		$our_keys = $this->get_central_localkeys();
 
 		if (!is_array($our_keys)) $our_keys = array();
 		
-		if (!isset($our_keys[$updraft_key_index])) {
+		if ('' === $updraft_key_index || is_null($updraft_key_index) || !isset($our_keys[$updraft_key_index])) {
 			return array('responsetype' => 'error', 'code' => 'unknown_key');
 		}
 
 		if (!empty($our_keys[$updraft_key_index]['publickey_remote'])) {
 			return array('responsetype' => 'error', 'code' => 'already_have');
 		}
+
+		$public_key = UpdraftPlus_Manipulation_Functions::fetch_superglobal('get', 'public_key');
 		
-		$our_keys[$updraft_key_index]['publickey_remote'] = base64_decode(stripslashes($_GET['public_key']));
+		$our_keys[$updraft_key_index]['publickey_remote'] = base64_decode(UpdraftPlus_Manipulation_Functions::wp_unslash($public_key));
 		$this->update_central_localkeys($our_keys, true, 'no');
 		
 		return array('responsetype' => 'ok', 'code' => 'ok');
@@ -283,15 +297,19 @@ class UpdraftCentral_Main {
 			'message' => $message,
 			'key_name_indicator' => $key_name_indicator
 		);
+
+		$server_remote_addr = UpdraftPlus_Manipulation_Functions::fetch_superglobal('server', 'REMOTE_ADDR');
+		$server_http_user_agent = UpdraftPlus_Manipulation_Functions::fetch_superglobal('server', 'HTTP_USER_AGENT');
+		$server_http_x_secondary_user_agent = UpdraftPlus_Manipulation_Functions::fetch_superglobal('server', 'HTTP_X_SECONDARY_USER_AGENT');
 		
-		if (!empty($_SERVER['REMOTE_ADDR'])) {
-			$new_item['remote_ip'] = $_SERVER['REMOTE_ADDR'];
+		if (!empty($server_remote_addr)) {
+			$new_item['remote_ip'] = $server_remote_addr;
 		}
-		if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-			$new_item['http_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+		if (!empty($server_http_user_agent)) {
+			$new_item['http_user_agent'] = $server_http_user_agent;
 		}
-		if (!empty($_SERVER['HTTP_X_SECONDARY_USER_AGENT'])) {
-			$new_item['http_secondary_user_agent'] = $_SERVER['HTTP_X_SECONDARY_USER_AGENT'];
+		if (!empty($server_http_x_secondary_user_agent)) {
+			$new_item['http_secondary_user_agent'] = $server_http_x_secondary_user_agent;
 		}
 		
 		$udrpc_log[] = $new_item;
@@ -385,7 +403,7 @@ class UpdraftCentral_Main {
 
 		// ENT_HTML5 exists only on PHP 5.4+
 		// @codingStandardsIgnoreLine
-		$flags = defined('ENT_HTML5') ? ENT_QUOTES | ENT_HTML5 : ENT_QUOTES;
+		$flags = defined('ENT_HTML5') ? ENT_QUOTES | ENT_HTML5 : ENT_QUOTES;// phpcs:ignore PHPCompatibility.Constants.NewConstants.ent_html5Found -- ENT_HTML5 is used intentionally with proper check.
 		
 		$extra_info = array(
 			'user_id' => $user->ID,
@@ -666,7 +684,7 @@ class UpdraftCentral_Main {
 
 		if (empty($keys_data)) {
 			?>
-			<tr><td colspan="2"><em><?php $updraftcentral_host_plugin->retrieve_show_message('no_updraftcentral_dashboards', true); ?></em></td></tr>
+			<em><?php $updraftcentral_host_plugin->retrieve_show_message('no_updraftcentral_dashboards', true); ?></em>
 			<?php
 		}
 		
@@ -684,7 +702,6 @@ class UpdraftCentral_Main {
 				</thead>
 				<tbody>
 					<?php
-					
 					foreach ($keys_data as $key_id => $key) {
 						$user_display = 'Unknown' !== $key['user_display'] ? $key['user_display'] : $updraftcentral_host_plugin->retrieve_show_message('unknown');
 						$reconstructed_url = !empty($key['reconstructed_url']) ? $key['reconstructed_url'] : $updraftcentral_host_plugin->retrieve_show_message('unknown');

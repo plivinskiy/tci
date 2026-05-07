@@ -29,7 +29,7 @@ class B2S_Post_Tools {
 
         foreach ($postIds as $v) {
 
-            $row = $wpdb->get_row($wpdb->prepare("SELECT b.id,b.post_id,b.post_for_relay,b.post_for_approve,b.sched_details_id,d.network_id,d.network_type FROM {$wpdb->prefix}b2s_posts b LEFT JOIN {$wpdb->prefix}b2s_posts_network_details d ON (d.id = b.network_details_id) WHERE b.id =%d AND b.publish_date = %s", (int) $v, "0000-00-00 00:00:00"));
+            $row = $wpdb->get_row($wpdb->prepare("SELECT b.id,b.post_id,b.post_for_relay,b.post_for_approve,b.sched_details_id,d.network_id,d.network_type FROM {$wpdb->prefix}b2s_posts b LEFT JOIN {$wpdb->prefix}b2s_posts_network_details d ON (d.id = b.network_details_id) WHERE b.id =%d AND b.publish_date = %s AND b.blog_user_id = %d", (int) $v, "0000-00-00 00:00:00", (int) get_current_user_id()));
             if (isset($row->id) && (int) $row->id == $v) {
                 if ((int) $row->post_for_approve == 1) {
                     $wpdb->update($wpdb->prefix.'b2s_posts', array('hide' => 1), array('id' => $v));
@@ -87,7 +87,7 @@ class B2S_Post_Tools {
         $blogPostId = 0;
         $count = 0;
         foreach ($postIds as $v) {
-            $row = $wpdb->get_row($wpdb->prepare("SELECT id,v2_id,post_id FROM {$wpdb->prefix}b2s_posts WHERE id =%d", (int) $v));
+            $row = $wpdb->get_row($wpdb->prepare("SELECT id,v2_id,post_id FROM {$wpdb->prefix}b2s_posts WHERE id =%d AND blog_user_id = %d", (int) $v , get_current_user_id()));
             if (isset($row->id) && (int) $row->id == $v) {
                 $hook_action = (isset($row->v2_id) && (int) $row->v2_id > 0) ? 0 : 4; //oldItems
                 $wpdb->update($wpdb->prefix.'b2s_posts', array('hook_action' => $hook_action, 'hide' => 1), array('id' => $v));
@@ -109,10 +109,9 @@ class B2S_Post_Tools {
         $count = 0;
         foreach ($postIds as $v) {
       
-            $row = $wpdb->get_row($wpdb->prepare("SELECT id,v2_id,post_id FROM {$wpdb->prefix}b2s_posts WHERE id =%d", (int) $v));
+            $row = $wpdb->get_row($wpdb->prepare("SELECT id,v2_id,post_id FROM {$wpdb->prefix}b2s_posts WHERE id =%d AND blog_user_id = %d", (int) $v , get_current_user_id()));
             if (isset($row->id) && (int) $row->id == $v) {
-                $hook_action = (isset($row->v2_id) && (int) $row->v2_id > 0) ? 0 : 4; //oldItems
-                $wpdb->update($wpdb->prefix.'b2s_posts', array('hide' => 1), array('id' => $v));
+                $wpdb->update($wpdb->prefix.'b2s_posts', array('hook_action' => 0, 'hide' => 1), array('id' => $v));
                 $resultPostIds[] = $v;
                 $blogPostId = $row->post_id;
                 $count++;

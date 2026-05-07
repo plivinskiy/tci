@@ -1,9 +1,9 @@
 === Document Embedder – Embed PDFs, Word, Excel, and Other Files ===
 Contributors: bplugins, abuhayat, shehabulislam, taninrahman, farazi1, freemius
-Tags: document embedder, embed pdf, embed any document, pdf embedder, add document
+Tags: document embedder, embed pdf, embed any document, pdf embedder, document library
 Requires at least: 6.5+
 Tested up to: 6.9
-Stable tag: 2.0.5
+Stable tag: 2.1.0
 Requires PHP: 7.1
 Donate link: https://www.buymeacoffee.com/abuhayat/
 License: GPLv2 or later
@@ -15,11 +15,13 @@ Document Embedder lets you display PDF, DOCX, PPTX, XLSX, and other files in Wor
 **Embed Any Document Instantly with the #1 No-Code Plugin – Trusted by 10,000+ WordPress Sites**
 
 
-[**Document Embedder**](https://bplugins.com/products/document-embedder/) | [**Documentation**](https://bplugins.com/docs/document-embedder/) | [**Pricing**](https://bplugins.com/products/document-embedder/pricing) | [**Support**](https://bplugins.com/support/) | [**Demo**](https://bplugins.com/products/document-embedder/#demos)
+[**Document Embedder**](https://bplugins.com/products/document-embedder/) | [**Documentation**](https://bplugins.com/docs/document-embedder/getting-started/) | [**Pricing**](https://bplugins.com/products/document-embedder/pricing) | [**Support**](https://bplugins.com/support/) | [**Demo**](https://bplugins.com/products/document-embedder/#demos)
 
 [**Document Embedder**](https://bplugins.com/products/document-embedder/) allows you to embed PDF, Word, Excel, PowerPoint, and other document formats directly into WordPress posts and pages. It supports local file uploads as well as files hosted on platforms like Google Drive and Dropbox. Files are displayed using the Google Drive viewer and can be configured to match your layout.
 
 The new Document Library module adds a powerful way to organize and display multiple documents in a structured library. You can upload files from your device, WordPress Media Library, or via URL, rename or delete documents easily, and display them with customizable layouts. The library includes search, filter, and sorting options, a responsive design, and full control over view and download buttons. Shortcode and Gutenberg block support make it easy to add libraries anywhere on your site.
+
+Want to capture leads before someone downloads? The **Email Gate** (Pro) requires visitors to submit their name and email before they can access a file. Every submission is logged to a built-in **Leads Dashboard** you can search, filter, and export as CSV.
 
 This plugin is ideal for sharing reports, presentations, worksheets, guides, and other materials without requiring visitors to download them or leave your site.
 
@@ -28,15 +30,25 @@ This plugin is ideal for sharing reports, presentations, worksheets, guides, and
 
 - **Embed Multiple File Types:** PDF, Word, Excel, PowerPoint, images, code, and more.
 
-- **Responsive Viewer:** Adjust **width and height** to fit any layout.
+- **Responsive Viewer:** Adjust **width and height** to fit any layout — with independent controls for Desktop, Tablet, and Mobile.
 
 - **Filename Display:** Show the document title at the top for clarity.
 
-- **Download Button:** Easily allow users to download PDFs.
+- **Download Button:** Easily allow users to download PDFs with a customizable button label (e.g., "Get Copy," "Save PDF").
+
+- **Download Placement:** Position the download button in the **Toolbar** or **Below the Embed**.
+
+- **Download Behavior:** Choose between **Force Save Dialog** (prompts users to save locally) or **Open in New Tab**.
+
+- **Custom Download Filename:** Define the exact filename shown to users when they download the file.
 
 - **Gutenberg Block Support:** Use the **Document Embedder Block** in the WordPress Block Editor (Gutenberg) for fast and easy document placement.
 
+- **Simple Shortcode Embedding:** Prefer the Classic Editor or page builders? Use the `[embed_doc]` shortcode to place documents anywhere on your site.
+
 - **Powered by Google Drive Viewer:** Reliable, fast rendering of your embedded files.
+
+- **Dedicated Post Type:** Manage all your documents individually using the `ppt_viewer` custom post type.
 
 **Document Library Module**
 
@@ -66,7 +78,7 @@ This plugin is ideal for sharing reports, presentations, worksheets, guides, and
 ### Pro Version – Unlock More Features
 Upgrade to [**Document Embedder Pro**](https://bplugins.com/products/document-embedder/#pricing) for more flexibility, better user control, and advanced integrations.
 
-**What’s Included in Pro:**
+**What's Included in Pro:**
 
 - **Disable Popout Option:** Prevent users from opening documents in a new window.
 
@@ -77,6 +89,23 @@ Upgrade to [**Document Embedder Pro**](https://bplugins.com/products/document-em
 - **Google Drive API Integration:** Embed and manage docs directly from your Google Drive.
 
 - **Dropbox Integration:** Access and embed files from Dropbox easily.
+
+**Download Management (Pro)**
+
+- **Download Tracking:** Record and display the total number of downloads per document.
+
+- **Per-IP Download Limits:** Set a maximum number of downloads per unique IP address (e.g., max 3 downloads per user).
+
+- **Access Restrictions:** Limit downloads to Logged-in Users only, or restrict by specific User Roles.
+
+**Lead Generation (Pro)**
+
+- **Email Gate:** Require visitors to submit their Name and Email before they can download a document. Turn any file into a lead magnet.
+
+- **Leads Dashboard:** A built-in admin interface to view and manage all captured leads, featuring:
+  - Search & Filters by date, email, or specific document
+  - Export leads list as a CSV file
+  - Bulk delete multiple leads simultaneously
 
 **Document Library Module**
 
@@ -113,11 +142,11 @@ Prefer the Block Editor? No problem!
 
 - Open the **Block Editor**.
 
-- Click + and choose the **Document Embedder block** under “Common Blocks.”
+- Click + and choose the **Document Embedder block** under "Common Blocks."
 
 - Select your document and configure the viewer.
 
-- Publish and you’re done!
+- Publish and you're done!
 
 [**Live Demo**](https://bplugins.com/products/document-embedder/#demos) | [**Try The Pro**](https://bplugins.com/products/document-embedder/#pricing)
 
@@ -234,10 +263,29 @@ Yes, In Most of the popular Browser such as Chrome, Safari, Firefox, IE And Micr
 
 There is no Limit, you can embed thousands of doc if you want.
 
+= How does the Email Gate work? =
+
+With Pro, you can require visitors to enter their Name and Email before downloading a document. All submissions are saved to the Leads Dashboard, where you can search, filter by date or document, and export as CSV.
+
+= Can I limit how many times someone can download a file? =
+
+Yes. With Pro you can set a maximum download count per IP address — for example, allowing each visitor to download a file no more than 3 times.
+
+= Can I restrict downloads to logged-in users only? =
+
+Yes. Pro lets you restrict downloads to logged-in users only, or limit access to specific user roles.
+
+= Does it work with page builders like Elementor or Divi? =
+
+Yes. Use the `[embed_doc]` shortcode in any page builder that supports shortcodes.
+
+= Does it work with TutorLMS? =
+
+Yes, Document Embedder is confirmed compatible with TutorLMS.
+
 = Where do I report security bugs found in this plugin? =
 
 Please report security bugs found in the source code of the Document Embedder plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/9e5fb69e-e0a3-42b6-8c77-41cd43842317). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
-
 
 
 == Screenshots ==
@@ -255,6 +303,21 @@ Please report security bugs found in the source code of the Document Embedder pl
 
 
 == Changelog ==
+
+= 2.1.0 - 16 April 2026 =
+* **New:** Complete download feature with a lot of options like access, email gate etc.
+* **New:** Email Gate – require visitors to submit Name and Email before downloading; all leads saved to a searchable Leads Dashboard with CSV export and bulk delete.
+* **New:** Download Tracking – record total download count per document.
+* **New:** Per-IP Download Limits – restrict how many times a single IP address can download a file.
+* **New:** Access Restrictions – limit downloads to logged-in users or specific user roles.
+* **Update:** Update filename in a toolbar for standard view.
+* **Update:** Update Shortcode generated UI for Easy to use.
+
+= 2.0.6 - 2 March 2026 =
+* **Update:** Improved overall user experience with a cleaner, more intuitive interface.
+* **Update:** Refactored internal codebase for better readability, maintainability, and performance.
+* **Fix:** Resolved all known UI and functionality issues across the plugin.
+* **Fix:** Removed unused and legacy code to reduce clutter and improve stability.
 
 = 2.0.4 - 24 January 2026 = 
 * Fixed Issues - download button and view button styles issue, Vulnerability issue.
@@ -310,7 +373,7 @@ Please report security bugs found in the source code of the Document Embedder pl
 * Fixed Block Editor issue
 
 = 1.3 =
-* Fix Js issue and make compatible with Wordpress 5.5
+* Fix Js issue and make compatible with WordPress 5.5
 
 = 1.2 =
 * Gutenberg Block Support

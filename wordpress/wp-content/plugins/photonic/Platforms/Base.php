@@ -20,7 +20,7 @@ require_once PHOTONIC_PATH . '/Components/Error.php';
  */
 abstract class Base {
 	public $api_key, $api_secret, $provider, $user_agent, $nonce, $oauth_timestamp, $signature_parameters, $link_lightbox_title,
-		$oauth_version, $oauth_done, $show_more_link, $is_server_down, $is_more_required, $gallery_index, $common_parameters,
+		$oauth_version, $oauth_done, $show_more_link, $gallery_index, $common_parameters,
 		$doc_links, $password_protected, $token, $token_secret, $show_buy_link, $stack_trace;
 
 	protected function __construct() {
@@ -31,8 +31,6 @@ abstract class Base {
 		$this->oauth_timestamp                   = time();
 		$this->oauth_version                     = '1.0';
 		$this->show_more_link                    = false;
-		$this->is_server_down                    = false;
-		$this->is_more_required                  = true;
 		$this->gallery_index                     = 0;
 
 		$bypass_popup                      = empty($photonic_enable_popup) || 'off' === $photonic_enable_popup || 'hide' === $photonic_enable_popup;

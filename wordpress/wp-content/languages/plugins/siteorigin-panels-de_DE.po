@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Page Builder by SiteOrigin - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-02-07 00:21:27+0000\n"
+"PO-Revision-Date: 2026-03-24 17:19:42+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -131,19 +131,19 @@ msgstr "Support"
 msgid "Settings"
 msgstr "﻿Einstellungen"
 
-#: inc/settings.php:324
+#: inc/settings.php:325
 msgid "Modern"
 msgstr "Modern"
 
-#: inc/settings.php:538
+#: inc/settings.php:545
 msgid "Header"
 msgstr "Header"
 
-#: inc/settings.php:537
+#: inc/settings.php:544
 msgid "Automatic"
 msgstr "Automatisch"
 
-#: inc/settings.php:539
+#: inc/settings.php:546
 msgid "Footer"
 msgstr "Footer"
 
@@ -211,11 +211,11 @@ msgstr "Mobiles Layout"
 msgid " - Results For:"
 msgstr " - Ergebnisse für:"
 
-#: inc/settings.php:465
+#: inc/settings.php:466
 msgid "Always"
 msgstr "Immer"
 
-#: inc/settings.php:464
+#: inc/settings.php:465
 msgid "Never"
 msgstr "Nie"
 
@@ -235,7 +235,7 @@ msgstr "Block-Editor"
 msgid "Welcome"
 msgstr "Willkommen"
 
-#: inc/settings.php:387
+#: inc/settings.php:388
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -762,7 +762,7 @@ msgstr "Widget Styles"
 msgid "Attributes"
 msgstr "Attribute"
 
-#: inc/settings.php:444 inc/styles-admin.php:105
+#: inc/settings.php:445 inc/styles-admin.php:105
 msgid "Layout"
 msgstr "Layout"
 
@@ -783,7 +783,7 @@ msgstr "Bild auswählen"
 msgid "Remove"
 msgstr "Entfernen"
 
-#: inc/settings.php:616 inc/styles-admin.php:377
+#: inc/settings.php:623 inc/styles-admin.php:377
 msgid "Enabled"
 msgstr "Aktiviert"
 
@@ -842,68 +842,68 @@ msgstr "Jetpack"
 msgid "BBPress"
 msgstr "BBPress"
 
-#: inc/admin-widget-dialog.php:215 inc/settings.php:431
+#: inc/admin-widget-dialog.php:215 inc/settings.php:432
 msgid "Recommended Widgets"
 msgstr "Empfohlene Widgets"
 
-#: inc/admin.php:1915 inc/admin.php:1979 inc/settings.php:230
+#: inc/admin.php:1915 inc/admin.php:1979 inc/settings.php:231
 #: settings/tpl/settings.php:9
 msgid "SiteOrigin Page Builder"
 msgstr "SiteOrigin Page Builder"
 
-#: inc/settings.php:262
+#: inc/settings.php:263
 msgid "Page Builder Settings"
 msgstr "Page Builder Einstellungen"
 
-#: inc/settings.php:276
+#: inc/settings.php:277
 msgid "General"
 msgstr "Allgemein"
 
-#: inc/settings.php:407
+#: inc/settings.php:408
 msgid "Widgets"
 msgstr "Widgets"
 
-#: inc/settings.php:413
+#: inc/settings.php:414
 msgid "Widget Title HTML"
 msgstr "Widget-Titel HTML"
 
-#: inc/settings.php:425
+#: inc/settings.php:426
 msgid "Legacy Bundled Widgets"
 msgstr "Veraltetes Widgets-Paket"
 
-#: inc/settings.php:426
+#: inc/settings.php:427
 msgid "Load legacy widgets from Page Builder 1."
 msgstr "Lädt die veralteten Widgets aus Page Builder 1."
 
-#: inc/settings.php:450
+#: inc/settings.php:451
 msgid "Responsive Layout"
 msgstr "Responsives Layout"
 
-#: inc/settings.php:481
+#: inc/settings.php:482
 msgid "Mobile Width"
 msgstr "Mobile Breite"
 
-#: inc/settings.php:523
+#: inc/settings.php:530
 msgid "Default spacing between columns in each row."
 msgstr "Standard Abstand zwischen den Spalten jeder Zeile."
 
-#: inc/settings.php:529
+#: inc/settings.php:536
 msgid "Full Width Container"
 msgstr "Gesamtbreiten-Container"
 
-#: inc/settings.php:530
+#: inc/settings.php:537
 msgid "The container used for the full width layout."
 msgstr "Container, der für das Layout mit gesamter Breite verwendet werden soll."
 
-#: inc/settings.php:553 inc/widgets/post-content.php:84
+#: inc/settings.php:560 inc/widgets/post-content.php:84
 msgid "Content"
 msgstr "Inhalt"
 
-#: inc/settings.php:559
+#: inc/settings.php:566
 msgid "Copy Content"
 msgstr "Inhalt kopieren"
 
-#: inc/settings.php:560
+#: inc/settings.php:567
 msgid "Copy content from Page Builder to post content."
 msgstr "Inhalte von Page Builder zu Post-Inhalt kopieren."
 
@@ -1079,7 +1079,7 @@ msgstr "Zeile duplizieren"
 msgid "Delete Row"
 msgstr "Zeile löschen"
 
-#: inc/settings.php:386 tpl/js-templates.php:149
+#: inc/settings.php:387 tpl/js-templates.php:149
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -1156,7 +1156,7 @@ msgstr "Homepage aktualisiert. 1{Seite anzeigen}."
 msgid "Next"
 msgstr "Nächstes"
 
-#: siteorigin-panels.php:359
+#: siteorigin-panels.php:364
 msgid "Read More"
 msgstr "Weiterlesen"
 
@@ -1188,7 +1188,7 @@ msgstr "Ziehe eine Datei zum Importieren hierher"
 msgid "Layouts Directory"
 msgstr "Layout-Verzeichnis"
 
-#: siteorigin-panels.php:579 tpl/js-templates.php:39 tpl/js-templates.php:41
+#: siteorigin-panels.php:603 tpl/js-templates.php:39 tpl/js-templates.php:41
 msgid "Live Editor"
 msgstr "Live-Editor"
 
@@ -1196,7 +1196,7 @@ msgstr "Live-Editor"
 msgid "This interface requires Javascript"
 msgstr "Dieses Interface benötigt JavaScript"
 
-#: siteorigin-panels.php:559
+#: siteorigin-panels.php:583
 msgid "Edit Home Page"
 msgstr "Homepage bearbeiten"
 
@@ -1216,7 +1216,7 @@ msgstr "Möchtest du den vorhandenen Inhalt dieses Editors in den Page Builder k
 msgid "Please read the 1{settings guide} of the Page Builder documentation for help."
 msgstr "Hilfe findest du in der 1{Einstellungs-Anleitung} der Page-Builder-Dokumentation."
 
-#: inc/settings.php:414
+#: inc/settings.php:415
 msgid "The HTML used for widget titles. {{title}} is replaced with the widget title."
 msgstr "HTML, welches für die Widget-Titel verwendet wird. {{title}} wird durch den Widget-Titel ersetzt."
 
@@ -1268,7 +1268,7 @@ msgstr "Widget unterhalb einfügen"
 msgid "Previous"
 msgstr "Zurück"
 
-#: inc/settings.php:282
+#: inc/settings.php:283
 msgid "Post Types"
 msgstr "Inhaltstypen"
 
@@ -1285,7 +1285,7 @@ msgid "You need to install 1{%1$s} to use the widget 2{%2$s}."
 msgstr "Sie müssen {%1$s} installieren, um das Widget 2{%2$s} verwenden zu können."
 
 #: inc/admin.php:183 inc/admin.php:727 inc/admin.php:1508 inc/admin.php:1512
-#: inc/settings.php:231 tpl/js-templates.php:217
+#: inc/settings.php:232 tpl/js-templates.php:217
 msgid "Page Builder"
 msgstr "Page-Builder"
 
@@ -1308,10 +1308,6 @@ msgstr "Spaltensatz"
 #: inc/styles.php:449 inc/styles.php:461
 msgid "Standard"
 msgstr "Standard"
-
-#: inc/styles.php:450
-msgid "Full Width"
-msgstr "Gesamte Breite"
 
 #: inc/styles.php:451
 msgid "Full Width Stretched"
@@ -1352,3 +1348,7 @@ msgstr "Innenabstand"
 #: inc/styles.php:429
 msgid "Bottom Margin"
 msgstr "Außenabstand unten"
+
+#: inc/styles.php:450
+msgid "Full Width"
+msgstr "Volle Breite"

@@ -676,6 +676,9 @@ jQuery(document).on("click", ".b2s-post-ship-item-full-text", function () {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
                 }
+                if (data.error == 'permission_author') {
+                    jQuery('.b2s-no-permission-author').show();
+                }
             }
         }
     });
@@ -3040,6 +3043,13 @@ jQuery("#b2sNetworkSent").validate({
                     jQuery('.b2s-nonce-check-fail').show();
                     return false;
                 }
+                if (data.error == 'permission') {
+                    jQuery('.b2s-no-permission').show();
+                    jQuery(".b2s-loading-area").hide();
+                    jQuery(".b2s-post-area").show();
+                    jQuery('#b2s-sidebar-wrapper').show();
+                    return false;
+                }
                 jQuery(".b2s-loading-area").hide();
 
                 //Onboarding
@@ -4787,6 +4797,7 @@ function saveDraft() {
             return false;
         },
         success: function (data) {
+            
             jQuery('.b2s-loader-btn-ship').css('display', 'none');
             jQuery('.b2s-submit-btn').removeAttr('disabled');
             jQuery('.b2s-submit-btn-scroll').removeAttr('disabled');
@@ -4797,8 +4808,12 @@ function saveDraft() {
                     jQuery('.b2s-post-draft-saved-success').fadeOut();
                 }, 5000);
             } else {
+
                 if (result.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
+                }
+                if (result.error == 'permission') {
+                    jQuery('.b2s-no-permission').show();
                 }
                 jQuery('.b2s-post-draft-saved-fail').show();
                 window.setTimeout(function () {
@@ -5717,6 +5732,9 @@ jQuery(document).on('click', '.b2s-draft-delete-confirm-btn', function () {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
                 }
+                if (data.error == 'permission') {
+                    jQuery('.b2s-no-permission').show();
+                }
                 jQuery('.b2s-post-remove-fail').show();
             }
             return true;
@@ -5731,170 +5749,51 @@ jQuery(document).on('click', '.b2s-post-item-ass-auth-btn', function () {
     return true;
 });
 
-//Tool:Assistini / Settings Modal
+//Tool:Assistini / AI Settings - opens Edit Post Template in AI mode
 jQuery(document).on('click', '.b2s-post-item-ass-setting-btn', function () {
-    jQuery('#b2sAssSettingsModal').modal('show');
-    var postTemplateElm = jQuery('#b2s-ass-settings-checkbox-1');
-    var emojiElm = jQuery('#b2s-ass-settings-checkbox-2');
-    var generateHashtagsElm = jQuery('#b2s-ass-settings-checkbox-3');
-    var displayedContentElm = jQuery('.b2s-ass-settings-checkbox-4');
-
-    jQuery.ajax({
-        url: ajaxurl,
-        type: "POST",
-        dataType: "json",
-        cache: false,
-        data: {
-            'action': 'b2s_get_ass_settings',
-            'b2s_security_nonce': jQuery('#b2s_security_nonce').val()
-        },
-        error: function () {
-            jQuery('.b2s-server-connection-fail').show();
-            return false;
-        },
-        beforeSend: function () {
-            postTemplateElm.prop('disabled', true);
-            emojiElm.prop('disabled', true);
-            generateHashtagsElm.prop('disabled', true);
-            displayedContentElm.prop('disabled', true);
-        },
-        success: function (data) {
-            if (data.result == true) {
-                postTemplateElm.prop('disabled', false);
-                emojiElm.prop('disabled', false);
-                generateHashtagsElm.prop('disabled', false);
-                displayedContentElm.prop('disabled', false);
-
-                if (data.settings.post_template != null) {
-                    postTemplateElm.prop('checked', data.settings.post_template);
-                    if(data.settings.post_template==true){
-                        jQuery('#b2s-ass-settings-checkbox-3').prop("disabled", true);
-                        jQuery('#b2s-ass-settings-checkbox-3').prop("checked", true);
-                        var text= jQuery('label[for="b2s-ass-settings-checkbox-3"]').text();
-                        text = text.replace(/\s?\(.*?\)/g, '');
-                        var additionText= jQuery('#b2s-ass-settings-checkbox-3-conditional-text').text();
-                        var wholeText= text +" "+ additionText;
-                        jQuery('label[for="b2s-ass-settings-checkbox-3"]').text(wholeText);
-                    }
-          
-    
-                }
-                if (data.settings.deactivate_emojis != null) {
-                    emojiElm.prop('checked', data.settings.deactivate_emojis);
-                }
-                if (data.settings.generate_hashtags != null) {
-                    generateHashtagsElm.prop('checked', data.settings.generate_hashtags);
-                }
-               
-                if(data.settings.displayed_content != null){
-                    displayedContentElm.prop('checked', data.settings.displayed_content);
-                }
-
-                // jQuery('.b2s-draft-list-entry[data-b2s-draft-id="' + jQuery('#b2s-delete-confirm-draft-id').val() + '"]').remove();
-                // jQuery('.b2s-post-remove-success').show();
-                // location.reload();
-            } else {
-                if (data.error == 'nonce') {
-                    jQuery('.b2s-nonce-check-fail').show();
-                }
-                // jQuery('.b2s-post-remove-fail').show();
-            }
-            return true;
-        }
-    });
+    var editBtn = jQuery(this).closest('.b2s-post-item').find('.b2s-edit-template-btn');
+    if (editBtn.length) {
+        window.b2sOpenTemplateInAiMode = true;
+        editBtn.trigger('click');
+    }
     return true;
 });
 
-//JM 2025/07/31 Update Notice for Customers->
-jQuery(document).on('change', '#b2s-ass-settings-checkbox-1', function () {
-    
-    var checked = jQuery(this).prop("checked");
-  
-    if(checked){
-        jQuery('#b2s-ass-settings-checkbox-3').prop("disabled", true);
-        jQuery('#b2s-ass-settings-checkbox-3').prop("checked", true);
-        var text= jQuery('label[for="b2s-ass-settings-checkbox-3"]').text();
-        var additionText= jQuery('#b2s-ass-settings-checkbox-3-conditional-text').text();
-        var wholeText= text +" "+ additionText;
-        jQuery('label[for="b2s-ass-settings-checkbox-3"]').text(wholeText);
-        
-    }else
-    {
-        jQuery('#b2s-ass-settings-checkbox-3').prop("disabled", false);
-        var text =jQuery('label[for="b2s-ass-settings-checkbox-3"]').text();
-        text = text.replace(/\s?\(.*?\)/g, '');
-        jQuery('label[for="b2s-ass-settings-checkbox-3"]').text(text);
-    }
-
-});
-
-jQuery(document).on('change', '.b2s-ass-settings-checkbox-4', function (e) {
-    
+jQuery(document).on('change', '.b2s-global-ai-settings-checkbox-4', function () {
     if (this.checked) {
-        jQuery(".toggle-label-b2s-ass-settings-checkbox-4-original-content").hide();
-        jQuery(".toggle-label-b2s-ass-settings-checkbox-4-displayed-content").show();
-        jQuery(".b2s-ass-settings-checkbox-4-original-content-checked").hide();
-        jQuery(".b2s-ass-settings-checkbox-4-displayed-content-checked").show();
+        jQuery('.toggle-label-b2s-global-ai-settings-checkbox-4-original-content').hide();
+        jQuery('.toggle-label-b2s-global-ai-settings-checkbox-4-displayed-content').show();
+        jQuery('.b2s-global-ai-settings-checkbox-4-original-content-checked').hide();
+        jQuery('.b2s-global-ai-settings-checkbox-4-displayed-content-checked').show();
     } else {
-      
-        jQuery(".toggle-label-b2s-ass-settings-checkbox-4-displayed-content").hide();
-        jQuery(".toggle-label-b2s-ass-settings-checkbox-4-original-content").show();
-        jQuery(".b2s-ass-settings-checkbox-4-displayed-content-checked").hide();
-        jQuery(".b2s-ass-settings-checkbox-4-original-content-checked").show();
-
+        jQuery('.toggle-label-b2s-global-ai-settings-checkbox-4-displayed-content').hide();
+        jQuery('.toggle-label-b2s-global-ai-settings-checkbox-4-original-content').show();
+        jQuery('.b2s-global-ai-settings-checkbox-4-displayed-content-checked').hide();
+        jQuery('.b2s-global-ai-settings-checkbox-4-original-content-checked').show();
     }
 });
 
-
-
-
-
-//Tool:Assistini / Settings Save
-jQuery(document).on('click', '#b2s-ass-settings-save-btn', function () {
-    var postTemplateElm = jQuery('#b2s-ass-settings-checkbox-1');
-    var emojiElm = jQuery('#b2s-ass-settings-checkbox-2');
-    var generateHashtagsElm = jQuery('#b2s-ass-settings-checkbox-3');
-    var displayedContentElm = jQuery('.b2s-ass-settings-checkbox-4');
-
-    jQuery.ajax({
-        url: ajaxurl,
-        type: "POST",
-        dataType: "json",
-        cache: false,
-        data: {
-            'action': 'b2s_ass_settings_save',
-            'b2s_security_nonce': jQuery('#b2s_security_nonce').val(),
-            'setting_post_template': postTemplateElm.prop('checked'),
-            'setting_deactivate_emojis': emojiElm.prop('checked'),
-            'setting_generate_hashtags': generateHashtagsElm.prop('checked'),
-            'setting_displayed_content': displayedContentElm.prop('checked')
-        },
-        error: function () {
-            jQuery('.b2s-server-connection-fail').show();
-            return false;
-        },
-        success: function (data) {
-            if (data.result == true) {
-                jQuery('#b2sAssSettingsModal').modal('hide');
-            } else {
-                if (data.error == 'nonce') {
-                    jQuery('.b2s-nonce-check-fail').show();
-                }
-            }
-            return true;
-        }
-    });
-
-
-    return true;
+jQuery(document).on('change', '#b2s-global-ai-settings-checkbox-1', function () {
+    var checked = jQuery(this).prop('checked');
+    if (checked) {
+        jQuery('#b2s-global-ai-settings-checkbox-3').prop('disabled', true).prop('checked', true);
+        var text = jQuery('label[for="b2s-global-ai-settings-checkbox-3"]').text().replace(/\s?\(.*?\)/g, '');
+        var additionText = jQuery('#b2s-global-ai-settings-checkbox-3-conditional-text').text();
+        jQuery('label[for="b2s-global-ai-settings-checkbox-3"]').text(text + ' ' + additionText);
+    } else {
+        jQuery('#b2s-global-ai-settings-checkbox-3').prop('disabled', false);
+        var text = jQuery('label[for="b2s-global-ai-settings-checkbox-3"]').text().replace(/\s?\(.*?\)/g, '');
+        jQuery('label[for="b2s-global-ai-settings-checkbox-3"]').text(text);
+    }
 });
+
 
 jQuery(document).on('click', '.b2s-tiktok-promotion-radio', function () {
     var options = jQuery('.b2s-tiktok-promotion-options[data-network-auth-id="' + jQuery(this).attr('data-network-auth-id') + '"]');
     if (jQuery(this).attr("value") == 1) {
-        options.show()
+        options.show();
     } else {
-        options.hide()
+        options.hide();
     }
 });
 
@@ -6435,6 +6334,46 @@ function stripTags(input) {
     return tempDiv.textContent || tempDiv.innerText || '';
 }
 
+// Mirrors B2S_Util::getExcerpt($text, 0, $limit):
+// Normalises HTML first (converts <br>/<p> to newlines, strips remaining tags)
+// so that sentence boundaries like "werden." are never masked by trailing HTML.
+// Prefers ending at a sentence boundary (. ? !); falls back to last word boundary.
+function b2sGetExcerpt(text, limit) {
+    // Normalise HTML: block separators become newlines, other tags are stripped
+    var clean = text
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>/gi, '\n')
+        .replace(/<[^>]+>/g, '')
+        .replace(/\n{2,}/g, '\n\n')
+        .replace(/[ \t]+/g, ' ')
+        .trim();
+    if (clean.length <= limit) {
+        return clean;
+    }
+    var parts = clean.split(/([ \t\n\r]+)/);
+    var length = 0;
+    var lastTaken = 0;
+    var partCount = 0;
+    for (var i = 0; i < parts.length; i++) {
+        length += parts[i].length;
+        if (length > limit) {
+            break;
+        }
+        partCount++;
+        var lastChar = parts[i].slice(-1);
+        if (lastChar === '.' || lastChar === '?' || lastChar === '!') {
+            lastTaken = partCount;
+        }
+    }
+    if (lastTaken > 0) {
+        return parts.slice(0, lastTaken).join('').trim().replace(/\n/g, '<br>');
+    }
+    // Fallback: cut at last word boundary within limit
+    var sub = clean.substring(0, limit);
+    var lastSpace = sub.lastIndexOf(' ');
+    return (lastSpace > 0 ? sub.substring(0, lastSpace) : sub).trim().replace(/\n/g, '<br>');
+}
+
 /////////New TikTok Direct Review///////////////////////////////
 
 //Validation
@@ -6701,14 +6640,672 @@ function toggleFbPageShareAsStory(networkId, networkType) {
         }
 };
 
-jQuery(document).on('click', '.b2s-edit-template-btn', function () {
+var b2sAiSettingsChanged = false;
+var b2sStandardSettingsChanged = false;
+var b2sAiSettingsPendingMode = null;
+var b2sAiSettingsLoading = false;
 
-    //new Ad Modal if Version Free
-    if(jQuery('#b2sUserVersion').val() < 1){
-        jQuery('#b2sProFeatureEditTemplateModal').modal('show');
+function getCurrentEditTemplateMode() {
+    var activeMode = jQuery('.b2s-edit-template-mode-btn.active').attr('data-mode');
+    return (activeMode === 'ai') ? 'ai' : 'standard';
+}
+
+function setEditTemplateMode(mode) {
+    var targetMode = (mode === 'ai') ? 'ai' : 'standard';
+    jQuery('.b2s-edit-template-mode-btn').removeClass('active');
+    jQuery('.b2s-edit-template-mode-btn[data-mode="' + targetMode + '"]').addClass('active');
+
+    if (targetMode === 'ai') {
+        jQuery('.b2s-edit-template-standard-content').hide();
+        jQuery('.b2s-edit-template-ai-content').show();
+        if (!jQuery('.b2s-ai-ass-connected-indicator').is(':visible')) {
+            jQuery('.b2s-edit-template-ai-content-connect-gate').show();
+        }
+        jQuery('.b2s-edit-template-save-btn').hide();
+        jQuery('.b2s-edit-template-no-cache-area').hide();
+        jQuery('.b2s-edit-template-content').addClass('b2s-ai-mode-active');
+        var $tabsNav = jQuery('.b2s-tabs-nav-container');
+        if ($tabsNav.length) {
+            var $config = jQuery('.tab-pane.active .b2s-ai-template-config');
+            if ($config.length) {
+                $config.before($tabsNav.detach());
+            }
+        }
+        jQuery.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            dataType: 'json',
+            cache: false,
+            data: {
+                'action': 'b2s_get_ass_settings',
+                'b2s_security_nonce': jQuery('#b2s_security_nonce').val()
+            },
+            success: function (data) {
+                b2sAiSettingsLoading = true;
+                if (data.result == true) {
+                    if (data.settings.post_template != null) {
+                        jQuery('#b2s-global-ai-settings-checkbox-1').prop('checked', data.settings.post_template);
+                        if (data.settings.post_template == true) {
+                            jQuery('#b2s-global-ai-settings-checkbox-3').prop('disabled', true).prop('checked', true);
+                            var text = jQuery('label[for="b2s-global-ai-settings-checkbox-3"]').text().replace(/\s?\(.*?\)/g, '');
+                            var additionText = jQuery('#b2s-global-ai-settings-checkbox-3-conditional-text').text();
+                            jQuery('label[for="b2s-global-ai-settings-checkbox-3"]').text(text + ' ' + additionText);
+                        }
+                    }
+                    if (data.settings.deactivate_emojis != null) {
+                        jQuery('#b2s-global-ai-settings-checkbox-2').prop('checked', data.settings.deactivate_emojis);
+                    }
+                    if (data.settings.generate_hashtags != null) {
+                        jQuery('#b2s-global-ai-settings-checkbox-3').prop('checked', data.settings.generate_hashtags);
+                    }
+                    if (data.settings.displayed_content != null) {
+                        jQuery('#b2s-global-ai-settings-checkbox-4').prop('checked', data.settings.displayed_content).trigger('change');
+                    }
+                }
+                b2sAiSettingsLoading = false;
+            }
+        });
+    } else {
+        jQuery('.b2s-edit-template-standard-content').show();
+        jQuery('.b2s-edit-template-ai-content').hide();
+        jQuery('.b2s-edit-template-ai-content-connect-gate').hide();
+        jQuery('.b2s-edit-template-save-btn').show();
+        jQuery('.b2s-edit-template-no-cache-area').show();
+        jQuery('.b2s-edit-template-content').removeClass('b2s-ai-mode-active');
+        var $tabsNav = jQuery('.b2s-tabs-nav-container');
+        var $tabContent = jQuery('.tab-content.clearfix');
+        if ($tabsNav.length && $tabContent.length) {
+            $tabContent.before($tabsNav.detach());
+        }
+    }
+
+    initAiTemplateSettings(jQuery('.b2s-edit-template-content'));
+}
+
+jQuery(document).on('change input', '.ai-template-form-element', function () {
+    if (!b2sAiSettingsLoading) {
+        b2sAiSettingsChanged = true;
+    }
+});
+
+jQuery(document).on('change input', '.standard-template-form-element', function () {
+    b2sStandardSettingsChanged = true;
+});
+
+jQuery(document).on('click', '.b2s-edit-template-mode-btn', function () {
+    var targetMode = jQuery(this).attr('data-mode');
+    if (targetMode === 'standard' && b2sAiSettingsChanged) {
+        b2sAiSettingsPendingMode = targetMode;
+        jQuery('#b2sAiSettingsUnsavedModal').modal('show');
+        return false;
+    }
+    if (targetMode === 'ai' && b2sStandardSettingsChanged) {
+        b2sAiSettingsPendingMode = targetMode;
+        jQuery('#b2sAiSettingsUnsavedModal').modal('show');
+        return false;
+    }
+    setEditTemplateMode(targetMode);
+    return false;
+});
+
+jQuery(document).on('click', '.b2s-ai-unsaved-save-btn', function () {
+    jQuery('#b2sAiSettingsUnsavedModal').modal('hide');
+    if (b2sAiSettingsPendingMode === 'standard') {
+        jQuery('.b2s-edit-template-save-ai-btn').trigger('click');
+    } else {
+        jQuery('.b2s-edit-template-save-btn').trigger('click');
+    }
+    if (b2sAiSettingsPendingMode) {
+        setEditTemplateMode(b2sAiSettingsPendingMode);
+        b2sAiSettingsPendingMode = null;
+    }
+});
+
+jQuery(document).on('click', '.b2s-ai-unsaved-skip-btn', function () {
+    jQuery('#b2sAiSettingsUnsavedModal').modal('hide');
+    b2sAiSettingsChanged = false;
+    b2sStandardSettingsChanged = false;
+    if (b2sAiSettingsPendingMode) {
+        setEditTemplateMode(b2sAiSettingsPendingMode);
+        b2sAiSettingsPendingMode = null;
+    }
+});
+
+
+jQuery('#b2sAiSettingsUnsavedModal').on('hidden.bs.modal', function () {
+    if (jQuery('.modal.in').length) {
+        jQuery('body').addClass('modal-open');
+    }
+});
+
+jQuery('#b2sProFeatureEditTemplateModal').on('hidden.bs.modal', function () {
+    if (jQuery('.modal.in').length) {
+        jQuery('body').addClass('modal-open');
+    }
+});
+
+jQuery(document).on('shown.bs.tab', '.b2s-template-profile, .b2s-template-page, .b2s-template-group', function () {
+    if (getCurrentEditTemplateMode() === 'ai') {
+        var $tabsNav = jQuery('.b2s-tabs-nav-container');
+        if ($tabsNav.length) {
+            var $config = jQuery('.tab-pane.active .b2s-ai-template-config');
+            if ($config.length) {
+                $config.before($tabsNav.detach());
+            }
+        }
+    }
+});
+
+// Load Global AI Settings on page load
+jQuery(document).ready(function () {
+    jQuery.ajax({
+        url: ajaxurl,
+        type: "POST",
+        dataType: "json",
+        cache: false,
+        data: {
+            'action': 'b2s_get_ass_settings',
+            'b2s_security_nonce': jQuery('#b2s_security_nonce').val()
+        },
+        success: function (data) {
+            b2sAiSettingsLoading = true;
+            if (data.result == true) {
+                if (data.settings.post_template != null) {
+                    jQuery('#b2s-global-ai-settings-checkbox-1').prop('checked', data.settings.post_template);
+                    if (data.settings.post_template == true) {
+                        jQuery('#b2s-global-ai-settings-checkbox-3').prop('disabled', true).prop('checked', true);
+                        var text = jQuery('label[for="b2s-global-ai-settings-checkbox-3"]').text().replace(/\s?\(.*?\)/g, '');
+                        var additionText = jQuery('#b2s-global-ai-settings-checkbox-3-conditional-text').text();
+                        jQuery('label[for="b2s-global-ai-settings-checkbox-3"]').text(text + ' ' + additionText);
+                    }
+                }
+                if (data.settings.deactivate_emojis != null) {
+                    jQuery('#b2s-global-ai-settings-checkbox-2').prop('checked', data.settings.deactivate_emojis);
+                }
+                if (data.settings.generate_hashtags != null) {
+                    jQuery('#b2s-global-ai-settings-checkbox-3').prop('checked', data.settings.generate_hashtags);
+                }
+                if (data.settings.displayed_content != null) {
+                    jQuery('#b2s-global-ai-settings-checkbox-4').prop('checked', data.settings.displayed_content).trigger('change');
+                }
+            }
+            b2sAiSettingsLoading = false;
+        }
+    });
+});
+
+jQuery(document).on('click', '.b2s-edit-template-save-ai-btn', function () {
+    b2sAiSettingsChanged = false;
+    // Save Global AI Settings (same action as b2s-ass-settings-save-btn)
+    jQuery.ajax({
+        url: ajaxurl,
+        type: "POST",
+        dataType: "json",
+        cache: false,
+        data: {
+            'action': 'b2s_ass_settings_save',
+            'b2s_security_nonce': jQuery('#b2s_security_nonce').val(),
+            'setting_post_template': jQuery('#b2s-global-ai-settings-checkbox-1').prop('checked'),
+            'setting_deactivate_emojis': jQuery('#b2s-global-ai-settings-checkbox-2').prop('checked'),
+            'setting_generate_hashtags': jQuery('#b2s-global-ai-settings-checkbox-3').prop('checked'),
+            'setting_displayed_content': jQuery('#b2s-global-ai-settings-checkbox-4').prop('checked')
+        },
+        error: function () {
+            jQuery('.b2s-server-connection-fail').show();
+        }
+    });
+
+    // Free users can only save global AI settings above
+    if (parseInt(jQuery('#b2sUserVersion').val(), 10) < 1) {
+        jQuery('#b2s-edit-template').modal('hide');
+        return false;
+    }
+
+    var networkId = parseInt(jQuery('#b2s-edit-template-network-id').val(), 10);
+    var typeId = getActiveTemplateType();
+    var aiInstructionField = jQuery('.b2s-ai-template-ai-instruction[data-network-type="' + typeId + '"]');
+    var generateHashtagsField = jQuery('.b2s-ai-template-generate-hashtags[data-network-type="' + typeId + '"]');
+    var hashtagsCountField = jQuery('.b2s-ai-template-hashtags-count[data-network-type="' + typeId + '"]');
+    var enforceKeywordsField = jQuery('.b2s-ai-template-enforce-keywords[data-network-type="' + typeId + '"]');
+    var useKeywordsField = jQuery('.b2s-ai-template-use-keywords[data-network-type="' + typeId + '"]');
+    var emojiField = jQuery('.b2s-ai-template-emojis[data-network-type="' + typeId + '"]');
+
+    if (!aiInstructionField.length || !networkId) {
+        return false;
+    }
+
+    var generateHashtags = generateHashtagsField.length ? generateHashtagsField.val() : 'none';
+
+    var payload = {
+        enabled: jQuery('.b2s-ai-template-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        content_goal_enabled: jQuery('.b2s-ai-template-content-goal-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        tone_language_enabled: jQuery('.b2s-ai-template-tone-language-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        hashtags_keywords_enabled: jQuery('.b2s-ai-template-hashtags-keywords-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        content_length_output_enabled: jQuery('.b2s-ai-template-content-length-output-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        answer_in_language: jQuery('.b2s-ai-template-answer-language[data-network-type="' + typeId + '"]').val(),
+        network_name: jQuery('.b2s-ai-template-network-name[data-network-type="' + typeId + '"]').val(),
+        ai_instruction: aiInstructionField.val(),
+        post_goal: jQuery('.b2s-ai-template-post-goal[data-network-type="' + typeId + '"]').val(),
+        cta_type: jQuery('.b2s-ai-template-cta-type[data-network-type="' + typeId + '"]').val(),
+        point_of_view: jQuery('.b2s-ai-template-point-of-view[data-network-type="' + typeId + '"]').val(),
+        tone: jQuery('.b2s-ai-template-tone[data-network-type="' + typeId + '"]').val(),
+        content_focus: jQuery('.b2s-ai-template-content-focus[data-network-type="' + typeId + '"]').val(),
+        text_form: jQuery('.b2s-ai-template-text-form[data-network-type="' + typeId + '"]').val(),
+        form_of_address: jQuery('.b2s-ai-template-form-of-address[data-network-type="' + typeId + '"]').val(),
+        emojis: emojiField.length ? emojiField.val() : 'off',
+        writing_style: jQuery('.b2s-ai-template-writing-style[data-network-type="' + typeId + '"]').val(),
+        generate_hashtags: generateHashtags,
+        hashtags_count: (generateHashtags === 'from_ai' && hashtagsCountField.length) ? hashtagsCountField.val() : 0,
+        use_keywords: (enforceKeywordsField.length && enforceKeywordsField.is(':checked') && useKeywordsField.length) ? useKeywordsField.val() : '',
+        keyword_strength: jQuery('.b2s-ai-template-keyword-strength[data-network-type="' + typeId + '"]').val(),
+        text_length: jQuery('.b2s-ai-template-text-length[data-network-type="' + typeId + '"]').val(),
+        text_depth: jQuery('.b2s-ai-template-text-depth[data-network-type="' + typeId + '"]').val()
+    };
+
+    jQuery('.b2s-edit-template-save-success').hide();
+    jQuery('.b2s-edit-template-save-failed').hide();
+
+    jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        dataType: 'json',
+        cache: false,
+        data: {
+            action: 'b2s_save_ai_post_template',
+            networkId: networkId,
+            typeId: typeId,
+            payload: payload,
+            b2s_security_nonce: jQuery('#b2s_security_nonce').val()
+        },
+        error: function () {
+            jQuery('.b2s-edit-template-save-failed').show();
+            return false;
+        },
+        success: function (data) {
+            if (data.result === true) {
+                jQuery('.b2s-edit-template-save-success').show();
+                setTimeout(function () {
+                    jQuery('.b2s-edit-template-save-success').fadeOut();
+                }, 3000);
+                jQuery('#b2s-edit-template').modal('hide');
+            } else {
+                if (data.error == 'nonce') {
+                    jQuery('.b2s-nonce-check-fail').show();
+                }
+                if (data.error == 'permission') {
+                    jQuery('#b2s-edit-template').modal('hide');
+                    jQuery('.b2s-no-permission-author').show();
+                    return false;
+                }
+                jQuery('.b2s-edit-template-save-failed').show();
+            }
+        }
+    });
+
+    return false;
+});
+
+function getAiTemplatePreviewPostId() {
+    var selectors = ['#post_ID', '#b2s_post_id', '#b2s-post-id', '#b2sPostId'];
+    for (var i = 0; i < selectors.length; i++) {
+        var value = parseInt(jQuery(selectors[i]).val(), 10);
+        if (!isNaN(value) && value > 0) {
+            return value;
+        }
+    }
+    return 0;
+}
+
+function getAiPreviewText(typeId, key) {
+    return jQuery('.b2s-ai-template-preview[data-network-type="' + typeId + '"]').data(key) || key;
+}
+
+function renderAiTemplatePreviewResult(typeId, data, isError) {
+    var previewElm = jQuery('.b2s-ai-template-preview[data-network-type="' + typeId + '"]');
+    if (!previewElm.length) {
         return;
     }
-    
+
+    previewElm.find('.b2s-ai-preview-loader').hide();
+    previewElm.show();
+
+    if (isError) {
+        previewElm.find('.b2s-ai-preview-result').hide();
+        previewElm.find('.b2s-ai-preview-message').text(data).show();
+        return;
+    }
+
+    previewElm.find('.b2s-ai-preview-message').hide();
+    previewElm.find('.b2s-ai-template-preview-title').text(previewElm.data('text-generated') || 'Generated text');
+    var assText = (data.ass_text || '').replace(/\r\n|\r|\n/g, '<br>');
+    previewElm.find('.b2s-ai-template-preview-text').html(assText);
+    var wordsOpen = typeof data.ass_words_open !== 'undefined' ? data.ass_words_open : 0;
+    var wordsTotal = typeof data.ass_words_total !== 'undefined' ? data.ass_words_total : 0;
+    previewElm.find('.b2s-ai-template-preview-meta').text((previewElm.data('text-left') || 'Left') + ': ' + wordsOpen + ' / ' + wordsTotal);
+    if (data.ass_hashtags) {
+        previewElm.find('.b2s-ai-template-preview-hashtags').html('<strong>' + (previewElm.data('text-hashtags') || 'Hashtags') + ':</strong> ' + data.ass_hashtags).show();
+    } else {
+        previewElm.find('.b2s-ai-template-preview-hashtags').hide();
+    }
+    previewElm.find('.b2s-ai-preview-result').show();
+}
+
+jQuery(document).on('click', '.b2s-ai-template-preview-btn', function () {
+    var previewBtn = jQuery(this);
+    var networkId = parseInt(jQuery('#b2s-edit-template-network-id').val(), 10);
+    var typeId = getActiveTemplateType();
+    var postId = getAiTemplatePreviewPostId();
+    var postTextElm = jQuery('.b2s-edit-template-preview-content[data-network-type="' + typeId + '"]').first();
+    var postText = postTextElm.length ? jQuery.trim(postTextElm.text()) : '';
+    var generateHashtagsField = jQuery('.b2s-ai-template-generate-hashtags[data-network-type="' + typeId + '"]');
+    var hashtagsCountField = jQuery('.b2s-ai-template-hashtags-count[data-network-type="' + typeId + '"]');
+    var enforceKeywordsField = jQuery('.b2s-ai-template-enforce-keywords[data-network-type="' + typeId + '"]');
+    var useKeywordsField = jQuery('.b2s-ai-template-use-keywords[data-network-type="' + typeId + '"]');
+    var emojiField = jQuery('.b2s-ai-template-emojis[data-network-type="' + typeId + '"]');
+    var generateHashtags = generateHashtagsField.length ? generateHashtagsField.val() : 'none';
+
+    var aiTemplatePayload = {
+        enabled: jQuery('.b2s-ai-template-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        content_goal_enabled: jQuery('.b2s-ai-template-content-goal-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        tone_language_enabled: jQuery('.b2s-ai-template-tone-language-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        hashtags_keywords_enabled: jQuery('.b2s-ai-template-hashtags-keywords-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        content_length_output_enabled: jQuery('.b2s-ai-template-content-length-output-enabled[data-network-type="' + typeId + '"]').is(':checked') ? 1 : 0,
+        answer_in_language: jQuery('.b2s-ai-template-answer-language[data-network-type="' + typeId + '"]').val(),
+        network_name: jQuery('.b2s-ai-template-network-name[data-network-type="' + typeId + '"]').val(),
+        ai_instruction: jQuery('.b2s-ai-template-ai-instruction[data-network-type="' + typeId + '"]').val(),
+        post_goal: jQuery('.b2s-ai-template-post-goal[data-network-type="' + typeId + '"]').val(),
+        cta_type: jQuery('.b2s-ai-template-cta-type[data-network-type="' + typeId + '"]').val(),
+        point_of_view: jQuery('.b2s-ai-template-point-of-view[data-network-type="' + typeId + '"]').val(),
+        tone: jQuery('.b2s-ai-template-tone[data-network-type="' + typeId + '"]').val(),
+        content_focus: jQuery('.b2s-ai-template-content-focus[data-network-type="' + typeId + '"]').val(),
+        text_form: jQuery('.b2s-ai-template-text-form[data-network-type="' + typeId + '"]').val(),
+        form_of_address: jQuery('.b2s-ai-template-form-of-address[data-network-type="' + typeId + '"]').val(),
+        emojis: emojiField.length ? emojiField.val() : 'off',
+        writing_style: jQuery('.b2s-ai-template-writing-style[data-network-type="' + typeId + '"]').val(),
+        generate_hashtags: generateHashtags,
+        hashtags_count: (generateHashtags === 'from_ai' && hashtagsCountField.length) ? hashtagsCountField.val() : 0,
+        use_keywords: (enforceKeywordsField.length && enforceKeywordsField.is(':checked') && useKeywordsField.length) ? useKeywordsField.val() : '',
+        keyword_strength: jQuery('.b2s-ai-template-keyword-strength[data-network-type="' + typeId + '"]').val(),
+        text_length: jQuery('.b2s-ai-template-text-length[data-network-type="' + typeId + '"]').val(),
+        text_depth: jQuery('.b2s-ai-template-text-depth[data-network-type="' + typeId + '"]').val()
+    };
+
+    if (!networkId) {
+        renderAiTemplatePreviewResult(typeId, getAiPreviewText(typeId, 'text-no-network'), true);
+        return false;
+    }
+
+    if (!postId) {
+        renderAiTemplatePreviewResult(typeId, getAiPreviewText(typeId, 'text-no-context'), true);
+        return false;
+    }
+
+    jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        cache: false,
+        async: true,
+        data: {
+            action: 'b2s_ass_generate_text_sm',
+            b2s_security_nonce: jQuery('#b2s_security_nonce').val(),
+            post_format: jQuery('.b2s-edit-template-post-format[data-network-type="' + typeId + '"]').val(),
+            post_network_name: jQuery('.b2s-ai-template-network-name[data-network-type="' + typeId + '"]').val(),
+            post_lang: jQuery('#b2sUserLang').val() || 'en',
+            post_id: postId,
+            network_id: networkId,
+            network_type: typeId,
+            network_kind: typeId,
+            sel_sched_date: jQuery('#selSchedDate').val() || '',
+            b2s_post_type: jQuery('#b2sPostType').val() || '',
+            relay_count: jQuery('#b2sRelayCount').val() || 0,
+            is_video_mode: jQuery('#b2sIsVideo').val() || 0,
+            post_url: jQuery('#b2sDefault_url').val() || jQuery('#b2s_post_url').val() || '',
+            input_text: postText,
+            ai_template_settings: aiTemplatePayload
+        },
+        beforeSend: function () {
+            previewBtn.prop('disabled', true);
+            var previewElm = jQuery('.b2s-ai-template-preview[data-network-type="' + typeId + '"]');
+            previewElm.find('.b2s-ai-preview-result').hide();
+            previewElm.find('.b2s-ai-preview-message').hide();
+            previewElm.find('.b2s-ai-preview-loader-text').text(previewElm.data('text-generating') || 'Generating preview text...');
+            previewElm.find('.b2s-ai-preview-loader').show();
+            previewElm.show();
+        },
+        success: function (response) {
+            previewBtn.prop('disabled', false);
+            var data = response;
+            if (typeof response === 'string') {
+                try {
+                    data = JSON.parse(response);
+                } catch (e) {
+                    renderAiTemplatePreviewResult(typeId, getAiPreviewText(typeId, 'text-parse-error'), true);
+                    return;
+                }
+            }
+
+            if (data && data.error === 'nonce') {
+                jQuery('.b2s-nonce-check-fail').show();
+                renderAiTemplatePreviewResult(typeId, getAiPreviewText(typeId, 'text-security-fail'), true);
+                return;
+            }
+
+            if (data && data.result === true && data.ass_text) {
+                renderAiTemplatePreviewResult(typeId, data, false);
+                if (typeof data.ass_words_open !== 'undefined') {
+                    jQuery('#sidebar_ship_ass_words_open').text(data.ass_words_open);
+                    jQuery('#b2s-ship-ass-words-open').val(data.ass_words_open);
+                }
+                if (typeof data.ass_words_total !== 'undefined') {
+                    jQuery('#sidebar_ship_ass_words_total').text(data.ass_words_total);
+                    jQuery('#b2s-ship-ass-words-total').val(data.ass_words_total);
+                }
+                return;
+            }
+
+            renderAiTemplatePreviewResult(typeId, getAiPreviewText(typeId, 'text-gen-fail'), true);
+        },
+        error: function () {
+            previewBtn.prop('disabled', false);
+            renderAiTemplatePreviewResult(typeId, getAiPreviewText(typeId, 'text-request-fail'), true);
+        }
+    });
+
+    return false;
+});
+
+function updateAiTemplateState(networkType) {
+    var enabled = jQuery('.b2s-ai-template-enabled[data-network-type="' + networkType + '"]').is(':checked');
+    jQuery('.b2s-ai-template-settings[data-network-type="' + networkType + '"]').show().toggleClass('b2s-ai-template-settings-disabled', !enabled);
+    jQuery('.b2s-ai-template-disabled-info[data-network-type="' + networkType + '"]').toggle(!enabled);
+
+    var contentGoalEnabled = jQuery('.b2s-ai-template-content-goal-enabled[data-network-type="' + networkType + '"]').is(':checked');
+    var contentGoalFields = jQuery('.b2s-ai-template-content-goal-fields[data-network-type="' + networkType + '"]');
+    if (contentGoalFields.length) {
+        contentGoalFields.toggleClass('b2s-ai-template-group-fields-disabled', !contentGoalEnabled);
+        contentGoalFields.find('input, select, textarea, button').prop('disabled', !contentGoalEnabled);
+    }
+
+    var toneLanguageEnabled = jQuery('.b2s-ai-template-tone-language-enabled[data-network-type="' + networkType + '"]').is(':checked');
+    var toneLanguageFields = jQuery('.b2s-ai-template-tone-language-fields[data-network-type="' + networkType + '"]');
+    if (toneLanguageFields.length) {
+        toneLanguageFields.toggleClass('b2s-ai-template-group-fields-disabled', !toneLanguageEnabled);
+        toneLanguageFields.find('input, select, textarea, button').prop('disabled', !toneLanguageEnabled);
+    }
+
+    var hashtagsKeywordsEnabled = jQuery('.b2s-ai-template-hashtags-keywords-enabled[data-network-type="' + networkType + '"]').is(':checked');
+    var hashtagsKeywordsFields = jQuery('.b2s-ai-template-hashtags-keywords-fields[data-network-type="' + networkType + '"]');
+    if (hashtagsKeywordsFields.length) {
+        hashtagsKeywordsFields.toggleClass('b2s-ai-template-group-fields-disabled', !hashtagsKeywordsEnabled);
+        hashtagsKeywordsFields.find('input, select, textarea, button').prop('disabled', !hashtagsKeywordsEnabled);
+    }
+
+    var contentLengthOutputEnabled = jQuery('.b2s-ai-template-content-length-output-enabled[data-network-type="' + networkType + '"]').is(':checked');
+    var contentLengthOutputFields = jQuery('.b2s-ai-template-content-length-output-fields[data-network-type="' + networkType + '"]');
+    if (contentLengthOutputFields.length) {
+        contentLengthOutputFields.toggleClass('b2s-ai-template-group-fields-disabled', !contentLengthOutputEnabled);
+        contentLengthOutputFields.find('input, select, textarea, button').prop('disabled', !contentLengthOutputEnabled);
+    }
+
+    var generateHashtagsField = jQuery('.b2s-ai-template-generate-hashtags[data-network-type="' + networkType + '"]');
+    var hashtagsCountField = jQuery('.b2s-ai-template-hashtags-count[data-network-type="' + networkType + '"]');
+    if (hashtagsCountField.length) {
+        hashtagsCountField.prop('disabled', !(generateHashtagsField.length && generateHashtagsField.val() === 'from_ai' && hashtagsKeywordsEnabled));
+        if (generateHashtagsField.length && generateHashtagsField.val() === 'none') {
+            hashtagsCountField.val(0);
+        }
+    }
+
+    var enforceKeywordsField = jQuery('.b2s-ai-template-enforce-keywords[data-network-type="' + networkType + '"]');
+    var useKeywordsField = jQuery('.b2s-ai-template-use-keywords[data-network-type="' + networkType + '"]');
+    if (useKeywordsField.length) {
+        useKeywordsField.toggle(enforceKeywordsField.length && enforceKeywordsField.is(':checked'));
+    }
+}
+
+function initAiTemplateSettings(context) {
+    var scope = context && context.length ? context : jQuery(document);
+    scope.find('.b2s-ai-template-enabled').each(function () {
+        var networkType = jQuery(this).attr('data-network-type');
+        updateAiTemplateState(networkType);
+    });
+
+    scope.find('.b2s-ai-template-connect-gate:visible').each(function () {
+        resetAiInlineAssistiniAuth(jQuery(this));
+    });
+}
+
+function loadDefaultAiTemplate(networkType) {
+    var settingsWrapper = jQuery('.b2s-ai-template-settings[data-network-type="' + networkType + '"]');
+    if (!settingsWrapper.length) {
+        return;
+    }
+
+    var defaultConfig = settingsWrapper.attr('data-ai-defaults');
+    if (!defaultConfig) {
+        return;
+    }
+
+    var defaults = null;
+    try {
+        defaults = JSON.parse(defaultConfig);
+    } catch (error) {
+        return;
+    }
+
+    if (!defaults || typeof defaults !== 'object') {
+        return;
+    }
+
+    jQuery('.b2s-ai-template-enabled[data-network-type="' + networkType + '"]').prop('checked', parseInt(defaults.enabled, 10) === 1);
+    jQuery('.b2s-ai-template-content-goal-enabled[data-network-type="' + networkType + '"]').prop('checked', typeof defaults.content_goal_enabled === 'undefined' ? true : parseInt(defaults.content_goal_enabled, 10) === 1);
+    jQuery('.b2s-ai-template-tone-language-enabled[data-network-type="' + networkType + '"]').prop('checked', typeof defaults.tone_language_enabled === 'undefined' ? true : parseInt(defaults.tone_language_enabled, 10) === 1);
+    jQuery('.b2s-ai-template-hashtags-keywords-enabled[data-network-type="' + networkType + '"]').prop('checked', typeof defaults.hashtags_keywords_enabled === 'undefined' ? true : parseInt(defaults.hashtags_keywords_enabled, 10) === 1);
+    jQuery('.b2s-ai-template-content-length-output-enabled[data-network-type="' + networkType + '"]').prop('checked', typeof defaults.content_length_output_enabled === 'undefined' ? true : parseInt(defaults.content_length_output_enabled, 10) === 1);
+    jQuery('.b2s-ai-template-answer-language[data-network-type="' + networkType + '"]').val(defaults.answer_in_language || 'en');
+    jQuery('.b2s-ai-template-network-name[data-network-type="' + networkType + '"]').val(defaults.network_name || '');
+    jQuery('.b2s-ai-template-ai-instruction[data-network-type="' + networkType + '"]').val(defaults.ai_instruction || '');
+    jQuery('.b2s-ai-template-post-goal[data-network-type="' + networkType + '"]').val(defaults.post_goal || 'traffic');
+    jQuery('.b2s-ai-template-cta-type[data-network-type="' + networkType + '"]').val(defaults.cta_type || 'none');
+    jQuery('.b2s-ai-template-tone[data-network-type="' + networkType + '"]').val(defaults.tone || 'neutral');
+    jQuery('.b2s-ai-template-content-focus[data-network-type="' + networkType + '"]').val(defaults.content_focus || 50);
+    jQuery('.b2s-ai-template-point-of-view[data-network-type="' + networkType + '"]').val(defaults.point_of_view || 'neutral');
+    jQuery('.b2s-ai-template-text-form[data-network-type="' + networkType + '"]').val(defaults.text_form || 'default');
+    jQuery('.b2s-ai-template-form-of-address[data-network-type="' + networkType + '"]').val(defaults.form_of_address || 'neutral');
+    jQuery('.b2s-ai-template-emojis[data-network-type="' + networkType + '"]').val(defaults.emojis || 'auto');
+    jQuery('.b2s-ai-template-writing-style[data-network-type="' + networkType + '"]').val(defaults.writing_style || 'default');
+    jQuery('.b2s-ai-template-generate-hashtags[data-network-type="' + networkType + '"]').val(defaults.generate_hashtags || 'from_ai');
+    jQuery('.b2s-ai-template-hashtags-count[data-network-type="' + networkType + '"]').val(typeof defaults.hashtags_count !== 'undefined' ? defaults.hashtags_count : 1);
+    jQuery('.b2s-ai-template-keyword-strength[data-network-type="' + networkType + '"]').val(defaults.keyword_strength || 50);
+    jQuery('.b2s-ai-template-text-length[data-network-type="' + networkType + '"]').val(defaults.text_length || 'medium');
+    jQuery('.b2s-ai-template-text-depth[data-network-type="' + networkType + '"]').val(defaults.text_depth || 50);
+
+    var keywords = defaults.use_keywords || '';
+    var enforceKeywordsField = jQuery('.b2s-ai-template-enforce-keywords[data-network-type="' + networkType + '"]');
+    var useKeywordsField = jQuery('.b2s-ai-template-use-keywords[data-network-type="' + networkType + '"]');
+    if (enforceKeywordsField.length) {
+        enforceKeywordsField.prop('checked', keywords.length > 0);
+    }
+    if (useKeywordsField.length) {
+        useKeywordsField.val(keywords);
+    }
+
+    updateAiTemplateState(networkType);
+    jQuery('.b2s-ai-template-preview[data-network-type="' + networkType + '"]').hide().html('');
+}
+
+function resetAiInlineAssistiniAuth(gate) {
+    if (!gate || !gate.length) {
+        return;
+    }
+    gate.find('.b2s-ai-ass-auth-step-1-content').show();
+    gate.find('.b2s-ai-ass-auth-step-3-content').hide();
+    gate.find('.b2s-ai-ass-step-circle').removeClass('b2s-ass-color btn-danger').addClass('btn-default');
+    gate.find('.b2s-ai-ass-step-circle[data-step="1"]').addClass('b2s-ass-color btn-danger').removeClass('btn-default');
+}
+
+function openInlineAssistiniAuth(url, title) {
+    var location = window.location.protocol + '//' + window.location.hostname;
+    var targetUrl = encodeURI(url + '&location=' + location);
+    window.open(targetUrl, title, "width=650,height=800,scrollbars=yes,toolbar=no,status=no,resizable=no,menubar=no,location=no,directories=no,top=20,left=20");
+}
+
+jQuery(document).on('click', '.b2s-ai-ass-auth-step1-btn', function () {
+    var gate = jQuery(this).closest('.b2s-ai-template-connect-gate');
+    var emailOwn = gate.find('.b2s-ai-ass-auth-email-option[value="0"]');
+    var add = '';
+    if (emailOwn.is(':checked')) {
+        add = '&email=' + emailOwn.attr('data-auth-email');
+    }
+
+    gate.find('.b2s-ai-ass-step-circle[data-step="1"], .b2s-ai-ass-step-circle[data-step="2"]').addClass('b2s-ass-color btn-danger').removeClass('btn-default');
+    openInlineAssistiniAuth(jQuery(this).attr('data-url') + add, jQuery(this).attr('data-auth-title'));
+    return false;
+});
+
+jQuery(document).on('click', '.b2s-ai-ass-auth-step3-btn', function () {
+    var gate = jQuery(this).closest('.b2s-ai-template-connect-gate');
+    gate.hide();
+    jQuery('.b2s-ai-template-config').show();
+    jQuery('.b2s-ai-ass-connected-indicator').show();
+    jQuery('#b2s-global-ai-settings-not-connected-overlay').remove();
+    jQuery('.b2s-ai-template-not-connected-overlay').remove();
+    return false;
+});
+
+jQuery(document).on('change', '.b2s-ai-template-enabled, .b2s-ai-template-content-goal-enabled, .b2s-ai-template-tone-language-enabled, .b2s-ai-template-hashtags-keywords-enabled, .b2s-ai-template-content-length-output-enabled, .b2s-ai-template-generate-hashtags, .b2s-ai-template-enforce-keywords', function () {
+    var networkType = jQuery(this).attr('data-network-type');
+    updateAiTemplateState(networkType);
+});
+
+jQuery(document).on('change', '.b2s-ai-template-emojis', function () {
+    if (jQuery(this).val() !== 'none') {
+        jQuery('#b2s-global-ai-settings-checkbox-2').prop('checked', false);
+    }
+});
+
+jQuery(document).on('change', '.b2s-ai-template-hashtags-count', function () {
+    if (parseInt(jQuery(this).val(), 10) > 0) {
+        jQuery('#b2s-global-ai-settings-checkbox-3').prop('checked', true);
+    }
+});
+
+jQuery(document).on('click', '.b2s-edit-template-load-default-ai', function () {
+    loadDefaultAiTemplate(jQuery(this).attr('data-network-type'));
+    return false;
+});
+
+jQuery('#b2s-edit-template').on('show.bs.modal', function () {
+    b2sAiSettingsChanged = false;
+    b2sStandardSettingsChanged = false;
+}).on('shown.bs.modal', function () {
+    jQuery(this).removeAttr('aria-hidden');
+}).on('hidden.bs.modal', function () {
+    jQuery(this).attr('aria-hidden', 'true');
+});
+
+jQuery(document).on('click', '.b2s-edit-template-btn', function () {
+
     jQuery('b2s-edit-template-user-upgrade-required').hide();
     jQuery('.b2s-edit-template-content').hide();
     jQuery('.b2s-edit-template-save-btn').hide();
@@ -6756,6 +7353,13 @@ jQuery(document).on('click', '.b2s-edit-template-btn', function () {
                 }
                 jQuery('.b2s-edit-template-post-content').trigger('keyup');
                 jQuery('.b2s-edit-template-comment').trigger('keyup');
+                initAiTemplateSettings(jQuery('.b2s-edit-template-content'));
+                if (window.b2sOpenTemplateInAiMode) {
+                    window.b2sOpenTemplateInAiMode = false;
+                    setEditTemplateMode('ai');
+                } else {
+                    setEditTemplateMode('standard');
+                }
                 jQuery('.b2s-edit-template-share-as-story-wrapper').each(function () {
                     var wrapperType = jQuery(this).data('network-type');
                     toggleFbPageShareAsStory(networkId, wrapperType);
@@ -6998,6 +7602,8 @@ jQuery(document).on('click', '.b2s-edit-template-load-default', function () {
             jQuery('.b2s-edit-template-save-btn').show();
             if (data.result == true) {
                 jQuery('.b2s-template-tab-' + networkType).html(data.html);
+                initAiTemplateSettings(jQuery('.b2s-template-tab-' + networkType));
+                setEditTemplateMode(getCurrentEditTemplateMode());
             } else {
                 if (data.error == 'nonce') {
                     jQuery('.b2s-nonce-check-fail').show();
@@ -7010,6 +7616,10 @@ jQuery(document).on('click', '.b2s-edit-template-load-default', function () {
 
 // Edit Template - Save Button
 jQuery(document).on('click', '.b2s-edit-template-save-btn', function () {
+    b2sStandardSettingsChanged = false;
+
+    //When reloading always reset ignore template to false to make sure any changes in template will be applied
+    jQuery('#b2sIgnoreTemplate').val(0);
 
     if (jQuery('#b2sUserVersion').val() < 1 && jQuery('#b2s-edit-template-network-id').val() != 1 && jQuery('#b2s-edit-template-network-id').val() != 3 && jQuery('#b2s-edit-template-network-id').val() != 19) {
         return false;
@@ -7055,7 +7665,6 @@ jQuery(document).on('click', '.b2s-edit-template-save-btn', function () {
 
         template_data[networkType]['format'] = jQuery('.b2s-edit-template-post-format[data-network-type="' + networkType + '"]').val();
         template_data[networkType]['content'] = jQuery('.b2s-edit-template-post-content[data-network-type="' + networkType + '"]').val();
-        
         // Save default comment for networks that support comments
         if (typeof jQuery('.b2s-edit-template-comment[data-network-type="' + networkType + '"]') != "undefined") {
             var defaultCommentValue = jQuery('.b2s-edit-template-comment[data-network-type="' + networkType + '"]').val();
@@ -7288,6 +7897,16 @@ jQuery(document).on('keyup', '.b2s-edit-template-post-content', function () {
 });
 
 function generateExamplePost(template, content_range, exerpt_range) {
+    // Strip WP block delimiter comments
+    template = template.replace(/<!--[\s\S]*?-->/g, '');
+    // Escape user-supplied HTML to prevent XSS. The template arrives with \n already
+    // replaced by <br> at the call site, so we preserve those with a placeholder.
+    template = template
+        .replace(/&/g, '&amp;')
+        .replace(/<br>/gi, '\x01')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\x01/g, '<br>');
     if (jQuery('#b2s_use_post').val() == 'true') {
         var content = '';
         var exerpt = '';
@@ -7296,12 +7915,10 @@ function generateExamplePost(template, content_range, exerpt_range) {
         var author = '';
         var keywords = '';
         if (typeof jQuery('#b2s_post_content').val() != 'undefined' && jQuery('#b2s_post_content').val() != '') {
-            content = jQuery('#b2s_post_content').val().substring(0, content_range);
-            content = content.substring(0, content.lastIndexOf(' '));
+            content = b2sGetExcerpt(jQuery('#b2s_post_content').val(), content_range);
         }
         if (typeof jQuery('#b2s_post_excerpt').val() != 'undefined' && jQuery('#b2s_post_excerpt').val() != '') {
-            exerpt = jQuery('#b2s_post_excerpt').val().substring(0, exerpt_range);
-            exerpt = exerpt.substring(0, exerpt.lastIndexOf(' '));
+            exerpt = b2sGetExcerpt(jQuery('#b2s_post_excerpt').val(), exerpt_range);
         }
         if (typeof jQuery('#b2s_post_title').val() != 'undefined' && jQuery('#b2s_post_title').val() != '') {
             title = jQuery('#b2s_post_title').val();
@@ -7325,15 +7942,13 @@ function generateExamplePost(template, content_range, exerpt_range) {
 
     }
     if (typeof jQuery('.b2s-edit-template-limit').val() != 'undefined' && jQuery('.b2s-edit-template-limit').val() > 0) {
-        if (template.length > jQuery('.b2s-edit-template-limit').val() || jQuery('#b2s-edit-template-network-id').val() == 2 || jQuery('#b2s-edit-template-network-id').val() == 45) {
+        var limit = parseInt(jQuery('.b2s-edit-template-limit').val(), 10);
+        if (template.length > limit || jQuery('#b2s-edit-template-network-id').val() == 2 || jQuery('#b2s-edit-template-network-id').val() == 45) {
             if ((jQuery('#b2s-edit-template-network-id').val() == 2 || jQuery('#b2s-edit-template-network-id').val() == 45) && jQuery('.b2s-edit-template-post-format').val() == 0) {
-                template = template.substring(0, (jQuery('.b2s-edit-template-limit').val() - 24));
+                template = b2sGetExcerpt(template, limit - 24);
             } else {
-                template = template.substring(0, jQuery('.b2s-edit-template-limit').val());
+                template = b2sGetExcerpt(template, limit);
             }
-
-            
-            template = template.substring(0, template.lastIndexOf(' '));
         }
     }
 

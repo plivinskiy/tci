@@ -32,6 +32,29 @@
       $(".ppv_front_shortcode input").on("mouseout", function () {
         $(this).parent().find(".htooltip").text("Copy To Clipboard");
       });
+
+
+      $(document).on("click", ".pdfp_shortcode_copy_btn", function (e) {
+        e.preventDefault();
+
+        const text = $(this).data("clipboard-text");
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text);
+        } else {
+          const tempInput = document.createElement("input");
+          tempInput.value = text;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand("copy");
+          document.body.removeChild(tempInput);
+        }
+        $(this).text("Copied!");
+        setTimeout(() => {
+          $(this).text("Copy Shortcode");
+        }, 2000);
+      });
+
+      
     });
   })(jQuery);
   

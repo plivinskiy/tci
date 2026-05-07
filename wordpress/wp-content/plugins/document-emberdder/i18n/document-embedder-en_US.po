@@ -1,0 +1,41 @@
+# Copyright (C) 2026 bPlugins
+# This file is distributed under the GPLv3.
+msgid ""
+msgstr ""
+"Project-Id-Version: Document Embedder 2.0.6\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/document-emberdder\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-02-18T07:57:51+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: document-embedder\n"
+
+#. Plugin Name of the plugin
+#: document-embedder.php
+#: includes/DocumentEmbedder/PostType/PPTViewer.php:33
+msgid "Document Embedder"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: document-embedder.php
+msgid "http://documentembedder.com/"
+msgstr ""
+
+#. Description of the plugin
+#: document-embedder.php
+msgid "Embed Any document easily in wordpress such as word, excel, powerpoint, pdf and more"
+msgstr ""
+
+#. Author of the plugin
+#: document-embedder.php
+msgid "bPlugins"
+msgstr ""
+
+#. Author URI of the plugin
+#: document-embedder.php
+msgid "http://bplugins.com"
+msgstr ""

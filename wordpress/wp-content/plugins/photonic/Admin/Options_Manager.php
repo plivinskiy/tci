@@ -410,10 +410,6 @@ class Options_Manager extends Admin_Page {
 				case "background":
 					add_settings_field($value['id'], $value['name'], [&$this, "create_section_for_background"], $page, $value['grouping'], $value);
 					break;
-
-				case "padding":
-					add_settings_field($value['id'], $value['name'], [&$this, "create_section_for_padding"], $page, $value['grouping'], $value);
-					break;
 			}
 		}
 	}
@@ -933,113 +929,6 @@ class Options_Manager extends Admin_Page {
 						</div>
 					</td>
 				</tr>
-			</table>
-			<input type='hidden' id="<?php echo esc_attr($value['id']); ?>" name="photonic_options[<?php echo esc_attr($value['id']); ?>]"
-				   value="<?php echo esc_attr($default_txt); ?>"/>
-		</div>
-		<?php
-		$this->create_closing_tag();
-	}
-
-	/**
-	 * Renders an option whose type is "background". Invoked by add_settings_field.
-	 *
-	 * @param  $value
-	 * @return void
-	 */
-	public function create_section_for_padding($value) {
-		global $photonic_options;
-		$defaults = Defaults::get_options();
-		$this->create_opening_tag($value);
-		if (!isset($photonic_options[$value['id']])) {
-			$default = $defaults[$value['id']];
-			$default_txt = "";
-			foreach ($default as $edge => $edge_val) {
-				$default_txt .= $edge . '::';
-				foreach ($edge_val as $opt => $opt_val) {
-					$default_txt .= $opt . "=" . $opt_val . ";";
-				}
-				$default_txt .= "||";
-			}
-		}
-		else {
-			$default_txt = $photonic_options[$value['id']];
-			$default = $default_txt;
-			$edge_array = explode('||', $default);
-			$default = [];
-			if (is_array($edge_array)) {
-				foreach ($edge_array as $edge_vals) {
-					if ('' !== trim($edge_vals)) {
-						$edge_val_array = explode('::', $edge_vals);
-						if (is_array($edge_val_array) && count($edge_val_array) > 1) {
-							$vals = explode(';', $edge_val_array[1]);
-							$default[$edge_val_array[0]] = [];
-							foreach ($vals as $val) {
-								$pair = explode("=", $val);
-								if (isset($pair[0]) && isset($pair[1])) {
-									$default[$edge_val_array[0]][$pair[0]] = $pair[1];
-								}
-								elseif (isset($pair[0]) && !isset($pair[1])) {
-									$default[$edge_val_array[0]][$pair[0]] = "";
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		$edges = ['top' => 'Top', 'right' => 'Right', 'bottom' => 'Bottom', 'left' => 'Left'];
-		$padding_units = ["px" => "Pixels (px)", "em" => "Em"];
-
-		foreach ($value['options'] as $option_value => $option_text) {
-			if (isset($photonic_options[$value['id']])) {
-				$checked = checked($photonic_options[$value['id']], $option_value, false);
-			}
-			else {
-				$checked = checked($defaults[$value['id']], $option_value, false);
-			}
-			echo '<div class="photonic-radio"><input type="radio" name="' . esc_attr($value['id']) . '" value="' . esc_attr($option_value) . '" ' . esc_attr($checked) . "/>" . wp_kses_post($option_text) . "</div>\n";
-		}
-		?>
-		<div class='photonic-padding-options'>
-			<table class='opt-sub-table-5'>
-				<col class='opt-sub-table-col-51'/>
-				<col class='opt-sub-table-col-5'/>
-				<col class='opt-sub-table-col-5'/>
-
-				<tr>
-					<th scope="col">&nbsp;</th>
-					<th scope="col">Padding</th>
-					<th scope="col">Padding Units</th>
-				</tr>
-
-				<?php
-				foreach ($edges as $edge => $edge_text) {
-					?>
-					<tr>
-						<th scope="row"><?php echo esc_attr($edge_text); ?></th>
-						<td style='vertical-align: top'>
-							<input type="text" id="<?php echo esc_attr($value['id'] . '-' . $edge); ?>-padding"
-								   name="<?php echo esc_attr($value['id'] . '-' . $edge); ?>-padding"
-								   value="<?php echo esc_attr($default[$edge]['padding']); ?>"/><br/>
-						</td>
-
-						<td style='vertical-align: top'>
-							<select name="<?php echo esc_attr($value['id'] . '-' . $edge); ?>-padding-type"
-									id="<?php echo esc_attr($value['id'] . '-' . $edge); ?>-padding-type">
-								<?php
-								foreach ($padding_units as $option_value => $option_text) {
-									echo "<option ";
-									selected($default[$edge]['padding-type'], $option_value);
-									echo " value='" . esc_attr($option_value) . "' >" . esc_attr($option_text) . "</option>\n";
-								}
-								?>
-							</select>
-						</td>
-					</tr>
-					<?php
-				}
-				?>
 			</table>
 			<input type='hidden' id="<?php echo esc_attr($value['id']); ?>" name="photonic_options[<?php echo esc_attr($value['id']); ?>]"
 				   value="<?php echo esc_attr($default_txt); ?>"/>

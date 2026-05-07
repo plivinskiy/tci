@@ -52,12 +52,6 @@ export const getElement = value => {
 
 export const getText = value => {
 	// Not using innerHTML because of vulnerability to XSS
-	/*
-        const txt = document.createElement("div");
-        txt.innerHTML = value;
-        return txt.innerText;
-    */
-
 	if (value == null) {
 		return '';
 	}

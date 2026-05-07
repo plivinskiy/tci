@@ -22,6 +22,7 @@ class Admin {
 
 		// Gutenberg
 		add_action('enqueue_block_editor_assets', [&$this, 'enqueue_gutenberg_assets']);
+		add_action('enqueue_block_assets', [&$this, 'enqueue_fse_assets']); // Site Editor; without this, the block doesn't work on the FSE Site Editor
 
 		if (empty($photonic_disable_flow_editor_global)) {
 			add_action('media_buttons', [&$this, 'add_photonic_button']);
@@ -71,19 +72,27 @@ class Admin {
 
 	public function enqueue_wizard_scripts() {
 		if (current_user_can('edit_posts') && isset($_REQUEST['nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['nonce'])), 'photonic-wizard-' . get_current_user_id())) {
-			global $photonic_alternative_shortcode;
+			global $photonic_alternative_shortcode, $photonic_debug_on;
+			$safe_origin = '';
+			$url_parts = wp_parse_url(home_url());
+			$safe_origin_scheme = $url_parts['scheme'] ?? '';
+			$safe_origin_separator = empty($safe_origin_scheme) ? '' : '://';
+			$safe_origin_port = empty($url_parts['port']) ? '' : ':' . $url_parts['port'];
+			$safe_origin .= $safe_origin_scheme . $safe_origin_separator . $url_parts['host'] . $safe_origin_port;
 			$wizard_js = [
-				'ajaxurl'                       => admin_url('admin-ajax.php'),
-				'shortcode'                     => sanitize_text_field($photonic_alternative_shortcode ?: 'gallery'),
-				'insert_gallery'                => esc_html__('Insert Gallery', 'photonic'),
-				'update_gallery'                => esc_html__('Update Gallery', 'photonic'),
-				'error_mandatory'               => esc_html__('Please fill the mandatory fields. Mandatory fields are marked with a red "*".', 'photonic'),
-				'media_library_title'           => esc_html__('Select from WordPress Media Library', 'photonic'),
-				'media_library_button'          => esc_html__('Select', 'photonic'),
-				'info_editor_not_shortcode'     => esc_html__('The text selected in the editor is not a Photonic shortcode. Creating a new shortcode.', 'photonic'),
-				'info_editor_google_shortcode'  => esc_html__('The text selected in the editor is Photonic shortcode for Google Photos. With effect from April 2025, Google Photos is no longer supported. Creating a new shortcode.', 'photonic'),
+				'ajaxurl'                      => admin_url('admin-ajax.php'),
+				'shortcode'                    => sanitize_text_field($photonic_alternative_shortcode ?: 'gallery'),
+				'insert_gallery'               => esc_html__('Insert Gallery', 'photonic'),
+				'update_gallery'               => esc_html__('Update Gallery', 'photonic'),
+				'error_mandatory'              => esc_html__('Please fill the mandatory fields. Mandatory fields are marked with a red "*".', 'photonic'),
+				'media_library_title'          => esc_html__('Select from WordPress Media Library', 'photonic'),
+				'media_library_button'         => esc_html__('Select', 'photonic'),
+				'info_editor_not_shortcode'    => esc_html__('The text selected in the editor is not a Photonic shortcode. Creating a new shortcode.', 'photonic'),
+				'info_editor_google_shortcode' => esc_html__('The text selected in the editor is Photonic shortcode for Google Photos. With effect from April 2025, Google Photos is no longer supported. Creating a new shortcode.', 'photonic'),
 				/* Translators: 1: Open HTML tag 2: Close HTML tag */
-				'info_editor_block_select'      => sprintf(esc_html__('%1$sHint:%2$s To edit an existing Photonic block simply click on the block.', 'photonic'), '<strong>', '</strong>'),
+				'info_editor_block_select'     => sprintf(esc_html__('%1$sHint:%2$s To edit an existing Photonic block simply click on the block.', 'photonic'), '<strong>', '</strong>'),
+				'safe_origin'                  => $safe_origin,
+				'debug_on'                     => !empty($photonic_debug_on),
 			];
 			if (!empty($_REQUEST['shortcode'])) {
 				$wizard_js['shortcode'] = sanitize_text_field($_REQUEST['shortcode']);
@@ -246,9 +255,16 @@ class Admin {
 			wp_enqueue_style('photonic-upload', PHOTONIC_URL . 'include/css/admin/admin-form.css', [], Photonic::get_version(PHOTONIC_PATH . '/include/css/admin/admin-form.css'));
 		}
 		elseif ('post-new.php' === $hook || 'post.php' === $hook) {
-			global $photonic_disable_editor, $photonic_disable_editor_post_type;
+			global $photonic_disable_editor, $photonic_disable_editor_post_type, $photonic_alternative_shortcode;
 			$disabled_types = explode(',', $photonic_disable_editor_post_type);
 			wp_enqueue_style('photonic-upload', PHOTONIC_URL . 'include/css/admin/admin-form.css', [], Photonic::get_version(PHOTONIC_PATH . '/include/css/admin/admin-form.css'));
+			wp_enqueue_script('photonic-native-ui', PHOTONIC_URL . 'include/js/admin/native-ui.js', ['shortcode', 'thickbox'], Photonic::get_version(PHOTONIC_PATH . '/include/js/admin/native-ui.js'), false);
+			wp_enqueue_script('photonic-editor', PHOTONIC_URL . 'include/js/admin/editor.js', ['photonic-native-ui'], Photonic::get_version(PHOTONIC_PATH . '/include/js/admin/editor.js'), false);
+			$editor_js = [
+				'shortcode' => sanitize_text_field($photonic_alternative_shortcode ?: 'gallery'),
+			];
+			wp_localize_script('photonic-editor', 'Photonic_Editor_JS', $editor_js);
+
 			if (empty($photonic_disable_editor) && !in_array($_REQUEST['post_type'] ?? 'post', $disabled_types, true)) {
 				$this->prepare_mce_data();
 
@@ -280,10 +296,11 @@ class Admin {
 
 	public function enqueue_gutenberg_assets() {
 		if (function_exists('register_block_type')) {
+			wp_enqueue_script('photonic-native-ui', PHOTONIC_URL . 'include/js/admin/native-ui.js', ['shortcode', 'thickbox'], Photonic::get_version(PHOTONIC_PATH . '/include/js/admin/native-ui.js'), false);
 			wp_enqueue_script(
 				'photonic-gutenberg',
 				PHOTONIC_URL . 'include/js/admin/block.js',
-				['wp-blocks', 'wp-i18n', 'wp-element', 'shortcode', 'thickbox'],
+				['wp-blocks', 'wp-i18n', 'wp-element', 'shortcode', 'thickbox', 'photonic-native-ui'],
 				Photonic::get_version(PHOTONIC_PATH . '/include/js/admin/block.js'),
 				false
 			);
@@ -298,6 +315,17 @@ class Admin {
 			$js_array = $this->get_wizard_js_parameters($url);
 			wp_localize_script('photonic-gutenberg', 'Photonic_Gutenberg_JS', $js_array);
 
+			wp_enqueue_style(
+				'photonic-gutenberg',
+				PHOTONIC_URL . 'include/css/admin/admin-block.css',
+				['thickbox'],
+				Photonic::get_version(PHOTONIC_PATH . '/include/css/admin/admin-block.css')
+			);
+		}
+	}
+
+	public function enqueue_fse_assets() {
+		if (is_admin()) {
 			wp_enqueue_style(
 				'photonic-gutenberg',
 				PHOTONIC_URL . 'include/css/admin/admin-block.css',

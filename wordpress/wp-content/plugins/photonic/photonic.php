@@ -3,7 +3,7 @@
  * Plugin Name: Photonic Gallery & Lightbox for Flickr, SmugMug & Others
  * Plugin URI: https://aquoid.com/plugins/photonic/
  * Description: Extends the native gallery to support Flickr, SmugMug and Zenfolio. JS libraries like BaguetteBox, BigPicture, Gie Lightbox, LightGallery, PhotoSwipe, Spotlight, Swipebox, Fancybox, Magnific, Colorbox, PrettyPhoto, Image Lightbox, Featherlight and Lightcase are supported. Photos are displayed in vanilla grids of thumbnails, or more fancy slideshows, or justified or masonry or random mosaic layouts. The plugin also extends all layout options to a regular WP gallery.
- * Version: 3.24
+ * Version: 3.32
  * Requires at least: 6.2
  * Requires PHP: 7.3
  * Author: Sayontan Sinha
@@ -25,7 +25,7 @@ use Photonic_Plugin\Core\Photonic;
 class Photonic_Plugin {
 	public function __construct() {
 		if (!defined('PHOTONIC_VERSION')) {
-			define('PHOTONIC_VERSION', '3.24');
+			define('PHOTONIC_VERSION', '3.32');
 		}
 
 		define('PHOTONIC_PATH', __DIR__);

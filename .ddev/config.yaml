@@ -1,12 +1,12 @@
-name: tci.develop
+name: tci.old
 type: wordpress
 docroot: wordpress
-php_version: "7.4"
+php_version: "8.4"
 webserver_type: apache-fpm
 xdebug_enabled: true
 additional_hostnames: []
 additional_fqdns: []
-host_db_port: "59112"
+host_db_port: "59113"
 database:
     type: mysql
     version: "5.7"

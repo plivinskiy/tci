@@ -525,30 +525,42 @@ msgid "Navigation"
 msgstr ""
 
 #: widgets/anything-carousel/anything-carousel.php:152
+msgid "Arrows Location"
+msgstr ""
+
+#: widgets/anything-carousel/anything-carousel.php:155
+msgid "Left and Right"
+msgstr ""
+
+#: widgets/anything-carousel/anything-carousel.php:156
+msgid "Bottom Right"
+msgstr ""
+
+#: widgets/anything-carousel/anything-carousel.php:161
 msgid "Arrows Color"
 msgstr ""
 
-#: widgets/anything-carousel/anything-carousel.php:157
+#: widgets/anything-carousel/anything-carousel.php:166
 msgid "Arrows Hover Color"
 msgstr ""
 
-#: widgets/anything-carousel/anything-carousel.php:162
+#: widgets/anything-carousel/anything-carousel.php:171
 msgid "Arrows Margin"
 msgstr ""
 
-#: widgets/anything-carousel/anything-carousel.php:163
+#: widgets/anything-carousel/anything-carousel.php:172
 msgid "The space between the navigation arrows and items."
 msgstr ""
 
-#: widgets/anything-carousel/anything-carousel.php:167, widgets/blog/blog.php:636
+#: widgets/anything-carousel/anything-carousel.php:176, widgets/blog/blog.php:636
 msgid "Dots Color"
 msgstr ""
 
-#: widgets/anything-carousel/anything-carousel.php:172
+#: widgets/anything-carousel/anything-carousel.php:181
 msgid "Dots Selected and Hover Color"
 msgstr ""
 
-#: widgets/anything-carousel/anything-carousel.php:333
+#: widgets/anything-carousel/anything-carousel.php:346
 msgid "Add widgets and layouts to your carousel items with %sSiteOrigin Premium%s"
 msgstr ""
 

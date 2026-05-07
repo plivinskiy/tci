@@ -3,8 +3,8 @@ Tags: widgets, blocks, contact form, blog, slider
 Requires at least: 4.2
 Tested up to: 6.9
 Requires PHP: 7.0.0
-Stable tag: 1.71.0
-Build time: 2026-02-13T17:05:46+00:00
+Stable tag: 1.72.0
+Build time: 2026-04-14T14:12:21+01:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -108,6 +108,17 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.72.0 - 14 April 2026 =
+* Anything Carousel: Added bottom-right arrows navigation layout.
+* Features: Linked the title when the column link overlay is enabled.
+* Hero: Fixed FitText refresh on mobile devices.
+* Slider: Fixed cover background tiling.
+* Video: Added an option to show the cover image when a self-hosted video ends.
+* General: Resolved multiple WordPress (WP) 7 admin styling issues including checkbox appearance, button sizing, preview button height, measurement select chevron, and widgets search sizing.
+* General: Added custom action button styling for the widgets admin page.
+* General: Included accessibility Cascading Style Sheets (CSS) in release builds.
+* General: Added WordPress Multilingual (WPML) configuration entries for Widgets Bundle blocks.
 
 = 1.71.0 - 13 February 2026 =
 * Accordion: Added a heading title tag option, aligned the default with existing markup, refined title handling, and lazy-loaded embedded iframes.

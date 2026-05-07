@@ -104,7 +104,7 @@ class B2S_Onboarding_Item {
     }
 
 
-    private function getStep(){
+    public function getStep(){
 
         //what happens if someone does premium before posting?
 

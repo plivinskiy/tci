@@ -1,0 +1,70 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+.srsTable {
+    font-size: 13px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(1, 27, 57, 0.12);
+}
+.srsTable th {
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background-color: #011b39;
+    color: #ffffff;
+    padding: 9px 10px;
+    white-space: nowrap;
+}
+.srsTable td {
+    padding: 7px 10px;
+    white-space: nowrap;
+    border-bottom: 1px solid #e8ecf8;
+}
+.srsTable tbody tr:last-child td {
+    border-bottom: none;
+}
+.srsTable tbody tr:nth-child(even) {
+    background-color: #f4f6fd;
+}
+.srsTable tbody tr:hover {
+    background-color: #e8ecf8;
+}
+.srsTable tr.srsHome td {
+    background-color: #85bfff;
+    color: #011b39;
+    font-weight: 600;
+}
+.srsTable tr.srsHeim {}
+.srsTable tr.srsAusw {}
+.srsTable tr.srsSpielGestrichen { text-decoration: line-through; opacity: 0.6; }
+.srsTable td.srsTabHome {}
+.srsTable .r { text-align: right; }
+.srsTable .c { text-align: center; }
+.srsTable .l { text-align: left; }
+
+.srsTab div { margin: 0 0 16px 0; }
+.srsTab div:nth-last-child(1) { margin: 0; }
+.srsTab p { font-size: 14px; font-weight: 600; text-align: left; color: #011b39; margin-bottom: 6px; }
+
+.srsPlan div { margin: 0 0 16px 0; }
+.srsPlan div:nth-last-child(1) { margin: 0; }
+.srsPlan p { font-size: 14px; font-weight: 600; text-align: left; color: #011b39; margin-bottom: 6px; }
+
+.srsLinks { text-align: left; }
+
+p.srsLaden {}
+
+/* PDF schedule shortcode */
+.nuliga-pdf-wrap { overflow-x: auto; }
+.nuliga-pdf-wrap div { margin: 0 0 16px 0; }
+.nuliga-pdf-wrap div:nth-last-child(1) { margin: 0; }
+.nuliga-pdf-table { width: 100%; }
+p.nuliga-pdf-title { font-size: 15px; font-weight: 600; color: #011b39; margin-bottom: 6px; }
+p.nuliga-error { color: #c0392b; font-style: italic; }

@@ -1,0 +1,11 @@
+{
+    "name": "wp-nuliga/plugin",
+    "description": "WordPress nuLiga integration plugin",
+    "require": {
+        "smalot/pdfparser": "^2.0"
+    },
+    "config": {
+        "vendor-dir": "vendor",
+        "optimize-autoloader": true
+    }
+}

@@ -34,11 +34,11 @@ class Shortcode {
 
         switch ($post->post_status) {
             case 'publish':
-                return AnalogSystem::html($atts['id']);
+                return AnalogSystem::html($atts['id'], $atts);
 
             case 'private':
                 if (current_user_can('read_private_posts')) {
-                    return AnalogSystem::html($atts['id']);
+                    return AnalogSystem::html($atts['id'], $atts);
                 }
                 return '';
 
@@ -46,7 +46,7 @@ class Shortcode {
             case 'pending':
             case 'future':
                 if (current_user_can('edit_post', $post_id)) {
-                    return AnalogSystem::html($atts['id']);
+                    return AnalogSystem::html($atts['id'], $atts);
                 }
                 return '';
 

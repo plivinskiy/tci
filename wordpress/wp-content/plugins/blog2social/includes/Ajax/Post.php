@@ -58,6 +58,7 @@ class Ajax_Post {
         add_action("wp_ajax_b2s_move_user_auth_to_profile", array($this, 'moveUserAuthToProfile'));
         add_action("wp_ajax_b2s_assign_network_user_auth", array($this, 'assignNetworkUserAuth'));
         add_action("wp_ajax_b2s_save_post_template", array($this, 'savePostTemplate'));
+        add_action("wp_ajax_b2s_save_ai_post_template", array($this, 'saveAiPostTemplate'));
         add_action("wp_ajax_b2s_load_default_post_template", array($this, 'loadDefaultPostTemplate'));
         add_action('wp_ajax_b2s_save_draft_data', array($this, 'saveDraftData'));
         add_action('wp_ajax_b2s_delete_user_draft', array($this, 'deleteDraft'));
@@ -93,8 +94,12 @@ class Ajax_Post {
 
     public function debugConnection() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+        if(!current_user_can('manage_options')) {
+            echo wp_json_encode(array('result' => false, 'error' => 'permission_administrator'));
             wp_die();
         }
 
@@ -159,19 +164,19 @@ class Ajax_Post {
 
     public function curationDraft() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
 
         // JM 2026/02/12 Security Patch. Check if a user can edit the post, as this action leads to an insert/update in wp_posts
         if(!current_user_can('edit_posts')){
-            echo wp_json_encode(array('result' => false,'error'  => 'permission'));
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
             wp_die();
         }
         if (isset($_POST['b2s-draft-id']) && !empty($_POST['b2s-draft-id'])) {
             if (!current_user_can('edit_post', (int) $_POST['b2s-draft-id'])) {
-                echo wp_json_encode(array('result' => false,'error'  => 'permission'));
+                echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
                 wp_die();
             }
         }
@@ -263,11 +268,16 @@ class Ajax_Post {
 
     public function curationShare() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
-  
+    
+        if(!current_user_can('edit_posts')){
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
+            wp_die();
+        }
+    
         $optionalLink = '';
         //save as blog post
         if (isset($_POST['postFormat'])) {
@@ -348,7 +358,7 @@ class Ajax_Post {
                             //TOS Twitter 032018 - none multiple Accounts - User select once
                             $selectedTwitterProfile = (isset($_POST['twitter_select']) && !empty($_POST['twitter_select'])) ? (int) $_POST['twitter_select'] : '';
                             require_once (B2S_PLUGIN_DIR . 'includes/B2S/QuickPost.php');
-                            $quickPost = new B2S_QuickPost($data['content'], $data['title'], $optionalLink);
+                            $quickPost = new B2S_QuickPost($data['content'], isset($data['title']) ? $data['title'] : '', $optionalLink, isset($data['url']) ? $data['url'] : '');
                             
                             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only unsanitized in if condition
                             $imageUrl = (!empty($_POST['image_url'])) ? esc_url_raw(trim(urldecode(wp_unslash($_POST['image_url'])))) : "";
@@ -572,20 +582,20 @@ class Ajax_Post {
 
     public function curationCustomize() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
         
         // JM 2026/02/05 Security Patch. Check if a user can edit the post, as this action leads to an insert/update in wp_posts
         if(!current_user_can('edit_posts')){
-            echo wp_json_encode(array('result' => false,'error'  => 'permission'));
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
             wp_die();
         }
     
         if (isset($_POST['b2s-draft-id']) && !empty($_POST['b2s-draft-id'])) {
             if (!current_user_can('edit_post', (int) $_POST['b2s-draft-id'])) {
-                echo wp_json_encode(array('result' => false,'error'  => 'permission'));
+                echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
                 wp_die();
             }
         }
@@ -702,7 +712,7 @@ class Ajax_Post {
 
     public function prgShip() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -757,7 +767,7 @@ class Ajax_Post {
 
     public function lockAutoPostImport() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -771,7 +781,7 @@ class Ajax_Post {
 
     public function prgLogin() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -811,7 +821,7 @@ class Ajax_Post {
 
     public function prgLogout() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -823,11 +833,16 @@ class Ajax_Post {
 
     public function saveShipData() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
-
+    
+        if(!current_user_can('edit_others_posts')){
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_editor'));
+            wp_die();
+        }
+    
         require_once (B2S_PLUGIN_DIR . 'includes/B2S/Ship/Save.php');
         $post = $_POST;
         $metaOg = false;
@@ -1239,8 +1254,13 @@ class Ajax_Post {
 
     public function saveSocialMetaTags() {
 
-        if (!current_user_can('administrator') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+        
+        if(!current_user_can('manage_options')){
+            echo wp_json_encode(array('result' => false, 'error' => 'permission_administrator'));
             wp_die();
         }
 
@@ -1278,8 +1298,13 @@ class Ajax_Post {
 
     public function resetSocialMetaTags() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+        
+        if(!current_user_can('manage_options')){
+            echo wp_json_encode(array('result' => false, 'error' => 'permission_administrator'));
             wp_die();
         }
 
@@ -1294,7 +1319,7 @@ class Ajax_Post {
 
     public function saveNetworkBoardAndGroup() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1320,7 +1345,7 @@ class Ajax_Post {
 
     public function saveUserNetworkSettings() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1412,7 +1437,7 @@ class Ajax_Post {
 
     public function saveAutoPostSettings() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1572,7 +1597,7 @@ class Ajax_Post {
 
     public function autoPostAssignByDisconnect() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1615,7 +1640,7 @@ class Ajax_Post {
 
     public function saveUserMandant() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1633,7 +1658,7 @@ class Ajax_Post {
 
     public function deleteUserMandant() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1657,7 +1682,7 @@ class Ajax_Post {
 
     public function deleteUserAuth() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1741,7 +1766,7 @@ class Ajax_Post {
 
     public function updateUserVersion() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1902,7 +1927,7 @@ class Ajax_Post {
 
     public function acceptPrivacyPolicy() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1925,8 +1950,13 @@ class Ajax_Post {
 
     public function deleteUserPublishPost() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+
+        if(!current_user_can('edit_posts')){
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
             wp_die();
         }
 
@@ -1945,7 +1975,7 @@ class Ajax_Post {
 
     public function activateAddonTrial() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -1968,8 +1998,13 @@ class Ajax_Post {
 
     public function deleteUserApprovePost() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+
+        if(!current_user_can('edit_posts')){
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
             wp_die();
         }
 
@@ -1996,7 +2031,7 @@ class Ajax_Post {
         if (isset($_POST['postId']) && !empty($_POST['postId']) && (int) $_POST['postId'] > 0) {
      
             if(!current_user_can('delete_post', (int) $_POST['postId'])){ 
-                echo wp_json_encode(array('result' => false, 'error' => 'permission')); 
+                echo wp_json_encode(array('result' => false, 'error' => 'permission_editor')); 
                 wp_die(); 
             }
 
@@ -2014,7 +2049,7 @@ class Ajax_Post {
 
     public function sendTrailFeedback() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2038,7 +2073,7 @@ class Ajax_Post {
     //NEW V5.1.0
     public function saveUserTimeSettings() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2063,7 +2098,7 @@ class Ajax_Post {
 
     public function b2sShipNavbarSaveSettings() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2090,7 +2125,7 @@ class Ajax_Post {
 
     public function saveAuthToSettings() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2121,7 +2156,7 @@ class Ajax_Post {
 
     public function b2sPostMailUpdate() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2142,11 +2177,16 @@ class Ajax_Post {
 
     public function updateApprovePost() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
 
+        if(!current_user_can('edit_others_posts')){
+            echo wp_json_encode(array('result' => false, 'error' => 'permission_editor'));
+            wp_die();
+        }
+        
         //post_id
         if (isset($_POST['post_id']) && is_numeric($_POST['post_id']) && (int) $_POST['post_id'] > 0) {
             global $wpdb;
@@ -2169,11 +2209,16 @@ class Ajax_Post {
 
     public function b2sCalendarMovePost() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
-
+        
+        if(!current_user_can('edit_posts')){
+            echo wp_json_encode(array('result' => false, 'error' => 'permission_author'));
+            wp_die();
+        }
+    
         global $wpdb;
         if (isset($_POST['b2s_id']) && is_numeric($_POST['b2s_id']) && isset($_POST['sched_date']) && is_string($_POST['sched_date']) && isset($_POST['user_timezone'])) {
 //since V4.9.1 Instant Share Approve - Facebook Profile
@@ -2222,11 +2267,16 @@ class Ajax_Post {
 
     public function deleteUserSchedPost() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
 
+        if(!current_user_can('edit_others_posts')){
+            echo wp_json_encode(array('result' => false, 'error' => 'permission_editor'));
+            wp_die();
+        }
+        
         require_once (B2S_PLUGIN_DIR . '/includes/B2S/Post/Tools.php');
 
         if (isset($_POST['postId']) && !empty($_POST['postId'])) {
@@ -2260,8 +2310,13 @@ class Ajax_Post {
 
     public function b2sDeletePost() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+
+        if(!current_user_can('edit_others_posts')){
+            echo wp_json_encode(array('result' => false, 'error' => 'permission_editor'));
             wp_die();
         }
 
@@ -2301,11 +2356,16 @@ class Ajax_Post {
 
     public function b2sEditSavePost() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
 
+        if(!current_user_can('edit_posts')){
+            echo wp_json_encode(array('result' => false, 'error' => 'permission_author'));
+            wp_die();
+        }
+        
         global $wpdb;
         require_once (B2S_PLUGIN_DIR . 'includes/B2S/Calendar/Save.php');
 
@@ -2524,7 +2584,7 @@ class Ajax_Post {
 
     public function releaseLocks() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2545,7 +2605,7 @@ class Ajax_Post {
 
     public function hideRating() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2556,7 +2616,7 @@ class Ajax_Post {
 
     public function hidePremiumMessage() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2566,7 +2626,7 @@ class Ajax_Post {
 
     public function hideTrailMessage() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2576,7 +2636,7 @@ class Ajax_Post {
 
     public function hideTrailEndedMessage() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2587,7 +2647,7 @@ class Ajax_Post {
     public function moveUserAuthToProfile() {
 
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2612,7 +2672,7 @@ class Ajax_Post {
 
     public function assignNetworkUserAuth() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2726,7 +2786,7 @@ class Ajax_Post {
 
     public function savePostTemplate() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2854,9 +2914,116 @@ class Ajax_Post {
         wp_die();
     }
 
+    public function saveAiPostTemplate() {
+
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+            echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+
+        if(B2S_PLUGIN_USER_VERSION <1){
+            echo json_encode(array('result' => false, 'error' => 'version'));
+            wp_die();
+        }
+
+        if(!current_user_can('edit_posts')) {
+            echo json_encode(array('result' => false, 'error' => 'permission_author'));
+            wp_die();
+        }
+
+        $networkId = (isset($_POST['networkId']) ? (int) $_POST['networkId'] : 0);
+        $typeId = (isset($_POST['typeId']) ? (int) $_POST['typeId'] : -1);
+        if ($networkId <= 0 || $typeId < 0) {
+            echo json_encode(array('result' => false));
+            wp_die();
+        }
+
+        if (!isset($_POST['payload']) || !is_array($_POST['payload'])) {
+            echo json_encode(array('result' => false));
+            wp_die();
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'b2s_ai_template';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) != $table) {
+            echo json_encode(array('result' => false));
+            wp_die();
+        }
+
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $payload = B2S_Tools::sanitize_array_textarea(wp_unslash($_POST['payload']));
+
+        $safePayload = array(
+            'enabled' => (isset($payload['enabled']) && (int) $payload['enabled'] === 1) ? 1 : 0,
+            'content_goal_enabled' => (isset($payload['content_goal_enabled']) && (int) $payload['content_goal_enabled'] === 1) ? 1 : 0,
+            'tone_language_enabled' => (isset($payload['tone_language_enabled']) && (int) $payload['tone_language_enabled'] === 1) ? 1 : 0,
+            'hashtags_keywords_enabled' => (isset($payload['hashtags_keywords_enabled']) && (int) $payload['hashtags_keywords_enabled'] === 1) ? 1 : 0,
+            'content_length_output_enabled' => (isset($payload['content_length_output_enabled']) && (int) $payload['content_length_output_enabled'] === 1) ? 1 : 0,
+            'answer_in_language' => isset($payload['answer_in_language']) ? sanitize_text_field($payload['answer_in_language']) : 'auto',
+            'ai_instruction' => isset($payload['ai_instruction']) ? sanitize_textarea_field($payload['ai_instruction']) : '',
+            'post_goal' => isset($payload['post_goal']) ? sanitize_key($payload['post_goal']) : 'traffic',
+            'cta_type' => isset($payload['cta_type']) ? sanitize_key($payload['cta_type']) : 'none',
+            'point_of_view' => isset($payload['point_of_view']) ? sanitize_key($payload['point_of_view']) : 'neutral',
+            'tone' => isset($payload['tone']) ? sanitize_key($payload['tone']) : 'friendly',
+            'content_focus' => isset($payload['content_focus']) ? max(1, min(100, (int) $payload['content_focus'])) : 50,
+            'text_form' => isset($payload['text_form']) ? sanitize_key($payload['text_form']) : 'default',
+            'form_of_address' => isset($payload['form_of_address']) ? sanitize_key($payload['form_of_address']) : 'neutral',
+            'emojis' => isset($payload['emojis']) ? sanitize_key($payload['emojis']) : 'auto',
+            'writing_style' => isset($payload['writing_style']) ? sanitize_key($payload['writing_style']) : 'default',
+            'generate_hashtags' => isset($payload['generate_hashtags']) ? sanitize_key($payload['generate_hashtags']) : 'none',
+            'hashtags_count' => isset($payload['hashtags_count']) ? max(0, (int) $payload['hashtags_count']) : 0,
+            'use_keywords' => isset($payload['use_keywords']) ? sanitize_text_field($payload['use_keywords']) : '',
+            'keyword_strength' => isset($payload['keyword_strength']) ? max(1, min(100, (int) $payload['keyword_strength'])) : 50,
+            'text_length' => isset($payload['text_length']) ? sanitize_key($payload['text_length']) : 'medium',
+            'text_depth' => isset($payload['text_depth']) ? max(1, min(100, (int) $payload['text_depth'])) : 50,
+        );
+
+        $jsonPayload = wp_json_encode($safePayload);
+
+        if ($jsonPayload === false) {
+            echo json_encode(array('result' => false));
+            wp_die();
+        }
+
+        $entryCount = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM `{$table}` WHERE `blog_user_id` = %d AND `network_id` = %d AND `type_id` = %d",
+            (int) B2S_PLUGIN_BLOG_USER_ID,
+            $networkId,
+            $typeId
+        ));
+
+        if ($entryCount > 0) {
+            $result = $wpdb->update(
+                $table,
+                array('payload' => $jsonPayload),
+                array(
+                    'blog_user_id' => (int) B2S_PLUGIN_BLOG_USER_ID,
+                    'network_id' => $networkId,
+                    'type_id' => $typeId
+                ),
+                array('%s'),
+                array('%d', '%d', '%d')
+            );
+        } else {
+            $result = $wpdb->insert(
+                $table,
+                array(
+                    'blog_user_id' => (int) B2S_PLUGIN_BLOG_USER_ID,
+                    'network_id' => $networkId,
+                    'type_id' => $typeId,
+                    'payload' => $jsonPayload
+                ),
+                array('%d', '%d', '%d', '%s')
+            );
+        }
+
+        echo json_encode(array('result' => ($result !== false)));
+        wp_die();
+    }
+
     public function loadDefaultPostTemplate() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2875,8 +3042,13 @@ class Ajax_Post {
 
     public function saveDraftData() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+        
+        if(!current_user_can('edit_posts')){
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
             wp_die();
         }
     
@@ -2906,8 +3078,13 @@ class Ajax_Post {
 
     public function deleteDraft() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+
+        if(!current_user_can('edit_posts')){
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
             wp_die();
         }
 
@@ -2923,7 +3100,7 @@ class Ajax_Post {
 
     public function changeFavoriteStatus() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -2947,7 +3124,7 @@ class Ajax_Post {
 
     public function saveUrlParameter() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3014,7 +3191,7 @@ class Ajax_Post {
     }
 
     public function saveShareSettings() {
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3046,11 +3223,16 @@ class Ajax_Post {
 
     public function rePostSubmit() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
-
+        
+        if(!current_user_can('edit_posts')){
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_author'));
+            wp_die();
+        }
+    
         if (isset($_POST['b2s-re-post-profil-dropdown']) && (int) $_POST['b2s-re-post-profil-dropdown'] >= 0 && isset($_POST['b2s-re-post-profil-data-' . sanitize_text_field(wp_unslash($_POST['b2s-re-post-profil-dropdown']))]) && !empty($_POST['b2s-re-post-profil-data-' . sanitize_text_field(wp_unslash($_POST['b2s-re-post-profil-dropdown']))])) {
             $networkData = json_decode(base64_decode(sanitize_text_field(wp_unslash($_POST['b2s-re-post-profil-data-' . sanitize_text_field(wp_unslash($_POST['b2s-re-post-profil-dropdown']))]))));
             if ($networkData !== false && is_array($networkData) && !empty($networkData)) {
@@ -3377,8 +3559,13 @@ class Ajax_Post {
 
     public function deleteRePostSched() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
+            wp_die();
+        }
+
+        if(!current_user_can('edit_others_posts')){
+            echo wp_json_encode(array('result' => false,'error'  => 'permission_editor'));
             wp_die();
         }
 
@@ -3428,7 +3615,7 @@ class Ajax_Post {
 
     public function communityRegister() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3463,7 +3650,7 @@ class Ajax_Post {
 
     public function metricsStartingConfirm() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3477,7 +3664,7 @@ class Ajax_Post {
 
     public function metricsBannerClose() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3491,7 +3678,7 @@ class Ajax_Post {
 
     public function metricsFeedbackClose() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3505,7 +3692,7 @@ class Ajax_Post {
 
     public function continueTrialOption() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3519,7 +3706,7 @@ class Ajax_Post {
 
     public function hideFinalTrialOption() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3584,7 +3771,7 @@ class Ajax_Post {
 
     public function addUserApp() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3627,7 +3814,7 @@ class Ajax_Post {
 
     public function editUserApp() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3656,7 +3843,7 @@ class Ajax_Post {
 
     public function deleteUserApp() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3714,7 +3901,7 @@ class Ajax_Post {
 
     public function saveUserOnboarding() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3732,7 +3919,7 @@ class Ajax_Post {
     
     public function saveUserOnboardingPaused() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3750,7 +3937,7 @@ class Ajax_Post {
 
     public function assAuthSave() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3766,17 +3953,23 @@ class Ajax_Post {
         }
 
         $options = new B2S_Options((int) B2S_PLUGIN_BLOG_USER_ID, 'B2S_PLUGIN_USER_TOOL');
-        $toolData = array(
-            'account' => array(
-                'words_open' => isset($_POST['ass_words_open']) ? (int) $_POST['ass_words_open'] : 0,
-                'words_total' => isset($_POST['ass_words_total']) ? (int) $_POST['ass_words_total'] : 0,
-            ),
-            'settings' => array(
+        $toolData = $options->_getOption(1);
+        if (!is_array($toolData)) {
+            $toolData = array();
+        }
+        // Always update account info from the fresh login response
+        $toolData['account'] = array(
+            'words_open' => isset($_POST['ass_words_open']) ? (int) $_POST['ass_words_open'] : 0,
+            'words_total' => isset($_POST['ass_words_total']) ? (int) $_POST['ass_words_total'] : 0,
+        );
+        // Only apply default settings on first-time login; preserve existing user settings
+        if (!isset($toolData['settings']) || !is_array($toolData['settings'])) {
+            $toolData['settings'] = array(
                 'post_template' => true,
                 'deactivate_emojis' => false,
                 'generate_hashtags' => true
-            ),
-        );
+            );
+        }
         $options->_setOption(1, $toolData);
         echo json_encode(array('result' => true));
         wp_die();
@@ -3784,7 +3977,7 @@ class Ajax_Post {
 
     public function assGenerateContent() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3862,10 +4055,43 @@ class Ajax_Post {
                     'allow_emojis' => $allowEmojis,
                     'allow_html' => $allowHtml
                 );
-                if (isset($_POST['post_format']) && (int) $_POST['post_format'] >= 0) {
-                    $postData['post_type'] = (int) $_POST['post_format'];
+                
+                $aiTemplateSettings = array();
+
+                if (isset($_POST['ai_template_settings'])) {
+                    // In preview/test mode, use current form values if they are sent.
+                    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized below
+                    $requestTemplate = wp_unslash($_POST['ai_template_settings']);
+                    if (is_string($requestTemplate) && !empty($requestTemplate)) {
+                        $decodedTemplate = json_decode($requestTemplate, true);
+                        if (is_array($decodedTemplate)) {
+                            $requestTemplate = $decodedTemplate;
+                        }
+                    }
+
+                    if (is_array($requestTemplate) && !empty($requestTemplate)) {
+                        $requestTemplate = B2S_Tools::sanitize_array($requestTemplate);
+                        $aiTemplateSettings = B2S_Tools::normalizeAiTemplateSettings($requestTemplate, B2S_Tools::getAiTemplateDefaults(), (int) $networkId, (int) $networkType);
+                    }
                 }
 
+                // If no live values were sent (e.g. non-test/default flow), use stored template settings.
+                if (!is_array($aiTemplateSettings) || empty($aiTemplateSettings)) {
+                    $aiTemplateSettings = B2S_Tools::getAiTemplateDbSchema((int) B2S_PLUGIN_BLOG_USER_ID, (int) $networkId, (int) $networkType);
+                }
+
+                if (is_array($aiTemplateSettings) && !empty($aiTemplateSettings)) {
+                    $postData['ai_template_settings'] = B2S_Tools::filterAiTemplateDataToSend($aiTemplateSettings);
+                }
+
+                if (isset($_POST['post_format']) && (int) $_POST['post_format'] >= 0) {
+                    $postData['post_type'] = (int) $_POST['post_format'];
+                }     
+
+                if(isset($postData['ai_template_settings']) && B2S_PLUGIN_USER_VERSION<1){
+                    $postData['ai_template_settings']['enabled'] = 0; //Always disable advanced settings for free users if they are set from e.g. previous version
+                }
+            
                 $result = json_decode(B2S_Api_Post::post(B2S_PLUGIN_API_ENDPOINT, $postData), true);
 
                 if (is_array($result) && !empty($result)) {
@@ -3950,7 +4176,7 @@ class Ajax_Post {
 
     public function assSettingsSave() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3970,7 +4196,7 @@ class Ajax_Post {
 
     public function assLogout() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3983,7 +4209,7 @@ class Ajax_Post {
 
     public function deletePostNoticeAll() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -3994,7 +4220,7 @@ class Ajax_Post {
 
     public function checkImageSizeNetwork() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -4036,7 +4262,7 @@ class Ajax_Post {
 
     public function checkImageSizeNetworkAll() {
 
-        if (!current_user_can('read') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
+        if (!current_user_can('edit_posts') || !check_ajax_referer('b2s_security_nonce', 'b2s_security_nonce', false)) {
             echo wp_json_encode(array('result' => false, 'error' => 'nonce'));
             wp_die();
         }
@@ -4092,7 +4318,7 @@ class Ajax_Post {
     }
 
     // public function addUserApp() {
-    //     if (current_user_can('read') && isset($_POST['b2s_security_nonce']) && (int) wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['b2s_security_nonce'])), 'b2s_security_nonce') > 0) {
+    //     if (current_user_can('edit_posts') && isset($_POST['b2s_security_nonce']) && (int) wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['b2s_security_nonce'])), 'b2s_security_nonce') > 0) {
     //         $supportedNetworks = unserialize(B2S_PLUGIN_USER_APP_NETWORKS);
     //         if (isset($_POST['app_name']) && !empty($_POST['app_name']) && isset($_POST['network_id']) && !empty($_POST['network_id']) && isset($_POST['app_key']) && !empty($_POST['app_key']) && isset($_POST['app_secret']) && !empty($_POST['app_secret'])) {
     //             $appName = sanitize_text_field($_POST['app_name']);

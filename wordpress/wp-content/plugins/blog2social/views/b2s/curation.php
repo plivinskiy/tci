@@ -60,11 +60,6 @@ $isImagePro = (B2S_PLUGIN_USER_VERSION < 2) ? ' <span class="label label-success
                         <div id="b2s-curation-saved-draft-info" class="alert alert-success">
                             <span class="glyphicon glyphicon-success glyphicon-ok"></span> <?php esc_html_e('Saved as draft.', 'blog2social'); ?>
                         </div>
-                        <div class="col-xs-12 del-padding-left del-padding-right">
-                            <div id="b2s-curation-customize-no-permission" class="alert alert-info" style="display:none;"><?php echo esc_html__('You need a higher user role to edit this blog post. Please contact your administrator.', 'blog2social'); ?>
-                        </div>
-                        </div>
-
                         <div class="b2s-curation-area">
                             <div class="row">
                                 <div class="col-md-8 col-sm-12">

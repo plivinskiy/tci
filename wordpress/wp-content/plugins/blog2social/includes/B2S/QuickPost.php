@@ -11,12 +11,14 @@ class B2S_QuickPost {
     private $content;
     private $title;
     private $optionalLink;
+    private $url;
     private $template;
 
-    public function __construct($content = '', $title = '', $optionalLink = '') {
+    public function __construct($content = '', $title = '', $optionalLink = '', $url = '') {
         $this->content = sanitize_textarea_field($content);
         $this->title = sanitize_text_field($title);
         $this->optionalLink = sanitize_text_field($optionalLink);
+        $this->url = esc_url_raw($url);
 
     
         $this->template = ((defined('B2S_PLUGIN_NETWORK_SETTINGS_TEMPLATE_DEFAULT')) ? unserialize(B2S_PLUGIN_NETWORK_SETTINGS_TEMPLATE_DEFAULT) : false);
@@ -87,8 +89,11 @@ class B2S_QuickPost {
             $b2sItem = new B2S_Ship_Item(0,'en','','',0,false,array(),false,true);
             $emptyPostData = new stdClass();
             $emptyPostData->post_content = '';
+            $emptyPostData->post_title = $this->title;
+            $emptyPostData->post_author = B2S_PLUGIN_BLOG_USER_ID;
             $emptyPostData->post_type = '';
             $b2sItem->setPostData($emptyPostData);
+            $b2sItem->setPostUrl(!empty($this->url) ? $this->url : $this->optionalLink);
             $networkData = array(
                 'networkId' => $networkId,
                 'networkType' => $networkType,
@@ -96,6 +101,15 @@ class B2S_QuickPost {
             );
             
             $message= $b2sItem->getMessagebyTemplate((object) $networkData, $content);
+
+            // Get comment from template if allowed for this network
+            if (defined('B2S_PLUGIN_USER_VERSION') && B2S_PLUGIN_USER_VERSION >= 2 && B2S_Tools::isCommentAllowed($networkId, $networkType)) {
+                $commentValue = $b2sItem->getMessagebyTemplate((object) $networkData, $content, false, true);
+                if (!empty($commentValue)) {
+                    $postData['comment'] = $commentValue;
+                }
+            }
+
 
             //Add link if is within Limit
             if(!empty($this->optionalLink)){

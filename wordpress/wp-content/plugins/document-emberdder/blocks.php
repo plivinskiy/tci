@@ -11,7 +11,7 @@ if (!class_exists('PPV_Block')) {
         }
 
         function enqueue_script() {
-            wp_register_script('ppv-blocks', plugin_dir_url(__FILE__) . 'build/editor.js', array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'jquery'), BPLDE_VER, true);
+            wp_register_script('ppv-blocks', BPLDE_PLUGIN_DIR . 'build/editor.js', array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'jquery'), BPLDE_VER, true);
 
             // wp_register_style( 'ppv-blocks', plugin_dir_url( __FILE__ ). 'build/editor.css' , array(), PPV_VER );
 

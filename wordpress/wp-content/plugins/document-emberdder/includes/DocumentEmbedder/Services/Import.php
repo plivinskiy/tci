@@ -61,7 +61,7 @@ class Import {
         $data = apply_filters( 'ppv_data_import', $output, $docs );
 
         foreach($data as $key => $value){
-            if ($isPro || \metadata_exists('post', $key, 'ppv') == false) {
+            if (\metadata_exists('post', $key, 'ppv') == false) {
                 update_post_meta($key, 'ppv', $value);
             }
         }
