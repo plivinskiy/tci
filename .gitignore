@@ -20,6 +20,7 @@ wordpress/wp-content/wp-cache-config.php
 !wordpress/evidena/wp-content/uploads/wpforms/cache/.htaccess
 !wordpress/wp-content/plugins/akismet/.htaccess
 wordpress/wp-config-ddev.php
+wordpress/wp-content/debug.log
 wordpress/wp-content/plugins/*/node_modules/
 *.sql
 test-media
