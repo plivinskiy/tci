@@ -1,0 +1,335 @@
+# Translation of Plugins - Transients Manager - Stable (latest release) in German
+# This file is distributed under the same license as the Plugins - Transients Manager - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2026-03-03 19:17:58+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/4.0.3\n"
+"Language: de\n"
+"Project-Id-Version: Plugins - Transients Manager - Stable (latest release)\n"
+
+#: src/CrossPromotion.php:389
+msgid "Duplicator Pro - WordPress Migration & Backup Plugin"
+msgstr "Duplicator Pro - WordPress Migration & Backup Plugin"
+
+#: src/CrossPromotion.php:377
+msgid "Duplicator - WordPress Migration & Backup Plugin"
+msgstr "Duplicator - WordPress Migration & Backup Plugin"
+
+#: src/CrossPromotion.php:214 src/CrossPromotion.php:218
+msgid "Install"
+msgstr "Installieren"
+
+#: src/CrossPromotion.php:123
+msgid "Failed to install plugin"
+msgstr "Plugin konnte nicht installiert werden"
+
+#: src/CrossPromotion.php:120
+msgid "Plugin installed successfully"
+msgstr "Das Plugin wurde erfolgreich installiert"
+
+#: src/CrossPromotion.php:114
+msgid "Invalid plugin slug"
+msgstr "Ungültige Plugin-Titelform"
+
+#: src/CrossPromotion.php:109
+msgid "You do not have permission to install plugins"
+msgstr "Du hast nicht die Berechtigung zum Installieren von Plugins"
+
+#: src/CrossPromotion.php:79 src/CrossPromotion.php:105
+msgid "Invalid nonce"
+msgstr "Ungültige Nonce"
+
+#: src/CrossPromotion.php:54
+msgid "Activated"
+msgstr "Aktiviert"
+
+#: src/CrossPromotion.php:53
+msgid "Active"
+msgstr "Aktiv"
+
+#: src/CrossPromotion.php:52
+msgid "Failure"
+msgstr "Fehler"
+
+#: src/CrossPromotion.php:51
+msgid "Installing..."
+msgstr "Wird installiert …"
+
+#: src/TransientsManager.php:1451
+msgid "now"
+msgstr "jetzt"
+
+#. translators: 1: The number of seconds in an interval of time.
+#: src/TransientsManager.php:1447
+msgid "%s second"
+msgid_plural "%s seconds"
+msgstr[0] "%s Sekunde"
+msgstr[1] "%s Sekunden"
+
+#. translators: 1: The number of minutes in an interval of time.
+#: src/TransientsManager.php:1445
+msgid "%s minute"
+msgid_plural "%s minutes"
+msgstr[0] "%s Minute"
+msgstr[1] "%s Minuten"
+
+#. translators: 1: The number of hours in an interval of time.
+#: src/TransientsManager.php:1443
+msgid "%s hour"
+msgid_plural "%s hours"
+msgstr[0] "%s Stunde"
+msgstr[1] "%s Stunden"
+
+#. translators: 1: The number of days in an interval of time.
+#: src/TransientsManager.php:1441
+msgid "%s day"
+msgid_plural "%s days"
+msgstr[0] "%s Tag"
+msgstr[1] "%s Tage"
+
+#. translators: 1: The number of weeks in an interval of time.
+#: src/TransientsManager.php:1439
+msgid "%s week"
+msgid_plural "%s weeks"
+msgstr[0] "%s Woche"
+msgstr[1] "%s Wochen"
+
+#. translators: 1: The number of months in an interval of time.
+#: src/TransientsManager.php:1437
+msgid "%s month"
+msgid_plural "%s months"
+msgstr[0] "%s Monat"
+msgstr[1] "%s Monate"
+
+#. translators: 1: The number of years in an interval of time.
+#: src/TransientsManager.php:1435
+msgid "%s year"
+msgid_plural "%s years"
+msgstr[0] "%s Jahr"
+msgstr[1] "%s Jahre"
+
+#: src/TransientsManager.php:965
+msgid "Persistent"
+msgstr "Persistent"
+
+#: src/TransientsManager.php:924
+msgid "empty"
+msgstr "leer"
+
+#: src/TransientsManager.php:919
+msgid "scalar"
+msgstr "Skalar"
+
+#: src/TransientsManager.php:915
+msgid "json"
+msgstr "JSON"
+
+#: src/TransientsManager.php:910
+msgid "numeric"
+msgstr "numerisch"
+
+#: src/TransientsManager.php:906
+msgid "boolean?"
+msgstr "boolean?"
+
+#: src/TransientsManager.php:902
+msgid "timestamp?"
+msgstr "Zeitstempel?"
+
+#: src/TransientsManager.php:893
+msgid "html"
+msgstr "HTML"
+
+#: src/TransientsManager.php:889
+msgid "serialized"
+msgstr "serialisiertes Array"
+
+#: src/TransientsManager.php:885
+msgid "object"
+msgstr "Objekt"
+
+#: src/TransientsManager.php:881
+msgid "array"
+msgstr "Array"
+
+#: src/TransientsManager.php:874
+msgid "unknown"
+msgstr "unbekannt"
+
+#: src/TransientsManager.php:672
+msgid "View Transients"
+msgstr "Transienten anzeigen"
+
+#. translators: 1: Date and time, 2: Timezone, 3: Time since
+#: src/TransientsManager.php:603
+msgid "Expired transients scheduled for deletion on: %1$s (%2$s) – %3$s from now"
+msgstr "Die Löschung abgelaufener Transienten ist geplant für: %1$s (%2$s) – %3$s ab jetzt"
+
+#. translators: 1: Date and time, 2: Timezone
+#: src/TransientsManager.php:592
+msgid "Site time: %1$s (%2$s)"
+msgstr "Website-Zeit: %1$s (%2$s)"
+
+#: src/TransientsManager.php:523
+msgid "Option ID"
+msgstr "Options-ID"
+
+#: src/TransientsManager.php:424
+msgid "Show more details"
+msgstr "Weitere Details anzeigen"
+
+#: src/TransientsManager.php:414
+msgid "Option ID: %d"
+msgstr "Options-ID: %d"
+
+#: src/TransientsManager.php:408
+msgid "Select %s"
+msgstr "%s auswählen"
+
+#: src/TransientsManager.php:362 src/TransientsManager.php:452
+msgid "Select All"
+msgstr "Alle auswählen"
+
+#: src/TransientsManager.php:345 src/TransientsManager.php:482
+msgid "Apply"
+msgstr "Anwenden"
+
+#: src/TransientsManager.php:342 src/TransientsManager.php:349
+#: src/TransientsManager.php:479
+msgid "Delete All"
+msgstr "Alle löschen"
+
+#: src/TransientsManager.php:341 src/TransientsManager.php:478
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: src/TransientsManager.php:338 src/TransientsManager.php:475
+msgid "Delete Without Expiration"
+msgstr "Löschen ohne Ablaufdatum"
+
+#: src/TransientsManager.php:337 src/TransientsManager.php:474
+msgid "Delete With Expiration"
+msgstr "Löschen mit Ablaufdatum"
+
+#: src/TransientsManager.php:336 src/TransientsManager.php:473
+msgid "Delete Expired"
+msgstr "Abgelaufene löschen"
+
+#: src/TransientsManager.php:335 src/TransientsManager.php:367
+#: src/TransientsManager.php:434 src/TransientsManager.php:457
+#: src/TransientsManager.php:472 src/TransientsManager.php:531
+msgid "Expiration"
+msgstr "Ablaufdatum"
+
+#: src/TransientsManager.php:332 src/TransientsManager.php:469
+msgid "Delete Selected"
+msgstr "Auswahl löschen"
+
+#: src/TransientsManager.php:331 src/TransientsManager.php:468
+msgid "Selection"
+msgstr "Auswahl"
+
+#: src/TransientsManager.php:329 src/TransientsManager.php:466
+msgid "Bulk actions"
+msgstr "Mehrfachaktionen"
+
+#: src/TransientsManager.php:327 src/TransientsManager.php:464
+msgid "Select Bulk action"
+msgstr "Mehrfachaktion auswählen"
+
+#: src/TransientsManager.php:266
+msgid "Transient deleted."
+msgstr "Transient gelöscht."
+
+#: src/TransientsManager.php:255
+msgid "Transient updated."
+msgstr "Transient aktualisiert."
+
+#: src/TransientsManager.php:244
+msgid "You are using a persistent object cache. This screen may show incomplete information."
+msgstr "Du verwendest einen persistenten Objekt-Cache. In dieser Ansicht werden möglicherweise unvollständige Informationen angezeigt."
+
+#. Author URI of the plugin
+#: transients-manager.php
+msgid "https://www.wpbeginner.com"
+msgstr "https://www.wpbeginner.com"
+
+#. Author of the plugin
+#: transients-manager.php
+msgid "WPBeginner"
+msgstr "WPBeginner"
+
+#. Description of the plugin
+#: transients-manager.php
+msgid "Provides a familiar interface to view, search, edit, and delete Transients."
+msgstr "Bietet eine benutzerfreundliche Oberfläche zum Anzeigen, Suchen, Bearbeiten und Löschen von Transienten."
+
+#. Plugin URI of the plugin
+#: transients-manager.php
+msgid "https://wordpress.org/plugins/transients-manager/"
+msgstr "https://de.wordpress.org/plugins/transients-manager/"
+
+#: src/TransientsManager.php:981
+msgid "Expired"
+msgstr "Abgelaufen"
+
+#: src/TransientsManager.php:651
+msgid "Suspend Transients"
+msgstr "Transienten deaktivieren"
+
+#: src/TransientsManager.php:646
+msgid "Unsuspend Transients"
+msgstr "Transienten aktivieren"
+
+#: src/TransientsManager.php:445
+msgid "No transients found."
+msgstr "Es wurden keine Transienten gefunden."
+
+#: src/TransientsManager.php:420
+msgid "Delete"
+msgstr "Löschen"
+
+#: src/TransientsManager.php:418
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: src/TransientsManager.php:353 src/TransientsManager.php:486
+msgid "%s Transient"
+msgid_plural "%s Transients"
+msgstr[0] "%s Transient"
+msgstr[1] "%s Transienten"
+
+#: src/TransientsManager.php:316
+msgid "Search Transients"
+msgstr "Suche Transienten"
+
+#: src/TransientsManager.php:314
+msgid "Search"
+msgstr "Suche"
+
+#: src/TransientsManager.php:366 src/TransientsManager.php:428
+#: src/TransientsManager.php:456 src/TransientsManager.php:535
+msgid "Value"
+msgstr "Wert"
+
+#: src/TransientsManager.php:365 src/TransientsManager.php:412
+#: src/TransientsManager.php:455 src/TransientsManager.php:527
+msgid "Name"
+msgstr "Bezeichnung"
+
+#: src/TransientsManager.php:512
+msgid "Edit Transient"
+msgstr "Transient bearbeiten"
+
+#: src/TransientsManager.php:190 src/TransientsManager.php:309
+msgid "Transients"
+msgstr "Transienten"
+
+#. Plugin Name of the plugin
+#: transients-manager.php src/TransientsManager.php:189
+msgid "Transients Manager"
+msgstr "Transients Manager"

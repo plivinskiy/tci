@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - Akismet Anti-spam: Spam Protection - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-05-02 14:16:14+0000\n"
+"PO-Revision-Date: 2026-05-10 17:42:49+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,11 +18,11 @@ msgstr "Möchtest du <a href=\"%s\">ausstehende Kommentare auf Spam überprüfen
 
 #: views/config.php:268
 msgid "MCP (Model Context Protocol) allows AI assistants to access Akismet statistics and spam checking features."
-msgstr "MCP (Model Context Protocol) ermöglicht AI Assistants den Zugriff auf Akismet-Statistiken und Spamüberprüfungsfunktionen."
+msgstr "Das MCP (Model Context Protocol) ermöglicht KI-Assistenten den Zugriff auf Akismet-Statistiken und Funktionen zur Spam-Prüfung."
 
 #: views/config.php:264
 msgid " clients to access Akismet data and functionality"
-msgstr " Clients, um auf Akismet-Daten und -Funktionen zuzugreifen"
+msgstr "-Clients Zugriff auf Akismet-Daten und -Funktionen"
 
 #: views/config.php:264
 msgid "MCP"
@@ -38,7 +38,7 @@ msgstr "Zulassen "
 
 #: views/config.php:251
 msgid "Tool access"
-msgstr "Tool-Zugriff"
+msgstr "Werkzeugzugriff"
 
 #: views/config.php:104
 msgid "Copy API key"
@@ -50,7 +50,7 @@ msgstr "Detaillierte Statistiken anzeigen"
 
 #: class.akismet-rest-api.php:70
 msgid "If true, allow MCP clients to access Akismet data and functionality."
-msgstr "Wenn wahr, erlauben Sie MCP-Clients, auf Akismet-Daten und -Funktionen zuzugreifen."
+msgstr "Wenn true, gewährst du MCP-Clients Zugriff auf die Daten und Funktionen von Akismet."
 
 #: class.akismet-admin.php:119
 msgid "API key for Akismet."
@@ -138,7 +138,7 @@ msgstr "Das Zeitintervall für Statistiken. Optionen: „6-months“, „all“ 
 
 #: abilities/class-akismet-ability-get-stats.php:42
 msgid "Retrieves Akismet spam protection statistics including spam blocked count, accuracy percentage, and other key metrics."
-msgstr "Ruft Statistiken zum Spamschutz von Akismet ab, einschließlich Anzahl blockierter Spam-Mails, Prozentsatz der Genauigkeit und andere wichtige Kennzahlen."
+msgstr "Ruft Statistiken zum Akismet-Spamschutz ab, einschließlich der Anzahl von blockiertem Spam, der Erkennungsrate und weiterer wichtiger Metriken."
 
 #: abilities/class-akismet-ability-get-stats.php:33
 msgid "Get Akismet statistics"
@@ -146,7 +146,7 @@ msgstr "Akismet-Statistiken abrufen"
 
 #: abilities/class-akismet-ability-comment-check.php:195
 msgid "Failed to check comment with Akismet API."
-msgstr "Kommentar konnte mit Akismet-API nicht überprüft werden."
+msgstr "Die Überprüfung des Kommentars über die Akismet-API ist fehlgeschlagen."
 
 #: abilities/class-akismet-ability-comment-check.php:138
 msgid "Debug information to help troubleshoot issues."
@@ -218,7 +218,7 @@ msgstr "Der Name des Kommentarautors."
 
 #: abilities/class-akismet-ability-comment-check.php:42
 msgid "Checks a comment against the Akismet spam filter to determine if it is spam or legitimate content."
-msgstr "Überprüft einen Kommentar anhand des Akismet-Spamfilters, um festzustellen, ob es sich um Spam oder legitime Inhalte handelt."
+msgstr "Überprüft einen Kommentar mittels des Akismet-Spamfilters, um festzustellen, ob es sich um Spam oder um legitimen Inhalt handelt."
 
 #: abilities/class-akismet-ability-comment-check.php:33
 msgid "Check comment for spam"

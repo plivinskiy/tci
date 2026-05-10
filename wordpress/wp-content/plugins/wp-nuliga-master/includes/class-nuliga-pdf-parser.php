@@ -329,9 +329,11 @@ class Nuliga_Pdf_Parser {
 						$i++;
 					}
 
-					$count = count( $times );
-					$homes = [];
-					$guests = [];
+					$count   = count( $times );
+					$homes   = [];
+					$guests  = [];
+					$remarks = [];
+					$results = [];
 
 					// Collect home teams
 					for ( $k = 0; $k < $count && $i < $n; $k++, $i++ ) {
@@ -341,18 +343,24 @@ class Nuliga_Pdf_Parser {
 					for ( $k = 0; $k < $count && $i < $n; $k++, $i++ ) {
 						$guests[] = trim( $sched_lines[ $i ] );
 					}
-					// Skip trailing empty / Bem. / Erg. lines for this block
-					while ( $i < $n && trim( $sched_lines[ $i ] ) === '' ) {
-						$i++;
+					// Skip N Bem. (remarks) lines — always present, usually blank
+					for ( $k = 0; $k < $count && $i < $n; $k++, $i++ ) {}
+					// Collect N Erg. (result) lines
+					for ( $k = 0; $k < $count && $i < $n; $k++, $i++ ) {
+						$results[] = trim( $sched_lines[ $i ] );
 					}
 
 					for ( $k = 0; $k < $count; $k++ ) {
+						$erg = $results[ $k ] ?? '';
+						if ( ! preg_match( '/^\d+:\d+$|^w\.?o\.?$/i', $erg ) ) {
+							$erg = '';
+						}
 						$games[] = [
 							'datum'    => $datum,
 							'zeit'     => $times[ $k ],
 							'heim'     => $homes[ $k ] ?? '',
 							'gast'     => $guests[ $k ] ?? '',
-							'ergebnis' => '',
+							'ergebnis' => $erg,
 						];
 					}
 				}
@@ -382,7 +390,7 @@ class Nuliga_Pdf_Parser {
 				if ( ! str_starts_with( $after, $guest ) ) continue;
 				$tail = trim( substr( $after, strlen( $guest ) ) );
 				// Whatever remains is the result (e.g. "4:2") or empty
-				$ergebnis = preg_match( '/^[\d]+:[\d]+$/', $tail ) ? $tail : '';
+				$ergebnis = preg_match( '/^\d+:\d+$|^w\.?o\.?$/i', $tail ) ? $tail : '';
 				return [ $home, $guest, $ergebnis ];
 			}
 		}
