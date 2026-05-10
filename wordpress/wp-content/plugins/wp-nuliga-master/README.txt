@@ -25,3 +25,11 @@ e.g.
 1. Upload the plugin through the 'Plugins' menu in WordPress
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Place the specific nuliga divs in your template, widgets or pages
+
+
+[nuliga_pdf url="https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE.woa/wa/nuDokument?dokument=ScheduleReportFOP&group=2215907" type="beide" highlight="TC Illertissen"]
+
+[nuliga_pdf url="https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE.woa/wa/nuDokument?dokument=ScheduleReportFOP&group=2216337" type="beide" highlight="TC Illertissen"]
+
+
+[nuliga_pdf url="https://btv.liga.nu/cgi-bin/WebObjects/nuLigaDokumentTENDE.woa/wa/nuDokument?dokument=ScheduleReportFOP&group=2216351" type="beide" highlight="TC Illertissen"]

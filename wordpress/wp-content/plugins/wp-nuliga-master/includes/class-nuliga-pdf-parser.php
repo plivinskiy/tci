@@ -99,10 +99,13 @@ class Nuliga_Pdf_Parser {
 		$text   = $pdf->getText();
 		$dataTm = $pdf->getPages()[0]->getDataTm(); // standings fit on first page
 
+		$tabelle    = $this->parse_tabelle_from_positions( $dataTm );
+		$team_names = array_column( $tabelle, 'team' );
+
 		return [
 			'title'     => $this->parse_title( $text ),
-			'tabelle'   => $this->parse_tabelle_from_positions( $dataTm ),
-			'spielplan' => $this->parse_spielplan( $text ),
+			'tabelle'   => $tabelle,
+			'spielplan' => $this->parse_spielplan( $text, $team_names ),
 			'error'     => null,
 		];
 	}
@@ -260,7 +263,7 @@ class Nuliga_Pdf_Parser {
 	//     ...
 	//     [empty lines for Bem./Erg.]
 
-	private function parse_spielplan( $text ) {
+	private function parse_spielplan( $text, $team_names = [] ) {
 		$lines = $this->lines( $text );
 
 		// Find schedule header
@@ -295,13 +298,24 @@ class Nuliga_Pdf_Parser {
 				$i++;
 
 				if ( $rest !== '' && str_contains( $rest, "\t" ) ) {
-					// ---- Single game on one line ----
+					// ---- Single game — tab-separated (short team names) ----
 					[ $home, $guest_raw ] = explode( "\t", $rest, 2 );
 					[ $guest, $ergebnis ] = $this->split_guest_result( $guest_raw );
 					$games[] = [
 						'datum'    => $datum,
 						'zeit'     => $m[3],
 						'heim'     => trim( $home ),
+						'gast'     => $guest,
+						'ergebnis' => $ergebnis,
+					];
+				} elseif ( $rest !== '' ) {
+					// ---- Single game — no tab (long team names cause PDF to omit tab) ----
+					// Split using known team names from the standings table.
+					[ $home, $guest, $ergebnis ] = $this->split_by_team_names( $rest, $team_names );
+					$games[] = [
+						'datum'    => $datum,
+						'zeit'     => $m[3],
+						'heim'     => $home,
 						'gast'     => $guest,
 						'ergebnis' => $ergebnis,
 					];
@@ -348,6 +362,33 @@ class Nuliga_Pdf_Parser {
 		}
 
 		return $games;
+	}
+
+	/**
+	 * Splits "TeamA TeamB 4:2" into [home, guest, result] using known team names.
+	 * Tries each team name as home prefix, then looks for a second team name after it.
+	 * Falls back to [full string, "", ""] if no match found.
+	 */
+	private function split_by_team_names( $rest, $team_names ) {
+		// Longest names first to avoid partial matches (e.g. "TC X II" before "TC X")
+		usort( $team_names, fn( $a, $b ) => strlen( $b ) - strlen( $a ) );
+
+		foreach ( $team_names as $home ) {
+			if ( ! str_starts_with( $rest, $home ) ) continue;
+			$after = ltrim( substr( $rest, strlen( $home ) ) );
+
+			foreach ( $team_names as $guest ) {
+				if ( $guest === $home ) continue;
+				if ( ! str_starts_with( $after, $guest ) ) continue;
+				$tail = trim( substr( $after, strlen( $guest ) ) );
+				// Whatever remains is the result (e.g. "4:2") or empty
+				$ergebnis = preg_match( '/^[\d]+:[\d]+$/', $tail ) ? $tail : '';
+				return [ $home, $guest, $ergebnis ];
+			}
+		}
+
+		// No team match found — return the raw string as home, empty guest
+		return [ trim( $rest ), '', '' ];
 	}
 
 	/**
