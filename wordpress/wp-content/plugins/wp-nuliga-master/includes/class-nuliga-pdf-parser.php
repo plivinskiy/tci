@@ -281,91 +281,130 @@ class Nuliga_Pdf_Parser {
 		$i     = 0;
 		$n     = count( $sched_lines );
 
-		// Day abbreviations used in German nuLiga PDFs
 		$day_re = '(?:Mo|Di|Mi|Do|Fr|Sa|So)';
-		// Date+time header pattern: "So.10.05.202609:00" (day, dot, dd.mm.yyyy, hh:mm)
-		$header_re = "/^($day_re)\.(\d{2}\.\d{2}\.\d{4})(\d{2}:\d{2})(.*)/u";
+		// Normal header: "So.10.05.202609:00..."
+		$header_re    = "/^($day_re)\.(\d{2}\.\d{2}\.\d{4})(\d{2}:\d{2})(.*)/u";
+		// Rescheduled header: day abbreviation alone (date/time follow on separate lines)
+		$split_day_re = "/^($day_re)\.$/u";
 
 		while ( $i < $n ) {
 			$line = $sched_lines[ $i ];
 
-			// End of schedule section
 			if ( preg_match( '/^(Legende|nu\.Dokument)/i', $line ) ) break;
 
+			$datum      = null;
+			$first_time = null;
+			$rest       = null;
+
 			if ( preg_match( $header_re, $line, $m ) ) {
-				$datum = $m[1] . '. ' . $m[2]; // e.g. "So. 03.05.2026"
-				$rest  = trim( $m[4] );
+				$datum      = $m[1] . '. ' . $m[2];
+				$first_time = $m[3];
+				$rest       = trim( $m[4] );
 				$i++;
 
-				if ( $rest !== '' && str_contains( $rest, "\t" ) ) {
-					// ---- Single game — tab-separated (short team names) ----
-					[ $home, $guest_raw ] = explode( "\t", $rest, 2 );
-					[ $guest, $ergebnis ] = $this->split_guest_result( $guest_raw );
-					$games[] = [
-						'datum'    => $datum,
-						'zeit'     => $m[3],
-						'heim'     => trim( $home ),
-						'gast'     => $guest,
-						'ergebnis' => $ergebnis,
-					];
-				} elseif ( $rest !== '' ) {
-					// ---- Single game — no tab (long team names cause PDF to omit tab) ----
-					// Split using known team names from the standings table.
-					[ $home, $guest, $ergebnis ] = $this->split_by_team_names( $rest, $team_names );
-					$games[] = [
-						'datum'    => $datum,
-						'zeit'     => $m[3],
-						'heim'     => $home,
-						'gast'     => $guest,
-						'ergebnis' => $ergebnis,
-					];
-				} else {
-					// ---- Multi-game block ----
-					$times = [ $m[3] ];
+			} elseif ( preg_match( $split_day_re, $line, $ms ) ) {
+				// Rescheduled game: day on its own, then blank, date, blank, time on separate lines
+				$i++;
+				while ( $i < $n && trim( $sched_lines[ $i ] ) === '' ) $i++;
+				$dp = trim( $sched_lines[ $i ] ?? '' );
+				if ( ! preg_match( '/^\d{2}\.\d{2}\.\d{4}$/', $dp ) ) { $i++; continue; }
+				$i++;
+				while ( $i < $n && trim( $sched_lines[ $i ] ) === '' ) $i++;
+				$ft = trim( $sched_lines[ $i ] ?? '' );
+				if ( ! preg_match( '/^\d{2}:\d{2}$/', $ft ) ) { $i++; continue; }
+				$i++;
+				$datum      = $ms[1] . '. ' . $dp;
+				$first_time = $ft;
+				$rest       = '';
 
-					// Collect additional time lines (format "HH:MM")
-					while ( $i < $n && preg_match( '/^\d{2}:\d{2}$/', trim( $sched_lines[ $i ] ) ) ) {
-						$times[] = trim( $sched_lines[ $i ] );
-						$i++;
-					}
-
-					$count   = count( $times );
-					$homes   = [];
-					$guests  = [];
-					$remarks = [];
-					$results = [];
-
-					// Collect home teams
-					for ( $k = 0; $k < $count && $i < $n; $k++, $i++ ) {
-						$homes[] = trim( $sched_lines[ $i ] );
-					}
-					// Collect guest teams
-					for ( $k = 0; $k < $count && $i < $n; $k++, $i++ ) {
-						$guests[] = trim( $sched_lines[ $i ] );
-					}
-					// Skip N Bem. (remarks) lines — always present, usually blank
-					for ( $k = 0; $k < $count && $i < $n; $k++, $i++ ) {}
-					// Collect N Erg. (result) lines
-					for ( $k = 0; $k < $count && $i < $n; $k++, $i++ ) {
-						$results[] = trim( $sched_lines[ $i ] );
-					}
-
-					for ( $k = 0; $k < $count; $k++ ) {
-						$erg = $results[ $k ] ?? '';
-						if ( ! preg_match( '/^\d+:\d+$|^w\.?o\.?$/i', $erg ) ) {
-							$erg = '';
-						}
-						$games[] = [
-							'datum'    => $datum,
-							'zeit'     => $times[ $k ],
-							'heim'     => $homes[ $k ] ?? '',
-							'gast'     => $guests[ $k ] ?? '',
-							'ergebnis' => $erg,
-						];
-					}
-				}
 			} else {
 				$i++;
+				continue;
+			}
+
+			// ---- Single game — tab-separated ----
+			if ( $rest !== '' && str_contains( $rest, "\t" ) ) {
+				[ $home, $guest_raw ] = explode( "\t", $rest, 2 );
+				[ $guest, $ergebnis ] = $this->split_guest_result( $guest_raw );
+				$games[] = [
+					'datum'    => $datum,
+					'zeit'     => $first_time,
+					'heim'     => trim( $home ),
+					'gast'     => $guest,
+					'ergebnis' => $ergebnis,
+				];
+				continue;
+			}
+
+			// ---- Single game — no tab (long team names) ----
+			if ( $rest !== '' ) {
+				[ $home, $guest, $ergebnis ] = $this->split_by_team_names( $rest, $team_names );
+				$games[] = [
+					'datum'    => $datum,
+					'zeit'     => $first_time,
+					'heim'     => $home,
+					'gast'     => $guest,
+					'ergebnis' => $ergebnis,
+				];
+				continue;
+			}
+
+			// ---- Multi-game block ----
+			// Rescheduled blocks have a blank separator between the rescheduled game's
+			// time and the regular game times. Skip it if the next non-blank is a time.
+			if ( $i < $n && trim( $sched_lines[ $i ] ) === '' &&
+				isset( $sched_lines[ $i + 1 ] ) &&
+				preg_match( '/^\d{2}:\d{2}$/', trim( $sched_lines[ $i + 1 ] ) ) ) {
+				$i++;
+			}
+
+			$times = [ $first_time ];
+			while ( $i < $n && preg_match( '/^\d{2}:\d{2}$/', trim( $sched_lines[ $i ] ) ) ) {
+				$times[] = trim( $sched_lines[ $i ] );
+				$i++;
+			}
+
+			$count  = count( $times );
+			$homes  = [];
+			$guests = [];
+
+			// Collect home teams — skip blank lines and "» ursprünglich..." remarks
+			while ( count( $homes ) < $count && $i < $n ) {
+				$tl = trim( $sched_lines[ $i++ ] );
+				if ( $tl === '' || str_starts_with( $tl, '»' ) ) continue;
+				$homes[] = $tl;
+			}
+
+			// Collect guest teams — skip blank lines and remarks
+			while ( count( $guests ) < $count && $i < $n ) {
+				$tl = trim( $sched_lines[ $i++ ] );
+				if ( $tl === '' || str_starts_with( $tl, '»' ) ) continue;
+				$guests[] = $tl;
+			}
+
+			// Collect results by scanning: skip blanks/remarks, stop at next date header
+			$results = array_fill( 0, $count, '' );
+			$r_idx   = 0;
+			while ( $i < $n && $r_idx < $count ) {
+				$tl = trim( $sched_lines[ $i ] );
+				if ( preg_match( '/^\d+:\d+$|^w\.?o\.?$/i', $tl ) ) {
+					$results[ $r_idx++ ] = $tl;
+					$i++;
+				} elseif ( $tl === '' || str_starts_with( $tl, '»' ) ) {
+					$i++;
+				} else {
+					break; // next date header or end of section
+				}
+			}
+
+			for ( $k = 0; $k < $count; $k++ ) {
+				$games[] = [
+					'datum'    => $datum,
+					'zeit'     => $times[ $k ],
+					'heim'     => $homes[ $k ] ?? '',
+					'gast'     => $guests[ $k ] ?? '',
+					'ergebnis' => $results[ $k ] ?? '',
+				];
 			}
 		}
 
