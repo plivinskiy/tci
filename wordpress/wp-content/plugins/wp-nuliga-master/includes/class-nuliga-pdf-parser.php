@@ -20,7 +20,7 @@ class Nuliga_Pdf_Parser {
 	 * [
 	 *   'title'     => string,
 	 *   'tabelle'   => [ ['rang', 'team', 'beg', 'punkte', 'matches', 'saetze', 'spiele'], ... ],
-	 *   'spielplan' => [ ['datum', 'zeit', 'heim', 'gast', 'ergebnis'], ... ],
+	 *   'spielplan' => [ ['datum', 'zeit', 'heim', 'gast', 'ergebnis', 'spielort'], ... ],
 	 *   'error'     => string|null,
 	 * ]
 	 */
@@ -332,6 +332,7 @@ class Nuliga_Pdf_Parser {
 					'heim'     => trim( $home ),
 					'gast'     => $guest,
 					'ergebnis' => $ergebnis,
+					'spielort' => '',
 				];
 				continue;
 			}
@@ -345,33 +346,45 @@ class Nuliga_Pdf_Parser {
 					'heim'     => $home,
 					'gast'     => $guest,
 					'ergebnis' => $ergebnis,
+					'spielort' => '',
 				];
 				continue;
 			}
 
 			// ---- Multi-game block ----
-			// Rescheduled blocks have a blank separator between the rescheduled game's
-			// time and the regular game times. Skip it if the next non-blank is a time.
-			if ( $i < $n && trim( $sched_lines[ $i ] ) === '' &&
-				isset( $sched_lines[ $i + 1 ] ) &&
-				preg_match( '/^\d{2}:\d{2}$/', trim( $sched_lines[ $i + 1 ] ) ) ) {
-				$i++;
-			}
-
+			// Collect additional times. Blank lines between times are skipped only when
+			// another time follows (handles both rescheduled blocks and regular multi-game dates).
 			$times = [ $first_time ];
-			while ( $i < $n && preg_match( '/^\d{2}:\d{2}$/', trim( $sched_lines[ $i ] ) ) ) {
-				$times[] = trim( $sched_lines[ $i ] );
-				$i++;
+			while ( $i < $n ) {
+				$tl = trim( $sched_lines[ $i ] );
+				if ( preg_match( '/^\d{2}:\d{2}$/', $tl ) ) {
+					$times[] = $tl;
+					$i++;
+				} elseif ( $tl === '' && isset( $sched_lines[ $i + 1 ] ) &&
+					preg_match( '/^\d{2}:\d{2}$/', trim( $sched_lines[ $i + 1 ] ) ) ) {
+					$i++; // skip blank between times
+				} else {
+					break;
+				}
 			}
 
-			$count  = count( $times );
-			$homes  = [];
-			$guests = [];
+			$count      = count( $times );
+			$homes      = [];
+			$spielorten = array_fill( 0, $count, '' );
+			$guests     = [];
 
-			// Collect home teams — skip blank lines and "» ursprünglich..." remarks
+			// Collect home teams — skip blank lines and "» ursprünglich..." remarks.
+			// "Spielort: ..." lines are associated with the preceding home team and skipped.
 			while ( count( $homes ) < $count && $i < $n ) {
 				$tl = trim( $sched_lines[ $i++ ] );
 				if ( $tl === '' || str_starts_with( $tl, '»' ) ) continue;
+				if ( str_starts_with( $tl, 'Spielort:' ) ) {
+					$last = count( $homes ) - 1;
+					if ( $last >= 0 ) {
+						$spielorten[ $last ] = trim( substr( $tl, 9 ) );
+					}
+					continue;
+				}
 				$homes[] = $tl;
 			}
 
@@ -404,6 +417,7 @@ class Nuliga_Pdf_Parser {
 					'heim'     => $homes[ $k ] ?? '',
 					'gast'     => $guests[ $k ] ?? '',
 					'ergebnis' => $results[ $k ] ?? '',
+					'spielort' => $spielorten[ $k ] ?? '',
 				];
 			}
 		}
